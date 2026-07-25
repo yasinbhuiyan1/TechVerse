@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechVerse | Online Tech Store</title>
+    <link rel="icon" href="images/logo.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+
+        <h1>💻 TechVerse</h1>
+
+        <nav>
+
+            <a href="#home">Home</a>
+
+            <a href="#about">About</a>
+
+            <a href="#products">Products</a>
+
+            <a href="#contact">Contact</a>
+
+        </nav>
+        <input type="text" placeholder="🔍 Search products...">
+
+        <button onclick="darkMode()">🌙 Dark Mode</button>
+
+        <button id="cartBtn">
+            🛒 Cart
+            (<span id="cartCount">0</span>)
+        </button>
+    </header>
+
+    <section id="home">
+
+        <div class="banner-text">
+
+            <h2>Welcome to TechVerse</h2>
+
+            <p>Your trusted online tech store.</p>
+
+            <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                Shop Now
+            </button>
+
+        </div>
+
+    </section>
+    <section id="offer">
+        <h2>🔥 Special Offer 🔥</h2>
+        <p>🎉Get up to <strong>30% OFF</strong> on selected gaming products.</p>
+    </section>
+    <section id="products">
+
+        <h2>Our Products</h2>
+        <p><b>🛍️ 24 Products Available</b></p>
+
+        <div class="products">
+
+            <div class="card">
+                <span class="badge">-20%</span>
+                <img src="images/laptop.jpg" alt="Gaming Laptop">
+                <h3>Gaming Laptop</h3>
+                <p class="category">Category: Laptop</p>
+                <p class="price"><del>150,000 BDT</del><br>120,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 2 Years Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/keyboard.jpg" alt="Gaming Keyboard">
+                <h3>Gaming Keyboard</h3>
+                <p class="category">Category: Keyboard</p>
+                <p class="price"><del>3,900 BDT</del><br>3,500 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-30%</span>
+                <img src="images/mouse.jpg" alt="Gaming Mouse">
+                <h3>Gaming Mouse</h3>
+                <p class="category">Category: Mouse</p>
+                <p class="price"><del>5,400 BDT</del><br>3,800 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+            <div class="card">
+                <span class="badge">-20%</span>
+                <img src="images/headphone.jpg" alt="Gaming Headphone">
+                <h3>Gaming Headphone</h3>
+                <p class="category">Category: Headphone</p>
+                <p class="price"><del>4,300 BDT</del><br>3,500 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-20%</span>
+                <img src="images/monitor.jpg" alt="Gaming Monitor">
+                <h3>Gaming Monitor </h3>
+                <p class="category">Category: Monitor</p>
+                <p class="price"><del>40,000 BDT</del><br>32,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 2 Years Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/speaker.jpg" alt="Bluetooth Speaker">
+                <h3>Bluetooth Speaker</h3>
+                <p class="category">Category: Speaker</p>
+                <p class="price"><del>4,800 BDT</del><br>3,800 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/webcam.jpg" alt="HD Webcam">
+                <h3>HD Webcam</h3>
+                <p class="category">Category: Webcam</p>
+                <p class="price"><del>5,000 BDT</del><br>4,500 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/ssd.jpg" alt="SSD">
+                <h3>1TB SSD</h3>
+                <p class="category">Category: SSD</p>
+                <p class="price"><del>10,000 BDT</del><br>9,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 3 Years Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/router.jpg" alt="Router">
+                <h3>WiFi Router</h3>
+                <p class="category">Category: Router</p>
+                <p class="price"><del>3,600 BDT</del><br>3,200 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/ram.jpg" alt="RAM">
+                <h3>16GB DDR4 RAM</h3>
+                <p class="category">Category: RAM</p>
+                <p class="price"><del>6,000 BDT</del><br>5,500 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ Lifetime Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/processor.jpg" alt="Processor">
+                <h3>Intel Core i7</h3>
+                <p class="category">Category: Processor</p>
+                <p class="price"><del>30,000 BDT</del><br>28,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 3 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-20%</span>
+                <img src="images/gpu.jpg" alt="Graphics Card">
+                <h3>RTX Graphics Card</h3>
+                <p class="category">Category: Graphics Card</p>
+                <p class="price"><del>80,000 BDT</del><br>65,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 3 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-20%</span>
+                <img src="images/printer.jpg" alt="Printer">
+                <h3>Color Printer</h3>
+                <p class="category">Category: Printer</p>
+                <p class="price"><del>18,000 BDT</del><br>15,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 2 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/camera.jpg" alt="Camera">
+                <h3>Digital Camera</h3>
+                <p class="category">Category: Camera</p>
+                <p class="price"><del>58,000 BDT</del><br>52,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 2 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-20%</span>
+                <img src="images/smartwatch.jpg" alt="Smart Watch">
+                <h3>Smart Watch</h3>
+                <p class="category">Category: Smart Watch</p>
+                <p class="price"><del>9,000 BDT</del><br>7,500 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-30%</span>
+                <img src="images/tablet.jpg" alt="Tablet">
+                <h3>Android Tablet</h3>
+                <p class="category">Category: Tablet</p>
+                <p class="price"><del>24,000 BDT</del><br>20,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-15%</span>
+                <img src="images/powerbank.jpg" alt="Power Bank">
+                <h3>20000mAh Power Bank</h3>
+                <p class="category">Category: Power Bank</p>
+                <p class="price"><del>2,800 BDT</del><br>2,500 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 6 Months Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/phone.jpg" alt="Smartphone">
+                <h3>5G Smartphone</h3>
+                <p class="category">Category: Smartphone</p>
+                <p class="price"><del>40,000 BDT</del><br>35,000 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/charger.jpg" alt="Fast Charger">
+                <h3>65W Fast Charger</h3>
+                <p class="category">Category: Charger</p>
+                <p class="price"><del>2,000 BDT</del><br>1,800 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 6 Months Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/pendrive.jpg" alt="Pen Drive">
+                <h3>64GB Pen Drive</h3>
+                <p class="category">Category: Pen Drive</p>
+                <p class="price"><del>1,000 BDT</del><br>900 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 5 year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+            <div class="card">
+                <span class="badge">-30%</span>
+                <img src="images/microphone.jpg" alt="Gaming Microphone">
+                <h3>Gaming Microphone </h3>
+                <p class="category">Category: Microphone</p>
+                <p class="price"><del>6,000 BDT</del><br>4,200 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-10%</span>
+                <img src="images/controller.jpg" alt="Game Controller">
+                <h3>Game Controller </h3>
+                <p class="category">Category: Controller</p>
+                <p class="price"><del>4,200 BDT</del><br>3,800 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 1 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-15%</span>
+                <img src="images/cooler.jpg" alt="Laptop Cooling Pad">
+                <h3>Laptop Cooling Pad </h3>
+                <p class="category">Category: Cooler</p>
+                <p class="price"><del>2,600 BDT</del><br>2,200 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 6 Months Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+            <div class="card">
+                <span class="badge">-20%</span>
+                <img src="images/projector.jpg" alt=" Projector">
+                <h3>Mini Projector </h3>
+                <p class="category">Category: Projector</p>
+                <p class="price"><del>58,500 BDT</del><br>48,500 BDT</p>
+                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
+                <p class="delivery">🚚 Free Delivery</p>
+                <p class="warranty">🛡️ 2 Year Warranty</p>
+                <p class="stock">✔ In Stock</p>
+                <button onclick="addToCart()">🛒Buy Now</button>
+            </div>
+
+        </div>
+
+    </section>
+    <section id="about">
+        <h2>ℹ️About Us</h2>
+        <p>
+            Welcome to TechVerse! We are an online technology store offering high-quality laptops, gaming accessories,
+            computer components, and electronic devices at competitive prices. Our goal is to provide the best products
+            with excellent customer service.
+        </p>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+
+        <p>📧 <strong>Email:</strong> techverse@gmail.com</p>
+
+        <p>📞 <strong>Phone:</strong> +8801820727102</p>
+
+        <p>📍 <strong>Address:</strong> Khilgaon,Dhaka, Bangladesh</p>
+        <form>
+            <input type="text" placeholder="👤 Enter Your Name" required><br><br>
+
+            <input type="email" placeholder="📧 Enter Your Email" required><br><br>
+
+            <textarea rows="5" placeholder="💬 Write Your Message" required></textarea><br><br>
+
+            <button type="submit">📩 Send Message</button>
+        </form>
+    </section>
+    <footer>
+        <p>
+            © 2026 TechVerse | All Rights Reserved.<br>
+            Designed by Md Yeasin Bhuiyan
+        </p>
+
+        <br>
+
+        <h3>🌐Follow Us</h3>
+
+        <p>
+            <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
+            &nbsp;&nbsp;
+
+            <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+            &nbsp;&nbsp;
+
+            <a href="#"><i class="fab fa-youtube"></i> YouTube</a>
+        </p>
+
+        <hr>
+
+        <p>❤️‍🔥Thank you for visiting TechVerse ❤️</p>
+    </footer>
+    <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        ⬆
+    </button>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
