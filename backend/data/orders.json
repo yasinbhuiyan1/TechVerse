@@ -1,0 +1,19 @@
+[
+  {
+    "orderId": "TV-327569",
+    "customerName": "Yeasin",
+    "customerPhone": "01800000000",
+    "address": "Dhaka",
+    "items": [
+      {
+        "id": 1,
+        "name": "Gaming Laptop",
+        "price": 120000,
+        "quantity": 1
+      }
+    ],
+    "totalAmount": 120000,
+    "status": "Pending",
+    "createdAt": "2026-09-20T12:41:34.037Z"
+  }
+]

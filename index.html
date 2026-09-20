@@ -4,435 +4,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechVerse | Online Tech Store</title>
+    <title>TechVerse | Premium Online Tech Store</title>
     <link rel="icon" href="images/logo.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <header>
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="top-bar">
+        <span>⚡ <b>FLASH SALE!</b> Get up to 30% OFF on selected gaming gear. Use coupon <b>TECHVERSE10</b></span>
+        <div>Ends in: <span id="flashTimer" class="timer-box">05h 42m 19s</span></div>
+    </div>
 
-        <h1>💻 TechVerse</h1>
+    <!-- MAIN HEADER -->
+    <header>
+        <h1 onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            💻 TechVerse
+        </h1>
 
         <nav>
-
             <a href="#home">Home</a>
-
-            <a href="#about">About</a>
-
             <a href="#products">Products</a>
-
+            <a href="#about">About</a>
             <a href="#contact">Contact</a>
-
         </nav>
-        <input type="text" placeholder="🔍 Search products...">
 
-        <button onclick="darkMode()">🌙 Dark Mode</button>
+        <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search tech products...">
+        </div>
 
-        <button id="cartBtn">
-            🛒 Cart
-            (<span id="cartCount">0</span>)
-        </button>
-    </header>
-
-    <section id="home">
-
-        <div class="banner-text">
-
-            <h2>Welcome to TechVerse</h2>
-
-            <p>Your trusted online tech store.</p>
-
-            <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'});">
-                Shop Now
+        <div class="header-actions">
+            <button class="btn-icon" id="wishlistBtn" onclick="alert('Viewing saved wishlist items!')">
+                ❤️ <span id="wishlistCount">0</span>
             </button>
 
-        </div>
+            <button class="btn-icon" id="cartBtn" onclick="toggleCartDrawer(true)">
+                🛒 Cart (<span id="cartCount" class="badge-count">0</span>)
+            </button>
 
+            <button class="btn-icon" onclick="darkMode()">🌙</button>
+
+            <button class="btn-icon" onclick="toggleAdminModal(true)" style="background:var(--primary);">
+                ⚙️ Admin
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="home">
+        <div class="banner-text">
+            <h2>Next-Gen Tech Essentials</h2>
+            <p>Your trusted destination for genuine laptops, gaming gear & components.</p>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                Explore Products 🛍️
+            </button>
+        </div>
     </section>
-    <section id="offer">
-        <h2>🔥 Special Offer 🔥</h2>
-        <p>🎉Get up to <strong>30% OFF</strong> on selected gaming products.</p>
-    </section>
+
+    <!-- TRUST BADGES BAR -->
+    <div class="trust-bar">
+        <div class="trust-item">
+            <div class="trust-icon"><i class="fa-solid fa-truck-fast"></i></div>
+            <div class="trust-text">
+                <h4>Express Delivery</h4>
+                <p>24-48 Hours across Bangladesh</p>
+            </div>
+        </div>
+        <div class="trust-item">
+            <div class="trust-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="trust-text">
+                <h4>100% Genuine</h4>
+                <p>Official Brand Warranty</p>
+            </div>
+        </div>
+        <div class="trust-item">
+            <div class="trust-icon"><i class="fa-solid fa-arrow-rotate-left"></i></div>
+            <div class="trust-text">
+                <h4>7 Days Return</h4>
+                <p>Hassle-free replacement</p>
+            </div>
+        </div>
+        <div class="trust-item">
+            <div class="trust-icon"><i class="fa-solid fa-wallet"></i></div>
+            <div class="trust-text">
+                <h4>Flexible Payment</h4>
+                <p>COD / bKash / Cards</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPECIAL OFFER BANNER -->
+    <div id="offer">
+        <div>
+            <h2>🔥 Mega Gaming Offer 🔥</h2>
+            <p>Get instant <b>৳500 OFF</b> on orders over ৳2,000 using promo code <b>WELCOME500</b></p>
+        </div>
+        <button onclick="toggleCartDrawer(true)" style="background:#2563eb; color:white; padding:12px 24px; border-radius:30px; border:none; font-weight:700; cursor:pointer;">
+            Claim Offer 🎁
+        </button>
+    </div>
+
+    <!-- PRODUCTS SECTION -->
     <section id="products">
-
-        <h2>Our Products</h2>
-        <p><b>🛍️ 24 Products Available</b></p>
-
-        <div class="products">
-
-            <div class="card">
-                <span class="badge">-20%</span>
-                <img src="images/laptop.jpg" alt="Gaming Laptop">
-                <h3>Gaming Laptop</h3>
-                <p class="category">Category: Laptop</p>
-                <p class="price"><del>150,000 BDT</del><br>120,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 2 Years Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/keyboard.jpg" alt="Gaming Keyboard">
-                <h3>Gaming Keyboard</h3>
-                <p class="category">Category: Keyboard</p>
-                <p class="price"><del>3,900 BDT</del><br>3,500 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-30%</span>
-                <img src="images/mouse.jpg" alt="Gaming Mouse">
-                <h3>Gaming Mouse</h3>
-                <p class="category">Category: Mouse</p>
-                <p class="price"><del>5,400 BDT</del><br>3,800 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-            <div class="card">
-                <span class="badge">-20%</span>
-                <img src="images/headphone.jpg" alt="Gaming Headphone">
-                <h3>Gaming Headphone</h3>
-                <p class="category">Category: Headphone</p>
-                <p class="price"><del>4,300 BDT</del><br>3,500 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-20%</span>
-                <img src="images/monitor.jpg" alt="Gaming Monitor">
-                <h3>Gaming Monitor </h3>
-                <p class="category">Category: Monitor</p>
-                <p class="price"><del>40,000 BDT</del><br>32,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 2 Years Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/speaker.jpg" alt="Bluetooth Speaker">
-                <h3>Bluetooth Speaker</h3>
-                <p class="category">Category: Speaker</p>
-                <p class="price"><del>4,800 BDT</del><br>3,800 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/webcam.jpg" alt="HD Webcam">
-                <h3>HD Webcam</h3>
-                <p class="category">Category: Webcam</p>
-                <p class="price"><del>5,000 BDT</del><br>4,500 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/ssd.jpg" alt="SSD">
-                <h3>1TB SSD</h3>
-                <p class="category">Category: SSD</p>
-                <p class="price"><del>10,000 BDT</del><br>9,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 3 Years Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/router.jpg" alt="Router">
-                <h3>WiFi Router</h3>
-                <p class="category">Category: Router</p>
-                <p class="price"><del>3,600 BDT</del><br>3,200 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/ram.jpg" alt="RAM">
-                <h3>16GB DDR4 RAM</h3>
-                <p class="category">Category: RAM</p>
-                <p class="price"><del>6,000 BDT</del><br>5,500 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ Lifetime Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/processor.jpg" alt="Processor">
-                <h3>Intel Core i7</h3>
-                <p class="category">Category: Processor</p>
-                <p class="price"><del>30,000 BDT</del><br>28,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 3 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-20%</span>
-                <img src="images/gpu.jpg" alt="Graphics Card">
-                <h3>RTX Graphics Card</h3>
-                <p class="category">Category: Graphics Card</p>
-                <p class="price"><del>80,000 BDT</del><br>65,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 3 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-20%</span>
-                <img src="images/printer.jpg" alt="Printer">
-                <h3>Color Printer</h3>
-                <p class="category">Category: Printer</p>
-                <p class="price"><del>18,000 BDT</del><br>15,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 2 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/camera.jpg" alt="Camera">
-                <h3>Digital Camera</h3>
-                <p class="category">Category: Camera</p>
-                <p class="price"><del>58,000 BDT</del><br>52,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 2 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-20%</span>
-                <img src="images/smartwatch.jpg" alt="Smart Watch">
-                <h3>Smart Watch</h3>
-                <p class="category">Category: Smart Watch</p>
-                <p class="price"><del>9,000 BDT</del><br>7,500 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-30%</span>
-                <img src="images/tablet.jpg" alt="Tablet">
-                <h3>Android Tablet</h3>
-                <p class="category">Category: Tablet</p>
-                <p class="price"><del>24,000 BDT</del><br>20,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-15%</span>
-                <img src="images/powerbank.jpg" alt="Power Bank">
-                <h3>20000mAh Power Bank</h3>
-                <p class="category">Category: Power Bank</p>
-                <p class="price"><del>2,800 BDT</del><br>2,500 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 6 Months Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/phone.jpg" alt="Smartphone">
-                <h3>5G Smartphone</h3>
-                <p class="category">Category: Smartphone</p>
-                <p class="price"><del>40,000 BDT</del><br>35,000 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/charger.jpg" alt="Fast Charger">
-                <h3>65W Fast Charger</h3>
-                <p class="category">Category: Charger</p>
-                <p class="price"><del>2,000 BDT</del><br>1,800 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 6 Months Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/pendrive.jpg" alt="Pen Drive">
-                <h3>64GB Pen Drive</h3>
-                <p class="category">Category: Pen Drive</p>
-                <p class="price"><del>1,000 BDT</del><br>900 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 5 year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-            <div class="card">
-                <span class="badge">-30%</span>
-                <img src="images/microphone.jpg" alt="Gaming Microphone">
-                <h3>Gaming Microphone </h3>
-                <p class="category">Category: Microphone</p>
-                <p class="price"><del>6,000 BDT</del><br>4,200 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-10%</span>
-                <img src="images/controller.jpg" alt="Game Controller">
-                <h3>Game Controller </h3>
-                <p class="category">Category: Controller</p>
-                <p class="price"><del>4,200 BDT</del><br>3,800 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 1 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-15%</span>
-                <img src="images/cooler.jpg" alt="Laptop Cooling Pad">
-                <h3>Laptop Cooling Pad </h3>
-                <p class="category">Category: Cooler</p>
-                <p class="price"><del>2,600 BDT</del><br>2,200 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 6 Months Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
-            <div class="card">
-                <span class="badge">-20%</span>
-                <img src="images/projector.jpg" alt=" Projector">
-                <h3>Mini Projector </h3>
-                <p class="category">Category: Projector</p>
-                <p class="price"><del>58,500 BDT</del><br>48,500 BDT</p>
-                <p class="rating">Rating: <span class="stars">★★★★★</span></p>
-                <p class="delivery">🚚 Free Delivery</p>
-                <p class="warranty">🛡️ 2 Year Warranty</p>
-                <p class="stock">✔ In Stock</p>
-                <button onclick="addToCart()">🛒Buy Now</button>
-            </div>
-
+        <div class="section-title">
+            <h2>Featured Catalog</h2>
+            <p id="productCountBadge">Loading products from backend API...</p>
         </div>
 
+        <!-- CONTROLS BAR -->
+        <div class="controls-bar">
+            <div class="category-filter">
+                <button class="cat-btn active" onclick="filterCategory('All', this)">All</button>
+                <button class="cat-btn" onclick="filterCategory('Laptop', this)">💻 Laptops</button>
+                <button class="cat-btn" onclick="filterCategory('Keyboard', this)">⌨️ Keyboards</button>
+                <button class="cat-btn" onclick="filterCategory('Mouse', this)">🖱️ Mice</button>
+                <button class="cat-btn" onclick="filterCategory('Headphone', this)">🎧 Headphones</button>
+                <button class="cat-btn" onclick="filterCategory('Monitor', this)">🖥️ Monitors</button>
+                <button class="cat-btn" onclick="filterCategory('Speaker', this)">🔊 Audio</button>
+            </div>
+
+            <div class="sort-wrapper">
+                <select onchange="handleSortChange(this.value)">
+                    <option value="default">Sort By: Featured</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- PRODUCTS GRID -->
+        <div class="products">
+            <!-- Dynamic REST API Product Cards -->
+        </div>
     </section>
+
+    <!-- ABOUT SECTION -->
     <section id="about">
-        <h2>ℹ️About Us</h2>
-        <p>
-            Welcome to TechVerse! We are an online technology store offering high-quality laptops, gaming accessories,
-            computer components, and electronic devices at competitive prices. Our goal is to provide the best products
-            with excellent customer service.
+        <div class="section-title">
+            <h2>ℹ️ About TechVerse</h2>
+            <p>Bangladesh's Premier Online Computer & Tech Retailer</p>
+        </div>
+        <p style="max-width:800px; margin:0 auto; font-size:16px; line-height:1.7; color:var(--text-muted);">
+            TechVerse is an authorized distributor and online store bringing cutting-edge technology, authentic laptops,
+            gaming accessories, components, and gadgets to customers across Bangladesh. We ensure 100% genuine products,
+            official brand warranty, and dedicated customer service.
         </p>
     </section>
 
+    <!-- CONTACT SECTION -->
     <section id="contact">
-        <h2>Contact Us</h2>
+        <div class="section-title">
+            <h2>📩 Contact Us</h2>
+            <p>Get in touch with our tech specialists</p>
+        </div>
 
-        <p>📧 <strong>Email:</strong> techverse@gmail.com</p>
+        <div style="display:flex; justify-content:center; gap:30px; margin-bottom:20px; flex-wrap:wrap;">
+            <div>📧 <b>Email:</b> support@techverse.com</div>
+            <div>📞 <b>Phone:</b> +8801820727102</div>
+            <div>📍 <b>Address:</b> Khilgaon, Dhaka, Bangladesh</div>
+        </div>
 
-        <p>📞 <strong>Phone:</strong> +8801820727102</p>
-
-        <p>📍 <strong>Address:</strong> Khilgaon,Dhaka, Bangladesh</p>
         <form>
-            <input type="text" placeholder="👤 Enter Your Name" required><br><br>
-
-            <input type="email" placeholder="📧 Enter Your Email" required><br><br>
-
-            <textarea rows="5" placeholder="💬 Write Your Message" required></textarea><br><br>
-
-            <button type="submit">📩 Send Message</button>
+            <input type="text" placeholder="👤 Your Full Name" required>
+            <input type="email" placeholder="📧 Your Email Address" required>
+            <textarea rows="4" placeholder="💬 Your Message or Query" required></textarea>
+            <button type="submit" style="width:100%; background:var(--primary); color:white; padding:14px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">
+                Send Message 🚀
+            </button>
         </form>
     </section>
+
+    <!-- FOOTER -->
     <footer>
-        <p>
-            © 2026 TechVerse | All Rights Reserved.<br>
-            Designed by Md Yeasin Bhuiyan
-        </p>
-
+        <p>© 2026 TechVerse Online Tech Store | All Rights Reserved.</p>
+        <p style="margin-top:6px; font-size:14px;">Designed by <b>Md Yeasin Bhuiyan</b></p>
+        
         <br>
-
-        <h3>🌐Follow Us</h3>
-
-        <p>
-            <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
-            &nbsp;&nbsp;
-
-            <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-            &nbsp;&nbsp;
-
-            <a href="#"><i class="fab fa-youtube"></i> YouTube</a>
+        <h3 style="font-size:18px; margin-bottom:10px;">🌐 Follow Us</h3>
+        <p style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; font-size:16px;">
+            <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i> Facebook</a>
+            <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+            <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+            <a href="https://twitter.com" target="_blank"><i class="fab fa-x-twitter"></i> Twitter</a>
         </p>
 
-        <hr>
-
-        <p>❤️‍🔥Thank you for visiting TechVerse ❤️</p>
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.2); margin:20px 0;">
+        <p style="font-size:14px; opacity:0.9;">❤️‍🔥 Thank you for visiting TechVerse ❤️</p>
     </footer>
+
+    <!-- BACK TO TOP BUTTON -->
     <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
         ⬆
     </button>
 
+    <!-- SLIDE-OUT CART DRAWER -->
+    <div id="drawerOverlay" class="drawer-overlay" onclick="toggleCartDrawer(false)"></div>
+    <div id="cartDrawer" class="drawer">
+        <div class="drawer-header">
+            <h3>🛒 Your Cart</h3>
+            <span onclick="toggleCartDrawer(false)" style="font-size:24px; cursor:pointer; font-weight:700;">&times;</span>
+        </div>
+
+        <div id="drawerCartItems" class="drawer-body">
+            <!-- Items rendered by script.js -->
+        </div>
+
+        <div class="drawer-footer">
+            <div class="coupon-box">
+                <input type="text" id="couponInput" placeholder="Coupon Code (e.g. TECHVERSE10)">
+                <button onclick="applyCouponCode()">Apply</button>
+            </div>
+
+            <div style="margin-bottom:12px;">
+                <label style="font-size:13px; font-weight:700; display:block; margin-bottom:4px;">Delivery Location:</label>
+                <select onchange="updateShippingFee(this.value)" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                    <option value="60">Inside Dhaka (৳60)</option>
+                    <option value="120">Outside Dhaka (৳120)</option>
+                </select>
+            </div>
+
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="drawerSubtotal">৳ 0</span>
+            </div>
+            <div id="drawerDiscountRow" class="summary-row" style="display:none; color:var(--danger);">
+                <span>Discount:</span>
+                <span id="drawerDiscountAmount">- ৳ 0</span>
+            </div>
+            <div class="summary-row total">
+                <span>Grand Total:</span>
+                <span id="drawerGrandTotal">৳ 0</span>
+            </div>
+
+            <button onclick="openCheckoutModal()" style="width:100%; margin-top:15px; background:var(--primary); color:white; padding:14px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">
+                Proceed to Checkout ➡️
+            </button>
+        </div>
+    </div>
+
+    <!-- QUICK VIEW MODAL -->
+    <div id="quickModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleQuickModal(false)">&times;</span>
+            <div id="quickViewContent">
+                <!-- Content dynamically filled -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleCheckoutModal(false)">&times;</span>
+            <h2 style="color:var(--primary); margin-bottom:15px;">📦 Customer Shipping & Payment</h2>
+            <form id="checkoutForm" onsubmit="submitOrder(event)">
+                <input type="text" id="custName" placeholder="👤 Full Name" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border-color);">
+                <input type="tel" id="custPhone" placeholder="📞 Mobile Phone Number" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border-color);">
+                <input type="text" id="custAddress" placeholder="📍 Full Delivery Address" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border-color);">
+                
+                <label style="font-size:14px; font-weight:700; display:block; margin-bottom:6px;">Payment Method:</label>
+                <select id="paymentMethod" style="width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                    <option value="Cash on Delivery">💵 Cash on Delivery (COD)</option>
+                    <option value="bKash / Nagad / Rocket">📱 bKash / Nagad / Rocket</option>
+                    <option value="Credit/Debit Card">💳 Credit / Debit Card</option>
+                </select>
+
+                <button type="submit" style="width:100%; background:var(--success); color:white; padding:14px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">
+                    ✅ Confirm Order Now
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PRINTABLE INVOICE RECEIPT MODAL -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content" style="max-width:700px;">
+            <span class="close-modal no-print" onclick="toggleInvoiceModal(false)">&times;</span>
+            <div id="invoiceContent">
+                <!-- Receipt content filled dynamically -->
+            </div>
+            <div class="no-print" style="margin-top:20px; display:flex; justify-content:space-between;">
+                <button onclick="toggleInvoiceModal(false)" style="background:var(--bg-main); color:var(--text-color); padding:10px 20px; border-radius:6px; border:1px solid var(--border-color); cursor:pointer;">Close</button>
+                <button onclick="window.print()" style="background:var(--primary); color:white; padding:10px 24px; border-radius:6px; border:none; font-weight:700; cursor:pointer;">🖨️ Print Invoice</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD MODAL -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content" style="max-width:750px;">
+            <span class="close-modal" onclick="toggleAdminModal(false)">&times;</span>
+            <h2 style="color:var(--primary); margin-bottom:15px;">⚙️ Admin Control Suite</h2>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <h3 id="statProducts">0</h3>
+                    <small>Total Products</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(135deg, #10b981, #059669);">
+                    <h3 id="statOrders">0</h3>
+                    <small>Total Orders</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(135deg, #f59e0b, #d97706);">
+                    <h3 id="statRevenue">৳ 0</h3>
+                    <small>Total Sales Revenue</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(135deg, #0284c7, #0369a1);">
+                    <h3 id="statMessages">0</h3>
+                    <small>Customer Messages</small>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="loadAdminOrders()">📋 Customer Orders</button>
+            </div>
+
+            <div id="adminOrdersList" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                <!-- Filled dynamically -->
+            </div>
+
+            <div style="border-top:1px solid var(--border-color); padding-top:15px;">
+                <h4 style="color:var(--primary); margin-bottom:10px;">➕ Add Product to Live Store</h4>
+                <form id="addProductForm" onsubmit="submitAddProduct(event)" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <input type="text" id="prodName" placeholder="Product Name" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                    <input type="text" id="prodCategory" placeholder="Category (e.g. Laptop)" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                    <input type="number" id="prodPrice" placeholder="Price in BDT" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                    <button type="submit" style="grid-column: span 2; background:var(--primary); color:white; padding:12px; border-radius:6px; border:none; font-weight:700; cursor:pointer;">
+                        ➕ Add Product to API
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT -->
     <script src="script.js"></script>
 </body>
 

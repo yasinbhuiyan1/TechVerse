@@ -1,0 +1,22 @@
+[
+  {
+    "code": "TECHVERSE10",
+    "discountPercent": 10,
+    "maxDiscount": 5000,
+    "minSpend": 1000,
+    "description": "10% OFF on all TechVerse orders!"
+  },
+  {
+    "code": "FLASH20",
+    "discountPercent": 20,
+    "maxDiscount": 10000,
+    "minSpend": 5000,
+    "description": "20% Flash Sale Discount!"
+  },
+  {
+    "code": "WELCOME500",
+    "discountFlat": 500,
+    "minSpend": 2000,
+    "description": "Flat ৳500 OFF for new customers!"
+  }
+]
