@@ -477,60 +477,115 @@ function renderInvoice(order) {
     const container = document.getElementById("invoiceContent");
     if (!container) return;
 
+    const formattedDate = order.createdAt 
+        ? new Date(order.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : new Date().toLocaleDateString();
+
+    const itemsHtml = (order.items || []).map((item, index) => {
+        const qty = item.quantity || 1;
+        const price = Number(item.price || 0);
+        const itemTotal = price * qty;
+        return `
+            <tr>
+                <td style="width:40px; text-align:center;">${index + 1}</td>
+                <td><strong>${item.name}</strong></td>
+                <td>৳ ${price.toLocaleString()}</td>
+                <td style="text-align:center;">${qty}</td>
+                <td style="text-align:right;">৳ ${itemTotal.toLocaleString()}</td>
+            </tr>
+        `;
+    }).join("");
+
+    const subtotal = Number(order.subtotal || order.totalAmount || 0);
+    const shipping = Number(order.shippingFee !== undefined ? order.shippingFee : 60);
+    const discount = Number(order.discountAmount || 0);
+    const grandTotal = Number(order.totalAmount || (subtotal + shipping - discount));
+
     container.innerHTML = `
-        <div style="border-bottom: 2px solid var(--primary); padding-bottom:15px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <h2 style="color:var(--primary); font-size:24px; font-weight:800;">💻 TechVerse Online Store</h2>
-                <small style="color:var(--text-muted);">Dhaka, Bangladesh | Phone: +8801820727102</small>
+        <div class="invoice-box">
+            <!-- INVOICE HEADER -->
+            <div class="invoice-header">
+                <div class="invoice-brand">
+                    <h2>💻 TechVerse Online Store</h2>
+                    <p>Level 4, Tech Plaza, Multiplan Center, Dhaka-1205</p>
+                    <p>Phone: +880 1820-727102 | Email: support@techverse.com</p>
+                </div>
+                <div class="invoice-meta">
+                    <span class="invoice-status-badge">✓ ${order.status || 'CONFIRMED'}</span>
+                    <div class="invoice-id">Order #${order.orderId}</div>
+                    <div class="invoice-date">${formattedDate}</div>
+                </div>
             </div>
-            <div style="text-align:right;">
-                <span style="background:var(--success); color:white; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:700;">CONFIRMED</span><br>
-                <strong style="font-size:16px;">Order #${order.orderId}</strong><br>
-                <small>${new Date(order.createdAt).toLocaleDateString()}</small>
-            </div>
-        </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; background:var(--bg-main); padding:15px; border-radius:8px; margin-bottom:15px;">
-            <div>
-                <strong>Billed To:</strong><br>
-                <b>${order.customerName}</b><br>
-                Phone: ${order.customerPhone}<br>
-                Address: ${order.address}
+            <!-- INVOICE DETAILS GRID -->
+            <div class="invoice-details-grid">
+                <div class="invoice-details-card">
+                    <h4>📍 Billed To</h4>
+                    <p><strong>${order.customerName || 'Valued Customer'}</strong></p>
+                    <p>Phone: ${order.customerPhone || 'N/A'}</p>
+                    <p>Address: ${order.address || 'N/A'}</p>
+                </div>
+                <div class="invoice-details-card">
+                    <h4>📋 Order Details</h4>
+                    <p>Payment: <strong>${order.paymentMethod || 'Cash on Delivery'}</strong></p>
+                    <p>Status: <strong style="color:var(--warning,#f59e0b);">${order.status || 'Pending Delivery'}</strong></p>
+                    <p>Delivery: <strong>Standard Express Courier</strong></p>
+                </div>
             </div>
-            <div>
-                <strong>Order Details:</strong><br>
-                Payment: <b>${order.paymentMethod || 'Cash on Delivery'}</b><br>
-                Status: <b style="color:var(--warning);">Pending Delivery</b>
-            </div>
-        </div>
 
-        <table style="width:100%; border-collapse:collapse; margin-bottom:15px;">
-            <thead>
-                <tr style="background:var(--primary); color:white; text-align:left;">
-                    <th style="padding:8px;">Item</th>
-                    <th style="padding:8px;">Price</th>
-                    <th style="padding:8px;">Qty</th>
-                    <th style="padding:8px; text-align:right;">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${order.items.map(item => `
-                    <tr style="border-bottom:1px solid var(--border-color);">
-                        <td style="padding:8px;">${item.name}</td>
-                        <td style="padding:8px;">৳ ${Number(item.price).toLocaleString()}</td>
-                        <td style="padding:8px;">${item.quantity || 1}</td>
-                        <td style="padding:8px; text-align:right;">৳ ${(item.price * (item.quantity||1)).toLocaleString()}</td>
+            <!-- INVOICE ITEMS TABLE -->
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th style="width:40px; text-align:center;">#</th>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th style="text-align:center;">Qty</th>
+                        <th style="text-align:right;">Total</th>
                     </tr>
-                `).join("")}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    ${itemsHtml}
+                </tbody>
+            </table>
 
-        <div style="text-align:right; font-size:14px; line-height:1.6;">
-            <div>Subtotal: ৳ ${Number(order.subtotal || order.totalAmount).toLocaleString()}</div>
-            <div>Shipping Fee: ৳ ${Number(order.shippingFee || 60).toLocaleString()}</div>
-            ${order.discountAmount ? `<div style="color:var(--danger);">Discount: - ৳ ${Number(order.discountAmount).toLocaleString()}</div>` : ''}
-            <div style="font-size:20px; font-weight:800; color:var(--primary); border-top:1px solid var(--border-color); padding-top:6px; margin-top:6px;">
-                Grand Total: ৳ ${Number(order.totalAmount).toLocaleString()}
+            <!-- INVOICE SUMMARY & NOTES -->
+            <div class="invoice-summary-wrapper">
+                <div class="invoice-notes">
+                    <strong>📌 Important Information:</strong>
+                    <ul style="margin: 4px 0 0 16px; padding: 0;">
+                        <li>All products carry standard manufacturer warranty.</li>
+                        <li>Please retain this invoice receipt for any service or return claims.</li>
+                        <li>Thank you for shopping with TechVerse!</li>
+                    </ul>
+                </div>
+
+                <div class="invoice-summary-box">
+                    <div class="invoice-summary-row">
+                        <span>Subtotal:</span>
+                        <span>৳ ${subtotal.toLocaleString()}</span>
+                    </div>
+                    <div class="invoice-summary-row">
+                        <span>Shipping Fee:</span>
+                        <span>৳ ${shipping.toLocaleString()}</span>
+                    </div>
+                    ${discount > 0 ? `
+                        <div class="invoice-summary-row" style="color:var(--danger,#ef4444);">
+                            <span>Discount Coupon:</span>
+                            <span>- ৳ ${discount.toLocaleString()}</span>
+                        </div>
+                    ` : ''}
+                    <div class="invoice-grand-total">
+                        <span>Grand Total:</span>
+                        <span>৳ ${grandTotal.toLocaleString()}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INVOICE FOOTER -->
+            <div class="invoice-footer-banner">
+                <p>TechVerse Online Store | www.techverse.com | Support Helpline: +880 1820-727102</p>
+                <div class="invoice-watermark">✓ OFFICIAL E-RECEIPT - VERIFIED ORDER</div>
             </div>
         </div>
     `;
@@ -600,16 +655,20 @@ async function loadAdminOrders() {
                 return;
             }
 
-            container.innerHTML = data.data.map(o => `
+            window.adminOrdersData = data.data;
+            container.innerHTML = data.data.map((o, idx) => `
                 <div style="background:var(--bg-main); padding:14px; margin-bottom:12px; border-radius:8px; border-left:4px solid var(--primary);">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                         <strong>Order #${o.orderId}</strong>
-                        <select onchange="updateOrderStatus('${o.orderId}', this.value)" style="padding:4px 8px; border-radius:4px; font-weight:700;">
-                            <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
-                            <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
-                            <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
-                            <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
-                        </select>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button onclick="printAdminOrder(${idx})" style="padding:4px 10px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">🖨️ View & Print Invoice</button>
+                            <select onchange="updateOrderStatus('${o.orderId}', this.value)" style="padding:4px 8px; border-radius:4px; font-weight:700;">
+                                <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
+                                <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
+                                <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
+                                <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
+                            </select>
+                        </div>
                     </div>
                     <small>Customer: <b>${o.customerName}</b> (${o.customerPhone})</small><br>
                     <small>Address: ${o.address}</small><br>
@@ -619,6 +678,12 @@ async function loadAdminOrders() {
         }
     } catch (e) {
         container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">Unable to connect to orders API.</p>`;
+    }
+}
+
+function printAdminOrder(index) {
+    if (window.adminOrdersData && window.adminOrdersData[index]) {
+        renderInvoice(window.adminOrdersData[index]);
     }
 }
 

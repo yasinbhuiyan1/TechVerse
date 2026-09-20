@@ -282,14 +282,14 @@
 
     <!-- PRINTABLE INVOICE RECEIPT MODAL -->
     <div id="invoiceModal" class="modal">
-        <div class="modal-content" style="max-width:700px;">
+        <div class="modal-content" style="max-width:760px; padding:25px;">
             <span class="close-modal no-print" onclick="toggleInvoiceModal(false)">&times;</span>
             <div id="invoiceContent">
                 <!-- Receipt content filled dynamically -->
             </div>
-            <div class="no-print" style="margin-top:20px; display:flex; justify-content:space-between;">
-                <button onclick="toggleInvoiceModal(false)" style="background:var(--bg-main); color:var(--text-color); padding:10px 20px; border-radius:6px; border:1px solid var(--border-color); cursor:pointer;">Close</button>
-                <button onclick="window.print()" style="background:var(--primary); color:white; padding:10px 24px; border-radius:6px; border:none; font-weight:700; cursor:pointer;">🖨️ Print Invoice</button>
+            <div class="no-print" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:15px;">
+                <button onclick="toggleInvoiceModal(false)" style="background:var(--bg-main); color:var(--text-color); padding:10px 22px; border-radius:6px; border:1px solid var(--border-color); font-weight:600; cursor:pointer;">✖ Close</button>
+                <button onclick="window.print()" style="background:var(--primary); color:white; padding:11px 28px; border-radius:6px; border:none; font-weight:700; cursor:pointer; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;">🖨️ Print Invoice Receipt</button>
             </div>
         </div>
     </div>
