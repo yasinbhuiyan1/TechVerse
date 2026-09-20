@@ -310,5 +310,83 @@
     "delivery": "🚚 Free Delivery",
     "warranty": "🛡️ 2 Year Warranty",
     "inStock": true
+  },
+  {
+    "id": 25,
+    "name": "Asus ROG Strix Laptop",
+    "category": "Laptop",
+    "image": "images/laptop.jpg",
+    "oldPrice": 185000,
+    "price": 165000,
+    "discountBadge": "-15%",
+    "rating": "★★★★★",
+    "delivery": "🚚 Free Delivery",
+    "warranty": "🛡️ 2 Years Warranty",
+    "inStock": true
+  },
+  {
+    "id": 26,
+    "name": "Mechanical RGB Keyboard",
+    "category": "Keyboard",
+    "image": "images/keyboard.jpg",
+    "oldPrice": 7500,
+    "price": 6200,
+    "discountBadge": "-18%",
+    "rating": "★★★★★",
+    "delivery": "🚚 Free Delivery",
+    "warranty": "🛡️ 1 Year Warranty",
+    "inStock": true
+  },
+  {
+    "id": 27,
+    "name": "Logitech Wireless Mouse",
+    "category": "Mouse",
+    "image": "images/mouse.jpg",
+    "oldPrice": 6500,
+    "price": 5500,
+    "discountBadge": "-15%",
+    "rating": "★★★★★",
+    "delivery": "🚚 Free Delivery",
+    "warranty": "🛡️ 1 Year Warranty",
+    "inStock": true
+  },
+  {
+    "id": 28,
+    "name": "HyperX Cloud II Headphone",
+    "category": "Headphone",
+    "image": "images/headphone.jpg",
+    "oldPrice": 9500,
+    "price": 8200,
+    "discountBadge": "-14%",
+    "rating": "★★★★★",
+    "delivery": "🚚 Free Delivery",
+    "warranty": "🛡️ 2 Years Warranty",
+    "inStock": true
+  },
+  {
+    "id": 29,
+    "name": "Samsung 4K Curved Monitor",
+    "category": "Monitor",
+    "image": "images/monitor.jpg",
+    "oldPrice": 55000,
+    "price": 48000,
+    "discountBadge": "-12%",
+    "rating": "★★★★★",
+    "delivery": "🚚 Free Delivery",
+    "warranty": "🛡️ 3 Years Warranty",
+    "inStock": true
+  },
+  {
+    "id": 30,
+    "name": "JBL Studio Speaker",
+    "category": "Speaker",
+    "image": "images/speaker.jpg",
+    "oldPrice": 8800,
+    "price": 7400,
+    "discountBadge": "-16%",
+    "rating": "★★★★★",
+    "delivery": "🚚 Free Delivery",
+    "warranty": "🛡️ 1 Year Warranty",
+    "inStock": true
   }
 ]
