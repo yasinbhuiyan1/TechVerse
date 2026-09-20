@@ -1108,13 +1108,20 @@ footer a:hover { color: var(--accent); }
         print-color-adjust: exact !important;
     }
 
-    /* Completely collapse all main page sections from document height */
+    /* Hide ALL direct body children except #invoiceModal */
+    body > *:not(#invoiceModal) {
+        display: none !important;
+    }
+
+    /* Completely collapse all main page sections, trust bars, offer banners from document height */
     .top-bar,
     header,
     section,
     footer,
     nav,
     button,
+    .trust-bar,
+    #offer,
     .no-print,
     .close-modal,
     #topBtn,
@@ -1127,10 +1134,16 @@ footer a:hover { color: var(--accent); }
     }
 
     /* Hide any modal overlay except invoiceModal */
-    .modal {
+    .modal:not(#invoiceModal) {
         display: none !important;
         background: none !important;
         backdrop-filter: none !important;
+    }
+
+    #invoiceModal .no-print,
+    #invoiceModal button,
+    #invoiceModal .close-modal {
+        display: none !important;
     }
 
     #invoiceModal {
