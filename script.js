@@ -22,7 +22,39 @@ function initApp() {
     updateWishlistUI();
 }
 
-// ==================== PRODUCT FETCHING & SORTING ====================
+// Fallback products for offline mode (when Node backend is not running)
+const FALLBACK_PRODUCTS = [
+  { id: 1, name: "Gaming Laptop", category: "Laptop", image: "images/laptop.jpg", oldPrice: 150000, price: 120000, discountBadge: "-20%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 2 Years Warranty", inStock: true },
+  { id: 2, name: "Gaming Keyboard", category: "Keyboard", image: "images/keyboard.jpg", oldPrice: 3900, price: 3500, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 3, name: "Gaming Mouse", category: "Mouse", image: "images/mouse.jpg", oldPrice: 5400, price: 3800, discountBadge: "-30%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 4, name: "Gaming Headphone", category: "Headphone", image: "images/headphone.jpg", oldPrice: 4300, price: 3500, discountBadge: "-20%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 5, name: "Gaming Monitor", category: "Monitor", image: "images/monitor.jpg", oldPrice: 40000, price: 32000, discountBadge: "-20%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 2 Years Warranty", inStock: true },
+  { id: 6, name: "Bluetooth Speaker", category: "Speaker", image: "images/speaker.jpg", oldPrice: 4800, price: 3800, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 7, name: "HD Webcam", category: "Webcam", image: "images/webcam.jpg", oldPrice: 5000, price: 4500, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 8, name: "1TB SSD", category: "SSD", image: "images/ssd.jpg", oldPrice: 10000, price: 9000, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 3 Years Warranty", inStock: true },
+  { id: 9, name: "WiFi Router", category: "Router", image: "images/router.jpg", oldPrice: 3600, price: 3200, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 10, name: "16GB DDR4 RAM", category: "RAM", image: "images/ram.jpg", oldPrice: 6000, price: 5500, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ Lifetime Warranty", inStock: true },
+  { id: 11, name: "Intel Core i7", category: "Processor", image: "images/processor.jpg", oldPrice: 30000, price: 28000, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 3 Year Warranty", inStock: true },
+  { id: 12, name: "RTX Graphics Card", category: "Graphics Card", image: "images/gpu.jpg", oldPrice: 80000, price: 65000, discountBadge: "-20%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 3 Year Warranty", inStock: true },
+  { id: 13, name: "Color Printer", category: "Printer", image: "images/printer.jpg", oldPrice: 18000, price: 15000, discountBadge: "-20%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 2 Year Warranty", inStock: true },
+  { id: 14, name: "Digital Camera", category: "Camera", image: "images/camera.jpg", oldPrice: 58000, price: 52000, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 2 Year Warranty", inStock: true },
+  { id: 15, name: "Smart Watch", category: "Smart Watch", image: "images/smartwatch.jpg", oldPrice: 9000, price: 7500, discountBadge: "-20%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 16, name: "Android Tablet", category: "Tablet", image: "images/tablet.jpg", oldPrice: 24000, price: 20000, discountBadge: "-30%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 17, name: "20000mAh Power Bank", category: "Power Bank", image: "images/powerbank.jpg", oldPrice: 2800, price: 2500, discountBadge: "-15%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 6 Months Warranty", inStock: true },
+  { id: 18, name: "5G Smartphone", category: "Smartphone", image: "images/phone.jpg", oldPrice: 40000, price: 35000, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 19, name: "65W Fast Charger", category: "Charger", image: "images/charger.jpg", oldPrice: 2000, price: 1800, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 6 Months Warranty", inStock: true },
+  { id: 20, name: "64GB Pen Drive", category: "Pen Drive", image: "images/pendrive.jpg", oldPrice: 1000, price: 900, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 5 year Warranty", inStock: true },
+  { id: 21, name: "Gaming Microphone", category: "Microphone", image: "images/microphone.jpg", oldPrice: 6000, price: 4200, discountBadge: "-30%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 22, name: "Game Controller", category: "Controller", image: "images/controller.jpg", oldPrice: 4200, price: 3800, discountBadge: "-10%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 23, name: "Laptop Cooling Pad", category: "Cooler", image: "images/cooler.jpg", oldPrice: 2600, price: 2200, discountBadge: "-15%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 6 Months Warranty", inStock: true },
+  { id: 24, name: "Mini Projector", category: "Projector", image: "images/projector.jpg", oldPrice: 58500, price: 48500, discountBadge: "-20%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 2 Year Warranty", inStock: true },
+  { id: 25, name: "Asus ROG Strix Laptop", category: "Laptop", image: "images/laptop.jpg", oldPrice: 185000, price: 165000, discountBadge: "-15%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 2 Years Warranty", inStock: true },
+  { id: 26, name: "Mechanical RGB Keyboard", category: "Keyboard", image: "images/keyboard.jpg", oldPrice: 7500, price: 6200, discountBadge: "-18%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 27, name: "Logitech Wireless Mouse", category: "Mouse", image: "images/mouse.jpg", oldPrice: 6500, price: 5500, discountBadge: "-15%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true },
+  { id: 28, name: "HyperX Cloud II Headphone", category: "Headphone", image: "images/headphone.jpg", oldPrice: 9500, price: 8200, discountBadge: "-14%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 2 Years Warranty", inStock: true },
+  { id: 29, name: "Samsung 4K Curved Monitor", category: "Monitor", image: "images/monitor.jpg", oldPrice: 55000, price: 48000, discountBadge: "-12%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 3 Years Warranty", inStock: true },
+  { id: 30, name: "JBL Studio Speaker", category: "Speaker", image: "images/speaker.jpg", oldPrice: 8800, price: 7400, discountBadge: "-16%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true }
+];
 
 async function fetchProducts() {
     const searchVal = document.querySelector("#searchInput") ? document.querySelector("#searchInput").value.trim() : "";
@@ -40,10 +72,32 @@ async function fetchProducts() {
             renderProducts(productsList);
             const countEl = document.getElementById("productCountBadge");
             if (countEl) countEl.textContent = `${productsList.length} Products Available`;
+            return;
         }
     } catch (error) {
-        console.warn("Backend API offline. Using fallback products.", error);
+        console.warn("Backend API offline. Using local fallback products.", error);
     }
+
+    // Fallback logic when Backend REST API is not reachable
+    let filtered = [...FALLBACK_PRODUCTS];
+    if (activeCategory && activeCategory !== "All") {
+        filtered = filtered.filter(p => p.category && p.category.toLowerCase() === activeCategory.toLowerCase());
+    }
+    if (searchVal) {
+        const s = searchVal.toLowerCase();
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(s) || (p.category && p.category.toLowerCase().includes(s)));
+    }
+    if (activeSort === "price-asc") {
+        filtered.sort((a, b) => a.price - b.price);
+    } else if (activeSort === "price-desc") {
+        filtered.sort((a, b) => b.price - a.price);
+    } else if (activeSort === "rating") {
+        filtered.sort((a, b) => (b.rating ? b.rating.length : 5) - (a.rating ? a.rating.length : 5));
+    }
+    productsList = filtered;
+    renderProducts(productsList);
+    const countEl = document.getElementById("productCountBadge");
+    if (countEl) countEl.textContent = `${productsList.length} Products Available`;
 }
 
 function renderProducts(products) {
@@ -521,6 +575,17 @@ async function loadAdminStats() {
     }
 }
 
+async function switchAdminTab(tab, btn) {
+    document.querySelectorAll(".admin-tab").forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+
+    if (tab === 'orders') {
+        loadAdminOrders();
+    } else if (tab === 'products') {
+        loadAdminProducts();
+    }
+}
+
 async function loadAdminOrders() {
     const container = document.getElementById("adminOrdersList");
     if (!container) return;
@@ -554,6 +619,59 @@ async function loadAdminOrders() {
         }
     } catch (e) {
         container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">Unable to connect to orders API.</p>`;
+    }
+}
+
+async function loadAdminProducts() {
+    const container = document.getElementById("adminOrdersList");
+    if (!container) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        const data = await response.json();
+
+        if (data.success && data.data) {
+            if (data.data.length === 0) {
+                container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">No products in store database.</p>`;
+                return;
+            }
+
+            container.innerHTML = data.data.map(p => `
+                <div style="background:var(--bg-main); padding:10px 14px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--warning);">
+                    <div>
+                        <strong>#${p.id} ${p.name}</strong> <span style="font-size:12px; color:var(--text-muted);">(${p.category||'General'})</span><br>
+                        <small style="color:var(--primary); font-weight:700;">৳ ${Number(p.price).toLocaleString()}</small>
+                    </div>
+                    <button onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="background:var(--danger); color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer;">
+                        🗑️ Delete
+                    </button>
+                </div>
+            `).join("");
+        }
+    } catch (e) {
+        container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">Unable to load products list.</p>`;
+    }
+}
+
+async function deleteProduct(id, name) {
+    if (!confirm(`Are you sure you want to delete "${name}" from store database?`)) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+            method: "DELETE"
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            showToast(`🗑️ Product "${name}" deleted!`);
+            loadAdminProducts();
+            fetchProducts();
+            loadAdminStats();
+        } else {
+            alert(`Delete failed: ${data.message}`);
+        }
+    } catch (e) {
+        alert("Server error. Could not delete product.");
     }
 }
 

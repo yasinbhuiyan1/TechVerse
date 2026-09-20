@@ -320,7 +320,8 @@
             </div>
 
             <div class="admin-tabs">
-                <button class="admin-tab active" onclick="loadAdminOrders()">📋 Customer Orders</button>
+                <button class="admin-tab active" onclick="switchAdminTab('orders', this)">📋 Customer Orders</button>
+                <button class="admin-tab" onclick="switchAdminTab('products', this)">📦 Manage Products (Delete)</button>
             </div>
 
             <div id="adminOrdersList" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
