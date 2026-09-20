@@ -1076,25 +1076,48 @@ footer a:hover { color: var(--accent); }
 @media print {
     @page {
         size: A4 portrait;
-        margin: 10mm 12mm;
+        margin: 8mm 10mm;
     }
 
-    body * {
-        visibility: hidden !important;
+    /* Reset html & body layout */
+    html, body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
     }
 
-    header, footer, nav, button, .no-print, .close-modal, #topBtn, .drawer, .drawer-overlay {
+    /* Completely collapse all main page sections from document height */
+    .top-bar,
+    header,
+    section,
+    footer,
+    nav,
+    button,
+    .no-print,
+    .close-modal,
+    #topBtn,
+    .drawer,
+    .drawer-overlay,
+    #quickModal,
+    #checkoutModal,
+    #adminModal {
         display: none !important;
     }
 
-    #invoiceModal, #invoiceModal * {
-        visibility: visible !important;
+    /* Hide any modal overlay except invoiceModal */
+    .modal {
+        display: none !important;
+        background: none !important;
+        backdrop-filter: none !important;
     }
 
     #invoiceModal {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
+        display: block !important;
+        position: static !important;
         width: 100% !important;
         height: auto !important;
         background: #ffffff !important;
