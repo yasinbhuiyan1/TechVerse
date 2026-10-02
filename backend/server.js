@@ -44,8 +44,11 @@ const writeJsonFile = (filePath, data) => {
   }
 };
 
+// Serve static frontend files from the store root directory
+app.use(express.static(path.join(__dirname, '..')));
+
 // --- API HEALTH CHECK ---
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
     storeName: 'TechVerse Online Tech Store',
@@ -356,6 +359,12 @@ app.get('/api/stats', (req, res) => {
   const orders = readJsonFile(ordersFilePath);
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  const totalSoldItems = orders.reduce((sum, o) => {
+    if (Array.isArray(o.items)) {
+      return sum + o.items.reduce((iSum, item) => iSum + (Number(item.quantity) || 1), 0);
+    }
+    return sum;
+  }, 0);
   const pendingOrders = orders.filter(o => o.status === 'Pending').length;
   const completedOrders = orders.filter(o => o.status === 'Delivered').length;
 
@@ -363,6 +372,7 @@ app.get('/api/stats', (req, res) => {
     success: true,
     stats: {
       totalProducts: products.length,
+      totalSoldItems,
       totalMessages: messages.length,
       totalOrders: orders.length,
       pendingOrders,

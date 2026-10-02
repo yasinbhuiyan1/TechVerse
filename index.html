@@ -296,14 +296,24 @@
 
     <!-- ADMIN DASHBOARD MODAL -->
     <div id="adminModal" class="modal">
-        <div class="modal-content" style="max-width:750px;">
+        <div class="modal-content" style="max-width:780px;">
             <span class="close-modal" onclick="toggleAdminModal(false)">&times;</span>
-            <h2 style="color:var(--primary); margin-bottom:15px;">⚙️ Admin Control Suite</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px; padding-right:30px;">
+                <h2 style="color:var(--primary); margin:0;">⚙️ Admin Control Suite</h2>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="backendStatusBadge" style="font-size:12px; font-weight:700; padding:4px 12px; border-radius:20px; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3);">🟢 Live Backend</span>
+                    <button type="button" onclick="loadAdminData()" title="Refresh Dashboard" style="background:var(--bg-main); border:1px solid var(--border-color); color:var(--text-color); padding:5px 12px; border-radius:6px; font-weight:600; cursor:pointer;">🔄 Refresh</button>
+                </div>
+            </div>
 
-            <div class="stat-grid">
-                <div class="stat-card">
+            <div class="stat-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                <div class="stat-card" style="background:linear-gradient(135deg, #0d6efd, #0284c7);">
                     <h3 id="statProducts">0</h3>
                     <small>Total Products</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9);">
+                    <h3 id="statSoldItems">0</h3>
+                    <small>Total Sold Items</small>
                 </div>
                 <div class="stat-card" style="background:linear-gradient(135deg, #10b981, #059669);">
                     <h3 id="statOrders">0</h3>
@@ -313,7 +323,7 @@
                     <h3 id="statRevenue">৳ 0</h3>
                     <small>Total Sales Revenue</small>
                 </div>
-                <div class="stat-card" style="background:linear-gradient(135deg, #0284c7, #0369a1);">
+                <div class="stat-card" style="background:linear-gradient(135deg, #06b6d4, #0891b2);">
                     <h3 id="statMessages">0</h3>
                     <small>Customer Messages</small>
                 </div>
@@ -322,20 +332,23 @@
             <div class="admin-tabs">
                 <button class="admin-tab active" onclick="switchAdminTab('orders', this)">📋 Customer Orders</button>
                 <button class="admin-tab" onclick="switchAdminTab('products', this)">📦 Manage Products (Delete)</button>
+                <button class="admin-tab" onclick="switchAdminTab('messages', this)">💬 Customer Messages</button>
             </div>
 
-            <div id="adminOrdersList" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+            <div id="adminOrdersList" style="max-height: 280px; overflow-y: auto; margin-bottom: 20px;">
                 <!-- Filled dynamically -->
             </div>
 
             <div style="border-top:1px solid var(--border-color); padding-top:15px;">
                 <h4 style="color:var(--primary); margin-bottom:10px;">➕ Add Product to Live Store</h4>
                 <form id="addProductForm" onsubmit="submitAddProduct(event)" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <input type="text" id="prodName" placeholder="Product Name" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color);">
-                    <input type="text" id="prodCategory" placeholder="Category (e.g. Laptop)" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color);">
-                    <input type="number" id="prodPrice" placeholder="Price in BDT" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                    <input type="text" id="prodName" placeholder="Product Name *" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                    <input type="text" id="prodCategory" placeholder="Category (e.g. Laptop) *" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                    <input type="number" id="prodPrice" placeholder="Selling Price (BDT) *" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                    <input type="number" id="prodOldPrice" placeholder="Regular Price (Optional BDT)" style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                    <input type="text" id="prodImage" placeholder="Image URL (e.g. images/laptop.jpg)" value="images/laptop.jpg" style="grid-column: span 2; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
                     <button type="submit" style="grid-column: span 2; background:var(--primary); color:white; padding:12px; border-radius:6px; border:none; font-weight:700; cursor:pointer;">
-                        ➕ Add Product to API
+                        ➕ Add Product to Live Store & Database
                     </button>
                 </form>
             </div>

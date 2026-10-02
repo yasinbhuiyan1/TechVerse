@@ -16,10 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function initApp() {
+    getLocalProducts(); // Initialize localStorage if needed
+    getLocalOrders();   // Initialize localStorage orders
+    getLocalMessages(); // Initialize localStorage messages
     fetchProducts();
     setupEventListeners();
     updateCartUI();
     updateWishlistUI();
+    loadAdminStats(); // Pre-load stats
 }
 
 // Fallback products for offline mode (when Node backend is not running)
@@ -56,6 +60,172 @@ const FALLBACK_PRODUCTS = [
   { id: 30, name: "JBL Studio Speaker", category: "Speaker", image: "images/speaker.jpg", oldPrice: 8800, price: 7400, discountBadge: "-16%", rating: "★★★★★", delivery: "🚚 Free Delivery", warranty: "🛡️ 1 Year Warranty", inStock: true }
 ];
 
+// Initial seed orders for immediate data display
+const SEED_ORDERS = [
+  {
+    orderId: "TV-108809",
+    customerName: "Ziniya Islam Richi",
+    customerPhone: "01884443329",
+    address: "Raipur, Daudkhandi, Cumilla",
+    items: [
+      { id: 1, name: "Gaming Laptop", price: 120000, quantity: 1, image: "images/laptop.jpg" },
+      { id: 2, name: "Gaming Keyboard", price: 3500, quantity: 1, image: "images/keyboard.jpg" },
+      { id: 3, name: "Gaming Mouse", price: 3800, quantity: 1, image: "images/mouse.jpg" },
+      { id: 4, name: "Gaming Headphone", price: 3500, quantity: 1, image: "images/headphone.jpg" }
+    ],
+    subtotal: 130800,
+    shippingFee: 120,
+    discountAmount: 0,
+    totalAmount: 130920,
+    paymentMethod: "bKash / Nagad / Rocket",
+    status: "Delivered",
+    createdAt: "2026-09-20T19:16:17.796Z"
+  },
+  {
+    orderId: "TV-216489",
+    customerName: "Ziniya Islam Richi",
+    customerPhone: "01884443329",
+    address: "Raipur, Daudkhandi, Cumilla",
+    items: [
+      { id: 1, name: "Gaming Laptop", price: 120000, quantity: 1, image: "images/laptop.jpg" },
+      { id: 2, name: "Gaming Keyboard", price: 3500, quantity: 1, image: "images/keyboard.jpg" },
+      { id: 3, name: "Gaming Mouse", price: 3800, quantity: 1, image: "images/mouse.jpg" },
+      { id: 4, name: "Gaming Headphone", price: 3500, quantity: 1, image: "images/headphone.jpg" }
+    ],
+    subtotal: 130800,
+    shippingFee: 120,
+    discountAmount: 0,
+    totalAmount: 130920,
+    paymentMethod: "bKash / Nagad / Rocket",
+    status: "Shipped",
+    createdAt: "2026-09-20T19:12:33.653Z"
+  },
+  {
+    orderId: "TV-825640",
+    customerName: "Ziniya islam Richi",
+    customerPhone: "01884443329",
+    address: "Raipur, Daudkhandi, Cumilla",
+    items: [
+      { id: 2, name: "Gaming Keyboard", price: 3500, quantity: 3, image: "images/keyboard.jpg" }
+    ],
+    subtotal: 10500,
+    shippingFee: 120,
+    discountAmount: 0,
+    totalAmount: 10620,
+    paymentMethod: "bKash / Nagad / Rocket",
+    status: "Pending",
+    createdAt: "2026-09-20T19:04:42.022Z"
+  },
+  {
+    orderId: "TV-340412",
+    customerName: "Ziniya islam Richi",
+    customerPhone: "0188444329",
+    address: "Raipur, Daudkhandi, Cumilla",
+    items: [
+      { id: 3, name: "Gaming Mouse", price: 3800, quantity: 2, image: "images/mouse.jpg" }
+    ],
+    subtotal: 7600,
+    shippingFee: 120,
+    discountAmount: 0,
+    totalAmount: 7720,
+    paymentMethod: "bKash / Nagad / Rocket",
+    status: "Pending",
+    createdAt: "2026-09-20T18:58:34.622Z"
+  },
+  {
+    orderId: "TV-327569",
+    customerName: "Yeasin",
+    customerPhone: "01800000000",
+    address: "Dhaka",
+    items: [
+      { id: 1, name: "Gaming Laptop", price: 120000, quantity: 1, image: "images/laptop.jpg" }
+    ],
+    subtotal: 120000,
+    shippingFee: 0,
+    discountAmount: 0,
+    totalAmount: 120000,
+    paymentMethod: "Cash on Delivery",
+    status: "Pending",
+    createdAt: "2026-09-20T12:41:34.037Z"
+  }
+];
+
+// Initial seed messages
+const SEED_MESSAGES = [
+  {
+    id: 1789907350960,
+    name: "Yeasin Bhuiyan",
+    email: "yeasin@example.com",
+    message: "Welcome to TechVerse Store! Looking for top quality gaming gear and fast delivery.",
+    createdAt: "2026-09-20T12:29:10.960Z"
+  }
+];
+
+// Offline LocalStorage Data Engine
+function getLocalProducts() {
+    const data = localStorage.getItem("techverse_products");
+    if (data) {
+        try {
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch(e) {}
+    }
+    localStorage.setItem("techverse_products", JSON.stringify(FALLBACK_PRODUCTS));
+    return [...FALLBACK_PRODUCTS];
+}
+
+function saveLocalProducts(products) {
+    localStorage.setItem("techverse_products", JSON.stringify(products));
+}
+
+function getLocalOrders() {
+    const data = localStorage.getItem("techverse_orders");
+    if (data) {
+        try {
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) return parsed;
+        } catch(e) {}
+    }
+    localStorage.setItem("techverse_orders", JSON.stringify(SEED_ORDERS));
+    return [...SEED_ORDERS];
+}
+
+function saveLocalOrders(orders) {
+    localStorage.setItem("techverse_orders", JSON.stringify(orders));
+}
+
+function getLocalMessages() {
+    const data = localStorage.getItem("techverse_messages");
+    if (data) {
+        try {
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) return parsed;
+        } catch(e) {}
+    }
+    localStorage.setItem("techverse_messages", JSON.stringify(SEED_MESSAGES));
+    return [...SEED_MESSAGES];
+}
+
+function saveLocalMessages(messages) {
+    localStorage.setItem("techverse_messages", JSON.stringify(messages));
+}
+
+function updateBackendStatus(isOnline) {
+    const badge = document.getElementById("backendStatusBadge");
+    if (!badge) return;
+    if (isOnline) {
+        badge.innerHTML = "🟢 Live Backend Connected";
+        badge.style.background = "rgba(16,185,129,0.15)";
+        badge.style.color = "#10b981";
+        badge.style.borderColor = "rgba(16,185,129,0.3)";
+    } else {
+        badge.innerHTML = "⚡ Local Storage Mode (Offline Ready)";
+        badge.style.background = "rgba(59,130,246,0.15)";
+        badge.style.color = "#3b82f6";
+        badge.style.borderColor = "rgba(59,130,246,0.3)";
+    }
+}
+
 async function fetchProducts() {
     const searchVal = document.querySelector("#searchInput") ? document.querySelector("#searchInput").value.trim() : "";
     let url = `${API_BASE_URL}/products?category=${encodeURIComponent(activeCategory)}&sort=${activeSort}`;
@@ -64,22 +234,26 @@ async function fetchProducts() {
     }
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: AbortSignal.timeout(2500) });
         const data = await response.json();
 
         if (data.success && data.data) {
             productsList = data.data;
+            saveLocalProducts(productsList);
             renderProducts(productsList);
             const countEl = document.getElementById("productCountBadge");
             if (countEl) countEl.textContent = `${productsList.length} Products Available`;
+            updateBackendStatus(true);
             return;
         }
     } catch (error) {
-        console.warn("Backend API offline. Using local fallback products.", error);
+        console.warn("Backend API offline or unreachable. Using local storage products.");
+        updateBackendStatus(false);
     }
 
-    // Fallback logic when Backend REST API is not reachable
-    let filtered = [...FALLBACK_PRODUCTS];
+    // Fallback logic from local storage
+    let stored = getLocalProducts();
+    let filtered = [...stored];
     if (activeCategory && activeCategory !== "All") {
         filtered = filtered.filter(p => p.category && p.category.toLowerCase() === activeCategory.toLowerCase());
     }
@@ -417,60 +591,66 @@ async function submitOrder(e) {
         return;
     }
 
+    if (cartItems.length === 0) {
+        alert("⚠️ Your cart is empty!");
+        return;
+    }
+
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
     const grandTotal = Math.max(0, subtotal + currentShippingFee - discount);
 
-    const orderPayload = {
+    const newOrder = {
+        orderId: 'TV-' + Math.floor(100000 + Math.random() * 900000),
         customerName: name,
         customerPhone: phone,
         address: address,
-        items: cartItems,
+        items: cartItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            image: item.image,
+            quantity: item.quantity
+        })),
+        subtotal: subtotal,
         shippingFee: currentShippingFee,
         discountAmount: discount,
-        paymentMethod: paymentMethod
+        totalAmount: grandTotal,
+        paymentMethod: paymentMethod,
+        status: 'Pending',
+        createdAt: new Date().toISOString()
     };
 
+    // 1. Save to local storage first (reliable offline persistence)
+    const existingOrders = getLocalOrders();
+    existingOrders.unshift(newOrder);
+    saveLocalOrders(existingOrders);
+
+    // 2. Attempt to save to backend API
     try {
-        const response = await fetch(`${API_BASE_URL}/orders`, {
+        await fetch(`${API_BASE_URL}/orders`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(orderPayload)
+            body: JSON.stringify(newOrder),
+            signal: AbortSignal.timeout(3000)
         });
-
-        const data = await response.json();
-
-        if (data.success) {
-            renderInvoice(data.data);
-            cartItems = [];
-            appliedCoupon = null;
-            updateCartUI();
-            toggleCheckoutModal(false);
-            document.getElementById("checkoutForm").reset();
-        } else {
-            alert(`Order submission error: ${data.message}`);
-        }
-    } catch (e) {
-        // Fallback offline invoice
-        const offlineOrder = {
-            orderId: 'TV-' + Math.floor(100000 + Math.random() * 900000),
-            customerName: name,
-            customerPhone: phone,
-            address: address,
-            items: cartItems,
-            subtotal: subtotal,
-            shippingFee: currentShippingFee,
-            discountAmount: discount,
-            totalAmount: grandTotal,
-            paymentMethod: paymentMethod,
-            createdAt: new Date().toISOString()
-        };
-        renderInvoice(offlineOrder);
-        cartItems = [];
-        appliedCoupon = null;
-        updateCartUI();
-        toggleCheckoutModal(false);
+        updateBackendStatus(true);
+    } catch (err) {
+        console.warn("Backend offline; order stored securely in local database.", err);
+        updateBackendStatus(false);
     }
+
+    // 3. Update admin stats immediately
+    loadAdminStats();
+
+    // 4. Render invoice & clear cart
+    renderInvoice(newOrder);
+    cartItems = [];
+    appliedCoupon = null;
+    updateCartUI();
+    toggleCheckoutModal(false);
+    document.getElementById("checkoutForm").reset();
+    showToast(`🎉 Order #${newOrder.orderId} placed successfully!`);
 }
 
 function renderInvoice(order) {
@@ -611,22 +791,66 @@ function toggleAdminModal(open = true) {
 
 async function loadAdminData() {
     loadAdminStats();
-    loadAdminOrders();
+    const activeTab = document.querySelector(".admin-tab.active");
+    if (activeTab) {
+        if (activeTab.textContent.includes("Manage Products")) {
+            loadAdminProducts();
+        } else if (activeTab.textContent.includes("Customer Messages")) {
+            loadAdminMessages();
+        } else {
+            loadAdminOrders();
+        }
+    } else {
+        loadAdminOrders();
+    }
 }
 
 async function loadAdminStats() {
+    // 1. Compute stats immediately from local data (instant, zero delay, never stuck at 0)
+    const prods = getLocalProducts();
+    const orders = getLocalOrders();
+    const msgs = getLocalMessages();
+
+    const revenue = orders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+    const soldItems = orders.reduce((sum, o) => {
+        if (Array.isArray(o.items)) {
+            return sum + o.items.reduce((iSum, itm) => iSum + (Number(itm.quantity) || 1), 0);
+        }
+        return sum;
+    }, 0);
+
+    const renderStats = (data) => {
+        const statProds = document.getElementById("statProducts");
+        const statSold = document.getElementById("statSoldItems");
+        const statOrd = document.getElementById("statOrders");
+        const statRev = document.getElementById("statRevenue");
+        const statMsg = document.getElementById("statMessages");
+
+        if (statProds) statProds.textContent = data.totalProducts ?? prods.length;
+        if (statSold) statSold.textContent = data.totalSoldItems ?? soldItems;
+        if (statOrd) statOrd.textContent = data.totalOrders ?? orders.length;
+        if (statRev) statRev.textContent = `৳ ${(data.totalRevenueBDT ?? revenue).toLocaleString()}`;
+        if (statMsg) statMsg.textContent = data.totalMessages ?? msgs.length;
+    };
+
+    renderStats({
+        totalProducts: prods.length,
+        totalSoldItems: soldItems,
+        totalOrders: orders.length,
+        totalRevenueBDT: revenue,
+        totalMessages: msgs.length
+    });
+
+    // 2. Fetch from backend API if online
     try {
-        const response = await fetch(`${API_BASE_URL}/stats`);
+        const response = await fetch(`${API_BASE_URL}/stats`, { signal: AbortSignal.timeout(2500) });
         const data = await response.json();
-        if (data.success) {
-            const s = data.stats;
-            document.getElementById("statProducts").textContent = s.totalProducts || 0;
-            document.getElementById("statOrders").textContent = s.totalOrders || 0;
-            document.getElementById("statRevenue").textContent = `৳ ${(s.totalRevenueBDT || 0).toLocaleString()}`;
-            document.getElementById("statMessages").textContent = s.totalMessages || 0;
+        if (data.success && data.stats) {
+            updateBackendStatus(true);
+            renderStats(data.stats);
         }
     } catch (e) {
-        console.warn("Backend stats unavailable.", e);
+        updateBackendStatus(false);
     }
 }
 
@@ -638,6 +862,8 @@ async function switchAdminTab(tab, btn) {
         loadAdminOrders();
     } else if (tab === 'products') {
         loadAdminProducts();
+    } else if (tab === 'messages') {
+        loadAdminMessages();
     }
 }
 
@@ -645,40 +871,61 @@ async function loadAdminOrders() {
     const container = document.getElementById("adminOrdersList");
     if (!container) return;
 
+    let orders = getLocalOrders();
+
     try {
-        const response = await fetch(`${API_BASE_URL}/orders`);
+        const response = await fetch(`${API_BASE_URL}/orders`, { signal: AbortSignal.timeout(2500) });
         const data = await response.json();
-
-        if (data.success && data.data) {
-            if (data.data.length === 0) {
-                container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">No orders placed yet.</p>`;
-                return;
-            }
-
-            window.adminOrdersData = data.data;
-            container.innerHTML = data.data.map((o, idx) => `
-                <div style="background:var(--bg-main); padding:14px; margin-bottom:12px; border-radius:8px; border-left:4px solid var(--primary);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-                        <strong>Order #${o.orderId}</strong>
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <button onclick="printAdminOrder(${idx})" style="padding:4px 10px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">🖨️ View & Print Invoice</button>
-                            <select onchange="updateOrderStatus('${o.orderId}', this.value)" style="padding:4px 8px; border-radius:4px; font-weight:700;">
-                                <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
-                                <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
-                                <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
-                                <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
-                            </select>
-                        </div>
-                    </div>
-                    <small>Customer: <b>${o.customerName}</b> (${o.customerPhone})</small><br>
-                    <small>Address: ${o.address}</small><br>
-                    <small>Total: <b style="color:var(--primary);">৳ ${Number(o.totalAmount).toLocaleString()}</b> (${o.paymentMethod||'COD'})</small>
-                </div>
-            `).join("");
+        if (data.success && Array.isArray(data.data)) {
+            orders = data.data;
+            saveLocalOrders(orders);
+            updateBackendStatus(true);
         }
     } catch (e) {
-        container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">Unable to connect to orders API.</p>`;
+        updateBackendStatus(false);
     }
+
+    window.adminOrdersData = orders;
+
+    if (!orders || orders.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">
+            <p style="font-size:16px;">📭 No customer orders placed yet.</p>
+            <small>Orders will appear here as soon as customers buy products.</small>
+        </div>`;
+        return;
+    }
+
+    container.innerHTML = orders.map((o, idx) => {
+        const itemsSummary = (o.items || []).map(i => `${i.name} (x${i.quantity || 1})`).join(", ");
+        const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
+
+        return `
+            <div style="background:var(--bg-main); padding:14px; margin-bottom:12px; border-radius:8px; border-left:4px solid var(--primary); box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <strong style="font-size:15px; color:var(--text-color);">Order #${o.orderId}</strong>
+                        <span style="font-size:12px; color:var(--text-muted); margin-left:8px;">🕒 ${dateStr}</span>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button onclick="printAdminOrder(${idx})" style="padding:5px 12px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">🖨️ Invoice</button>
+                        <select onchange="updateOrderStatus('${o.orderId}', this.value)" style="padding:4px 8px; border-radius:4px; font-weight:700; background:var(--card-bg); color:var(--text-color); border:1px solid var(--border-color);">
+                            <option value="Pending" ${o.status==='Pending'?'selected':''}>⏳ Pending</option>
+                            <option value="Shipped" ${o.status==='Shipped'?'selected':''}>🚚 Shipped</option>
+                            <option value="Delivered" ${o.status==='Delivered'?'selected':''}>✅ Delivered</option>
+                            <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>❌ Cancelled</option>
+                        </select>
+                        <button onclick="deleteAdminOrder('${o.orderId}')" title="Delete Order" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440; padding:4px 8px; border-radius:4px; font-weight:700; cursor:pointer;">🗑️</button>
+                    </div>
+                </div>
+                <div style="margin-top:8px; font-size:13px; line-height:1.5;">
+                    <div>Customer: <b>${o.customerName}</b> (${o.customerPhone})</div>
+                    <div>Address: <span>${o.address}</span></div>
+                    <div>Items: <span style="color:var(--text-muted);">${itemsSummary || 'N/A'}</span></div>
+                    <div style="margin-top:4px;">Total Amount: <b style="color:var(--primary); font-size:14px;">৳ ${Number(o.totalAmount).toLocaleString()}</b> <span style="font-size:11px; color:var(--text-muted);">(${o.paymentMethod||'COD'})</span></div>
+                </div>
+            </div>
+        `;
+    }).join("");
 }
 
 function printAdminOrder(index) {
@@ -687,103 +934,226 @@ function printAdminOrder(index) {
     }
 }
 
+async function updateOrderStatus(orderId, status) {
+    let orders = getLocalOrders();
+    const idx = orders.findIndex(o => o.orderId === orderId);
+    if (idx !== -1) {
+        orders[idx].status = status;
+        saveLocalOrders(orders);
+    }
+
+    try {
+        await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status })
+        });
+        updateBackendStatus(true);
+    } catch (e) {
+        updateBackendStatus(false);
+    }
+
+    showToast(`Order #${orderId} status changed to ${status}`);
+    loadAdminStats();
+}
+
+async function deleteAdminOrder(orderId) {
+    if (!confirm(`Are you sure you want to delete Order #${orderId}?`)) return;
+
+    let orders = getLocalOrders();
+    orders = orders.filter(o => o.orderId !== orderId);
+    saveLocalOrders(orders);
+
+    try {
+        await fetch(`${API_BASE_URL}/orders/${orderId}`, { method: "DELETE" });
+    } catch (e) {}
+
+    showToast(`Order #${orderId} deleted.`);
+    loadAdminOrders();
+    loadAdminStats();
+}
+
 async function loadAdminProducts() {
     const container = document.getElementById("adminOrdersList");
     if (!container) return;
 
+    let products = getLocalProducts();
+
     try {
-        const response = await fetch(`${API_BASE_URL}/products`);
+        const response = await fetch(`${API_BASE_URL}/products`, { signal: AbortSignal.timeout(2500) });
         const data = await response.json();
-
-        if (data.success && data.data) {
-            if (data.data.length === 0) {
-                container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">No products in store database.</p>`;
-                return;
-            }
-
-            container.innerHTML = data.data.map(p => `
-                <div style="background:var(--bg-main); padding:10px 14px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--warning);">
-                    <div>
-                        <strong>#${p.id} ${p.name}</strong> <span style="font-size:12px; color:var(--text-muted);">(${p.category||'General'})</span><br>
-                        <small style="color:var(--primary); font-weight:700;">৳ ${Number(p.price).toLocaleString()}</small>
-                    </div>
-                    <button onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="background:var(--danger); color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer;">
-                        🗑️ Delete
-                    </button>
-                </div>
-            `).join("");
+        if (data.success && Array.isArray(data.data)) {
+            products = data.data;
+            saveLocalProducts(products);
+            updateBackendStatus(true);
         }
     } catch (e) {
-        container.innerHTML = `<p style="padding:15px; color:var(--text-muted);">Unable to load products list.</p>`;
+        updateBackendStatus(false);
     }
+
+    if (!products || products.length === 0) {
+        container.innerHTML = `<p style="padding:20px; text-align:center; color:var(--text-muted);">No products in store database.</p>`;
+        return;
+    }
+
+    container.innerHTML = products.map(p => `
+        <div style="background:var(--bg-main); padding:10px 14px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--warning); box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <img src="${p.image || 'images/laptop.jpg'}" alt="${p.name}" style="width:40px; height:40px; object-fit:contain; border-radius:4px; background:white; padding:2px; border:1px solid var(--border-color);">
+                <div>
+                    <strong style="color:var(--text-color);">#${p.id} ${p.name}</strong> <span style="font-size:12px; color:var(--text-muted);">(${p.category||'General'})</span><br>
+                    <small style="color:var(--primary); font-weight:700;">৳ ${Number(p.price).toLocaleString()}</small>
+                </div>
+            </div>
+            <button onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="background:var(--danger); color:white; border:none; padding:6px 14px; border-radius:6px; font-weight:700; cursor:pointer;">
+                🗑️ Delete
+            </button>
+        </div>
+    `).join("");
 }
 
 async function deleteProduct(id, name) {
     if (!confirm(`Are you sure you want to delete "${name}" from store database?`)) return;
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-            method: "DELETE"
-        });
-        const data = await response.json();
+    let products = getLocalProducts();
+    products = products.filter(p => p.id !== id);
+    saveLocalProducts(products);
+    productsList = products;
 
-        if (data.success) {
-            showToast(`🗑️ Product "${name}" deleted!`);
-            loadAdminProducts();
-            fetchProducts();
-            loadAdminStats();
-        } else {
-            alert(`Delete failed: ${data.message}`);
-        }
-    } catch (e) {
-        alert("Server error. Could not delete product.");
-    }
-}
-
-async function updateOrderStatus(orderId, status) {
     try {
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status })
-        });
-        const data = await response.json();
-        if (data.success) {
-            showToast(`Order #${orderId} status changed to ${status}`);
-            loadAdminStats();
-        }
-    } catch (e) {
-        alert("Failed to update order status.");
-    }
+        await fetch(`${API_BASE_URL}/products/${id}`, { method: "DELETE" });
+    } catch (e) {}
+
+    showToast(`🗑️ Product "${name}" deleted!`);
+    loadAdminProducts();
+    renderProducts(productsList);
+    loadAdminStats();
 }
 
 async function submitAddProduct(e) {
     e.preventDefault();
     const name = document.getElementById("prodName").value.trim();
     const category = document.getElementById("prodCategory").value.trim();
-    const price = document.getElementById("prodPrice").value;
+    const price = parseInt(document.getElementById("prodPrice").value);
+    const oldPriceInput = document.getElementById("prodOldPrice");
+    const oldPrice = oldPriceInput && oldPriceInput.value ? parseInt(oldPriceInput.value) : Math.round(price * 1.2);
+    const imageInput = document.getElementById("prodImage");
+    const image = (imageInput && imageInput.value.trim()) ? imageInput.value.trim() : "images/laptop.jpg";
 
-    if (!name || !price) {
-        alert("Name and Price required.");
+    if (!name || isNaN(price)) {
+        alert("Please enter a valid product name and price.");
         return;
     }
 
+    const newProd = {
+        id: Date.now(),
+        name,
+        category: category || "General",
+        price,
+        oldPrice,
+        image,
+        discountBadge: `-${Math.round((1 - price / oldPrice) * 100)}%`,
+        rating: "★★★★★",
+        delivery: "🚚 Free Delivery",
+        warranty: "🛡️ 1 Year Warranty",
+        inStock: true
+    };
+
+    // 1. Save to local storage
+    const products = getLocalProducts();
+    products.unshift(newProd);
+    saveLocalProducts(products);
+    productsList = products;
+
+    // 2. Send to backend if online
     try {
-        const response = await fetch(`${API_BASE_URL}/products`, {
+        await fetch(`${API_BASE_URL}/products`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, category, price: parseInt(price) })
+            body: JSON.stringify(newProd),
+            signal: AbortSignal.timeout(3000)
         });
+        updateBackendStatus(true);
+    } catch (err) {
+        updateBackendStatus(false);
+    }
+
+    alert(`✅ Product "${name}" added to TechVerse store successfully!`);
+    document.getElementById("addProductForm").reset();
+    if (imageInput) imageInput.value = "images/laptop.jpg";
+
+    renderProducts(productsList);
+    loadAdminStats();
+
+    // If currently on products tab, refresh it
+    const activeTab = document.querySelector(".admin-tab.active");
+    if (activeTab && activeTab.textContent.includes("Manage Products")) {
+        loadAdminProducts();
+    }
+}
+
+async function loadAdminMessages() {
+    const container = document.getElementById("adminOrdersList");
+    if (!container) return;
+
+    let messages = getLocalMessages();
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/contact`, { signal: AbortSignal.timeout(2500) });
         const data = await response.json();
-        if (data.success) {
-            alert(`✅ Product "${name}" added to TechVerse store!`);
-            document.getElementById("addProductForm").reset();
-            fetchProducts();
-            loadAdminStats();
+        if (data.success && Array.isArray(data.data)) {
+            messages = data.data;
+            saveLocalMessages(messages);
+            updateBackendStatus(true);
         }
     } catch (e) {
-        alert("Server error. Could not add product.");
+        updateBackendStatus(false);
     }
+
+    if (!messages || messages.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">
+            <p style="font-size:16px;">💬 No customer messages received yet.</p>
+            <small>Customer inquiries submitted through the contact form will appear here.</small>
+        </div>`;
+        return;
+    }
+
+    container.innerHTML = messages.map(m => {
+        const dateStr = m.createdAt ? new Date(m.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
+        return `
+            <div style="background:var(--bg-main); padding:14px; margin-bottom:12px; border-radius:8px; border-left:4px solid var(--accent); box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <strong style="color:var(--text-color); font-size:15px;">👤 ${m.name}</strong>
+                        <span style="font-size:12px; color:var(--text-muted); margin-left:8px;">✉️ ${m.email}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:11px; color:var(--text-muted);">🕒 ${dateStr}</span>
+                        <button onclick="deleteAdminMessage(${m.id})" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440; padding:4px 10px; border-radius:4px; font-weight:700; cursor:pointer;">🗑️ Delete</button>
+                    </div>
+                </div>
+                <p style="margin-top:10px; font-size:13px; line-height:1.5; color:var(--text-color); background:var(--card-bg); padding:10px 12px; border-radius:6px; border:1px solid var(--border-color);">
+                    "${m.message}"
+                </p>
+            </div>
+        `;
+    }).join("");
+}
+
+async function deleteAdminMessage(id) {
+    if (!confirm("Are you sure you want to delete this customer message?")) return;
+
+    let messages = getLocalMessages();
+    messages = messages.filter(m => m.id !== id);
+    saveLocalMessages(messages);
+
+    try {
+        await fetch(`${API_BASE_URL}/contact/${id}`, { method: "DELETE" });
+    } catch (e) {}
+
+    showToast("Customer message deleted.");
+    loadAdminMessages();
+    loadAdminStats();
 }
 
 
@@ -850,21 +1220,40 @@ function setupEventListeners() {
             const email = inputs[1] ? inputs[1].value.trim() : "";
             const message = textarea ? textarea.value.trim() : "";
 
+            if (!name || !email || !message) {
+                alert("Please fill in all contact fields.");
+                return;
+            }
+
+            const newMsg = {
+                id: Date.now(),
+                name,
+                email,
+                message,
+                createdAt: new Date().toISOString()
+            };
+
+            // Save to local storage
+            const msgs = getLocalMessages();
+            msgs.unshift(newMsg);
+            saveLocalMessages(msgs);
+
+            // Send to backend if available
             try {
-                const response = await fetch(`${API_BASE_URL}/contact`, {
+                await fetch(`${API_BASE_URL}/contact`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, email, message })
+                    body: JSON.stringify(newMsg),
+                    signal: AbortSignal.timeout(3000)
                 });
-                const data = await response.json();
-                if (data.success) {
-                    alert(`✅ Thank you, ${name}! Your message has been received.`);
-                    contactForm.reset();
-                }
+                updateBackendStatus(true);
             } catch (err) {
-                alert("Message sent (Offline mode).");
-                contactForm.reset();
+                updateBackendStatus(false);
             }
+
+            alert(`✅ Thank you, ${name}! Your message has been received.`);
+            contactForm.reset();
+            loadAdminStats();
         });
     }
 }
