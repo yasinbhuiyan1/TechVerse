@@ -1,3 +1,7 @@
+// ==========================================================================
+// TECHVERSE ENTERPRISE E-COMMERCE CORE SCRIPT
+// ==========================================================================
+
 // Backend API Base URL
 const API_BASE_URL = "http://localhost:5000/api";
 
@@ -10,10 +14,33 @@ let activeSort = "default";
 let appliedCoupon = null;
 let currentShippingFee = 60; // Default Inside Dhaka
 
+// Initializer
 document.addEventListener("DOMContentLoaded", function () {
+    initTheme();
     initApp();
     startFlashTimer();
 });
+
+function initTheme() {
+    const savedTheme = localStorage.getItem("techverse_theme");
+    const toggleBtn = document.getElementById("themeToggleBtn");
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark");
+        if (toggleBtn) toggleBtn.textContent = "☀️";
+    } else {
+        document.body.classList.remove("dark");
+        if (toggleBtn) toggleBtn.textContent = "🌙";
+    }
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+    const isDark = document.body.classList.contains("dark");
+    localStorage.setItem("techverse_theme", isDark ? "dark" : "light");
+    const toggleBtn = document.getElementById("themeToggleBtn");
+    if (toggleBtn) toggleBtn.textContent = isDark ? "☀️" : "🌙";
+    showToast(isDark ? "🌙 Dark Mode enabled" : "☀️ Light Mode enabled");
+}
 
 function initApp() {
     getLocalProducts(); // Initialize localStorage if needed
@@ -115,38 +142,6 @@ const SEED_ORDERS = [
     paymentMethod: "bKash / Nagad / Rocket",
     status: "Pending",
     createdAt: "2026-09-20T19:04:42.022Z"
-  },
-  {
-    orderId: "TV-340412",
-    customerName: "Ziniya islam Richi",
-    customerPhone: "0188444329",
-    address: "Raipur, Daudkhandi, Cumilla",
-    items: [
-      { id: 3, name: "Gaming Mouse", price: 3800, quantity: 2, image: "images/mouse.jpg" }
-    ],
-    subtotal: 7600,
-    shippingFee: 120,
-    discountAmount: 0,
-    totalAmount: 7720,
-    paymentMethod: "bKash / Nagad / Rocket",
-    status: "Pending",
-    createdAt: "2026-09-20T18:58:34.622Z"
-  },
-  {
-    orderId: "TV-327569",
-    customerName: "Yeasin",
-    customerPhone: "01800000000",
-    address: "Dhaka",
-    items: [
-      { id: 1, name: "Gaming Laptop", price: 120000, quantity: 1, image: "images/laptop.jpg" }
-    ],
-    subtotal: 120000,
-    shippingFee: 0,
-    discountAmount: 0,
-    totalAmount: 120000,
-    paymentMethod: "Cash on Delivery",
-    status: "Pending",
-    createdAt: "2026-09-20T12:41:34.037Z"
   }
 ];
 
@@ -154,8 +149,8 @@ const SEED_ORDERS = [
 const SEED_MESSAGES = [
   {
     id: 1789907350960,
-    name: "Yeasin Bhuiyan",
-    email: "yeasin@example.com",
+    name: "Md Yeasin Bhuiyan",
+    email: "yeasin@techverse.com",
     message: "Welcome to TechVerse Store! Looking for top quality gaming gear and fast delivery.",
     createdAt: "2026-09-20T12:29:10.960Z"
   }
@@ -219,12 +214,14 @@ function updateBackendStatus(isOnline) {
         badge.style.color = "#10b981";
         badge.style.borderColor = "rgba(16,185,129,0.3)";
     } else {
-        badge.innerHTML = "⚡ Local Storage Mode (Offline Ready)";
+        badge.innerHTML = "⚡ Local Database Mode (Active)";
         badge.style.background = "rgba(59,130,246,0.15)";
         badge.style.color = "#3b82f6";
         badge.style.borderColor = "rgba(59,130,246,0.3)";
     }
 }
+
+// ==================== PRODUCTS API & RENDERING ====================
 
 async function fetchProducts() {
     const searchVal = document.querySelector("#searchInput") ? document.querySelector("#searchInput").value.trim() : "";
@@ -242,7 +239,7 @@ async function fetchProducts() {
             saveLocalProducts(productsList);
             renderProducts(productsList);
             const countEl = document.getElementById("productCountBadge");
-            if (countEl) countEl.textContent = `${productsList.length} Products Available`;
+            if (countEl) countEl.textContent = `${productsList.length} Verified Products In Catalog`;
             updateBackendStatus(true);
             return;
         }
@@ -271,7 +268,7 @@ async function fetchProducts() {
     productsList = filtered;
     renderProducts(productsList);
     const countEl = document.getElementById("productCountBadge");
-    if (countEl) countEl.textContent = `${productsList.length} Products Available`;
+    if (countEl) countEl.textContent = `${productsList.length} Verified Products In Catalog`;
 }
 
 function renderProducts(products) {
@@ -279,41 +276,48 @@ function renderProducts(products) {
     if (!container) return;
 
     if (products.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px; background:var(--card-bg); border-radius:12px;">
-            <h3>🔍 No products found matching your search.</h3>
-            <p style="color:var(--text-muted); margin-top:8px;">Try searching for a different keyword or category.</p>
-        </div>`;
+        container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align:center; padding:50px 20px; background:var(--card-bg); border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                <div style="font-size:42px; margin-bottom:12px;">🔍</div>
+                <h3 style="font-size:20px; margin-bottom:8px;">No products found matching your filter</h3>
+                <p style="color:var(--text-muted); margin-bottom:16px;">Try searching with a different term or clear the category filters.</p>
+                <button onclick="filterCategory('All'); clearSearchInput();" style="background:var(--primary); color:white; border:none; padding:10px 24px; border-radius:var(--radius-full); font-weight:700; cursor:pointer;">
+                    Show All Catalog
+                </button>
+            </div>
+        `;
         return;
     }
 
     container.innerHTML = products.map(product => {
         const isWishlisted = wishlist.includes(product.id);
+        const originalPrice = product.oldPrice || Math.round(product.price * 1.18);
         return `
             <div class="card" data-id="${product.id}">
                 <div class="badge-group">
                     ${product.discountBadge ? `<span class="badge badge-discount">${product.discountBadge}</span>` : ''}
-                    <span class="badge badge-hot">🔥 Hot</span>
+                    <span class="badge badge-hot">🔥 Official</span>
                 </div>
-                <button class="btn-wishlist ${isWishlisted ? 'active' : ''}" onclick="toggleWishlist(${product.id})">
+                <button class="btn-wishlist ${isWishlisted ? 'active' : ''}" onclick="toggleWishlist(${product.id})" title="${isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}">
                     ${isWishlisted ? '❤️' : '🤍'}
                 </button>
                 <div class="card-img-wrapper" onclick="openQuickView(${product.id})">
                     <img src="${product.image}" alt="${product.name}" loading="lazy">
                 </div>
                 <div class="category-tag">${product.category || 'General'}</div>
-                <h3 onclick="openQuickView(${product.id})">${product.name}</h3>
+                <h3 onclick="openQuickView(${product.id})" title="${product.name}">${product.name}</h3>
                 <div class="price-box">
-                    ${product.oldPrice ? `<del>৳ ${Number(product.oldPrice).toLocaleString()}</del>` : ''}
                     <span class="price">৳ ${Number(product.price).toLocaleString()}</span>
+                    <del>৳ ${Number(originalPrice).toLocaleString()}</del>
                 </div>
                 <div class="meta-info">
-                    <span><span class="stars">${product.rating || '★★★★★'}</span> (4.9/5)</span>
-                    <span>${product.warranty || '🛡️ 1 Year Warranty'}</span>
-                    <span class="stock-badge">${product.inStock ? '✔ In Stock' : '❌ Out of Stock'}</span>
+                    <span><span class="stars">${product.rating || '★★★★★'}</span> (4.9 verified)</span>
+                    <span>${product.warranty || '🛡️ 1 Year Official Warranty'}</span>
+                    <span class="stock-badge">${product.inStock ? '✔ In Stock (Ready to Ship)' : '❌ Out of Stock'}</span>
                 </div>
                 <div class="card-actions">
-                    <button class="btn-quick" onclick="openQuickView(${product.id})">👁️ Quick</button>
-                    <button class="btn-buy" onclick="addToCartById(${product.id})">🛒 Add to Cart</button>
+                    <button class="btn-quick" onclick="openQuickView(${product.id})"><i class="fa-solid fa-eye"></i> Quick</button>
+                    <button class="btn-buy" onclick="addToCartById(${product.id})"><i class="fa-solid fa-cart-shopping"></i> Add to Cart</button>
                 </div>
             </div>
         `;
@@ -323,7 +327,18 @@ function renderProducts(products) {
 function filterCategory(cat, btnElement) {
     activeCategory = cat;
     document.querySelectorAll(".cat-btn").forEach(btn => btn.classList.remove("active"));
-    if (btnElement) btnElement.classList.add("active");
+    document.querySelectorAll(".sub-nav-link").forEach(btn => btn.classList.remove("active"));
+    
+    if (btnElement) {
+        btnElement.classList.add("active");
+    } else {
+        // Find matching cat-btn
+        document.querySelectorAll(".cat-btn").forEach(btn => {
+            if (btn.textContent.toLowerCase().includes(cat.toLowerCase())) {
+                btn.classList.add("active");
+            }
+        });
+    }
     fetchProducts();
 }
 
@@ -332,6 +347,77 @@ function handleSortChange(sortValue) {
     fetchProducts();
 }
 
+// ==================== LIVE SEARCH AUTOCOMPLETE ====================
+
+function setupLiveSearch() {
+    const searchInput = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("searchClearBtn");
+    const dropdown = document.getElementById("searchDropdown");
+
+    if (!searchInput) return;
+
+    searchInput.addEventListener("input", function () {
+        const val = this.value.trim();
+        if (clearBtn) clearBtn.style.display = val.length > 0 ? "block" : "none";
+        
+        fetchProducts();
+
+        if (val.length < 2) {
+            if (dropdown) dropdown.style.display = "none";
+            return;
+        }
+
+        const prods = getLocalProducts();
+        const matches = prods.filter(p => 
+            p.name.toLowerCase().includes(val.toLowerCase()) || 
+            (p.category && p.category.toLowerCase().includes(val.toLowerCase()))
+        ).slice(0, 5);
+
+        if (matches.length > 0 && dropdown) {
+            dropdown.innerHTML = matches.map(p => `
+                <div class="search-dropdown-item" onclick="openQuickView(${p.id}); closeSearchDropdown();">
+                    <img src="${p.image}" alt="${p.name}" class="search-dropdown-img">
+                    <div class="search-dropdown-info">
+                        <div class="search-dropdown-title">${p.name}</div>
+                        <div class="search-dropdown-meta">
+                            <span style="color:var(--primary); font-weight:700;">${p.category}</span>
+                            <span>•</span>
+                            <span class="search-dropdown-price">৳ ${Number(p.price).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <button onclick="event.stopPropagation(); addToCartById(${p.id}); closeSearchDropdown();" style="background:var(--primary-light); color:var(--primary); border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer;">
+                        + Cart
+                    </button>
+                </div>
+            `).join("");
+            dropdown.style.display = "block";
+        } else if (dropdown) {
+            dropdown.style.display = "none";
+        }
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener("click", function(e) {
+        if (!e.target.closest(".search-wrapper") && dropdown) {
+            dropdown.style.display = "none";
+        }
+    });
+}
+
+function clearSearchInput() {
+    const input = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("searchClearBtn");
+    const dropdown = document.getElementById("searchDropdown");
+    if (input) input.value = "";
+    if (clearBtn) clearBtn.style.display = "none";
+    if (dropdown) dropdown.style.display = "none";
+    fetchProducts();
+}
+
+function closeSearchDropdown() {
+    const dropdown = document.getElementById("searchDropdown");
+    if (dropdown) dropdown.style.display = "none";
+}
 
 // ==================== WISHLIST SYSTEM ====================
 
@@ -352,13 +438,64 @@ function toggleWishlist(id) {
 function updateWishlistUI() {
     const el = document.getElementById("wishlistCount");
     if (el) el.textContent = wishlist.length;
+    renderWishlistDrawer();
 }
 
+function toggleWishlistDrawer(open = true) {
+    const drawer = document.getElementById("wishlistDrawer");
+    const overlay = document.getElementById("drawerOverlay");
+    if (drawer) drawer.classList.toggle("open", open);
+    if (overlay) overlay.style.display = open ? "block" : "none";
+    if (open) renderWishlistDrawer();
+}
+
+function renderWishlistDrawer() {
+    const container = document.getElementById("drawerWishlistItems");
+    if (!container) return;
+
+    if (wishlist.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:50px 20px; color:var(--text-muted);">
+                <div style="font-size:36px; margin-bottom:8px;">🤍</div>
+                <h4 style="font-size:16px; margin-bottom:4px;">Your Wishlist is Empty</h4>
+                <p style="font-size:13px;">Click the heart icon on any product to save items for later!</p>
+            </div>
+        `;
+        return;
+    }
+
+    const prods = getLocalProducts();
+    const wishlistedProducts = prods.filter(p => wishlist.includes(p.id));
+
+    container.innerHTML = wishlistedProducts.map(item => `
+        <div class="cart-item">
+            <img src="${item.image || 'images/laptop.jpg'}" alt="${item.name}" class="cart-item-img">
+            <div class="cart-item-info">
+                <div class="cart-item-title">${item.name}</div>
+                <div class="cart-item-price">৳ ${Number(item.price).toLocaleString()}</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button onclick="moveToCartFromWishlist(${item.id})" style="background:var(--primary); color:white; border:none; padding:7px 12px; border-radius:6px; font-size:12.5px; font-weight:700; cursor:pointer;" title="Move to Cart">🛒 Add</button>
+                <button onclick="toggleWishlist(${item.id})" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:16px;" title="Remove">✕</button>
+            </div>
+        </div>
+    `).join("");
+}
+
+function moveToCartFromWishlist(id) {
+    addToCartById(id);
+    toggleWishlist(id);
+    toggleWishlistDrawer(false);
+    toggleCartDrawer(true);
+}
 
 // ==================== CART DRAWER LOGIC ====================
 
+const addToCart = addToCartById;
+
 function addToCartById(id) {
-    const product = productsList.find(p => p.id === id);
+    const prods = getLocalProducts();
+    const product = prods.find(p => p.id === id) || productsList.find(p => p.id === id);
     if (!product) return;
 
     const existing = cartItems.find(item => item.id === id);
@@ -372,6 +509,13 @@ function addToCartById(id) {
             image: product.image,
             quantity: 1
         });
+    }
+
+    // Trigger cart button bump animation
+    const cartBtn = document.getElementById("cartBtn");
+    if (cartBtn) {
+        cartBtn.classList.add("bump");
+        setTimeout(() => cartBtn.classList.remove("bump"), 450);
     }
 
     updateCartUI();
@@ -393,21 +537,29 @@ function renderCartDrawer() {
     const grandTotalEl = document.getElementById("drawerGrandTotal");
     const discountRow = document.getElementById("drawerDiscountRow");
     const discountEl = document.getElementById("drawerDiscountAmount");
+    const shippingEl = document.getElementById("drawerShippingAmount");
 
     if (!cartListEl) return;
 
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    updateFreeShippingMeter(subtotal);
+
     if (cartItems.length === 0) {
-        cartListEl.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">
-            🛒 Your cart is empty.<br><small>Browse products and add items to order!</small>
-        </div>`;
+        cartListEl.innerHTML = `
+            <div style="text-align:center; padding:50px 20px; color:var(--text-muted);">
+                <div style="font-size:38px; margin-bottom:8px;">🛒</div>
+                <h4 style="font-size:16px; margin-bottom:4px;">Your Shopping Cart is Empty</h4>
+                <p style="font-size:13px;">Explore our catalog and add gaming gear to your cart!</p>
+            </div>
+        `;
         if (subtotalEl) subtotalEl.textContent = "৳ 0";
         if (grandTotalEl) grandTotalEl.textContent = "৳ 0";
+        if (shippingEl) shippingEl.textContent = "৳ 0";
+        if (discountRow) discountRow.style.display = "none";
         return;
     }
 
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     let discount = 0;
-
     if (appliedCoupon) {
         discount = appliedCoupon.discountAmount;
         if (discountRow) discountRow.style.display = "flex";
@@ -416,25 +568,56 @@ function renderCartDrawer() {
         if (discountRow) discountRow.style.display = "none";
     }
 
-    const grandTotal = Math.max(0, subtotal + currentShippingFee - discount);
+    // Free delivery bonus if subtotal >= 2000
+    const finalShippingFee = subtotal >= 2000 ? 0 : currentShippingFee;
+    if (shippingEl) {
+        shippingEl.innerHTML = subtotal >= 2000 
+            ? `<span style="color:var(--success); font-weight:800;">FREE (৳0)</span>` 
+            : `৳ ${currentShippingFee}`;
+    }
+
+    const grandTotal = Math.max(0, subtotal + finalShippingFee - discount);
 
     cartListEl.innerHTML = cartItems.map(item => `
         <div class="cart-item">
+            <img src="${item.image || 'images/laptop.jpg'}" alt="${item.name}" class="cart-item-img">
             <div class="cart-item-info">
                 <div class="cart-item-title">${item.name}</div>
-                <div class="cart-item-price">৳ ${item.price.toLocaleString()}</div>
+                <div class="cart-item-price">৳ ${Number(item.price).toLocaleString()}</div>
             </div>
             <div class="cart-qty-ctrl">
                 <button onclick="changeQuantity(${item.id}, -1)">-</button>
                 <span><b>${item.quantity}</b></span>
                 <button onclick="changeQuantity(${item.id}, 1)">+</button>
-                <button onclick="removeFromCart(${item.id})" style="color:red; background:none; border:none; margin-left:6px; cursor:pointer;">🗑️</button>
+                <button onclick="removeFromCart(${item.id})" style="color:var(--danger); margin-left:4px;" title="Remove">🗑️</button>
             </div>
         </div>
     `).join("");
 
     if (subtotalEl) subtotalEl.textContent = `৳ ${subtotal.toLocaleString()}`;
     if (grandTotalEl) grandTotalEl.textContent = `৳ ${grandTotal.toLocaleString()}`;
+}
+
+function updateFreeShippingMeter(subtotal) {
+    const textEl = document.getElementById("freeShippingText");
+    const percentEl = document.getElementById("freeShippingPercent");
+    const fillEl = document.getElementById("freeShippingFill");
+    if (!textEl || !percentEl || !fillEl) return;
+
+    const threshold = 2000;
+    if (subtotal >= threshold) {
+        textEl.innerHTML = "🎉 <b>You've unlocked FREE Delivery!</b>";
+        percentEl.textContent = "100%";
+        fillEl.style.width = "100%";
+        fillEl.style.background = "linear-gradient(90deg, #10b981, #059669)";
+    } else {
+        const remaining = threshold - subtotal;
+        const pct = Math.min(100, Math.round((subtotal / threshold) * 100));
+        textEl.innerHTML = `Add <b>৳${remaining.toLocaleString()}</b> for FREE delivery`;
+        percentEl.textContent = `${pct}%`;
+        fillEl.style.width = `${pct}%`;
+        fillEl.style.background = "linear-gradient(90deg, #3b82f6, #06b6d4)";
+    }
 }
 
 function changeQuantity(id, delta) {
@@ -473,16 +656,27 @@ function updateShippingFee(fee) {
     renderCartDrawer();
 }
 
-
 // ==================== COUPON SYSTEM ====================
+
+function quickApplyCoupon(code) {
+    const input = document.getElementById("couponInput");
+    if (input) input.value = code;
+    applyCouponCode();
+}
+
+function claimWelcomeCoupon() {
+    quickApplyCoupon("WELCOME500");
+    toggleCartDrawer(true);
+    showToast("🎁 Promo code WELCOME500 applied! ৳500 OFF over ৳2,000");
+}
 
 async function applyCouponCode() {
     const input = document.getElementById("couponInput");
     if (!input) return;
 
-    const code = input.value.trim();
+    const code = input.value.trim().toUpperCase();
     if (!code) {
-        alert("Please enter a coupon code (e.g. TECHVERSE10)");
+        alert("Please enter a coupon code (e.g. WELCOME500, TECHVERSE10)");
         return;
     }
 
@@ -501,52 +695,67 @@ async function applyCouponCode() {
             appliedCoupon = data.data;
             showToast(`✅ ${data.message}`);
             renderCartDrawer();
+            return;
         } else {
             alert(`⚠️ ${data.message}`);
         }
     } catch (e) {
-        // Fallback for demo codes if offline
-        if (code.toUpperCase() === "TECHVERSE10") {
-            const disc = Math.round(subtotal * 0.1);
+        // Fallback offline validation
+        if (code === "WELCOME500") {
+            if (subtotal < 2000) {
+                alert("⚠️ Coupon WELCOME500 requires minimum order of ৳2,000.");
+                return;
+            }
+            appliedCoupon = { code: "WELCOME500", discountAmount: 500, description: "৳500 Welcome Discount" };
+            showToast("✅ Coupon WELCOME500 Applied! ৳500 OFF");
+            renderCartDrawer();
+        } else if (code === "TECHVERSE10") {
+            if (subtotal < 1000) {
+                alert("⚠️ Coupon TECHVERSE10 requires minimum spend of ৳1,000.");
+                return;
+            }
+            const disc = Math.min(5000, Math.round(subtotal * 0.1));
             appliedCoupon = { code: "TECHVERSE10", discountAmount: disc, description: "10% OFF" };
-            showToast("✅ Coupon TECHVERSE10 Applied!");
+            showToast(`✅ Coupon TECHVERSE10 Applied! ৳${disc.toLocaleString()} saved.`);
             renderCartDrawer();
         } else {
-            alert("Invalid promo code. Try 'TECHVERSE10'");
+            alert("Invalid promo code. Try 'WELCOME500' or 'TECHVERSE10'");
         }
     }
 }
 
-
 // ==================== QUICK VIEW MODAL ====================
 
 function openQuickView(id) {
-    const product = productsList.find(p => p.id === id);
+    const prods = getLocalProducts();
+    const product = prods.find(p => p.id === id) || productsList.find(p => p.id === id);
     if (!product) return;
 
     const content = document.getElementById("quickViewContent");
     if (!content) return;
 
+    const originalPrice = product.oldPrice || Math.round(product.price * 1.18);
+
     content.innerHTML = `
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; align-items:center;">
-            <div style="background:var(--bg-main); padding:20px; border-radius:12px; text-align:center;">
-                <img src="${product.image}" alt="${product.name}" style="max-width:100%; max-height:220px; object-fit:contain;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px; align-items:center;">
+            <div style="background:var(--card-elevated); padding:24px; border-radius:var(--radius-md); text-align:center; border:1px solid var(--border-color);">
+                <img src="${product.image}" alt="${product.name}" style="max-width:100%; max-height:240px; object-fit:contain; filter:drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
             </div>
             <div>
-                <span style="background:var(--primary); color:white; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:700;">${product.category || 'Tech'}</span>
-                <h2 style="font-size:24px; margin:10px 0;">${product.name}</h2>
-                <div style="font-size:22px; font-weight:800; color:var(--primary); margin-bottom:15px;">
+                <span style="background:var(--primary-light); color:var(--primary); padding:4px 12px; border-radius:var(--radius-full); font-size:12px; font-weight:800; text-transform:uppercase;">${product.category || 'Tech'}</span>
+                <h2 style="font-size:24px; margin:10px 0 6px;">${product.name}</h2>
+                <div style="font-size:24px; font-weight:800; color:var(--primary); margin-bottom:14px; display:flex; align-items:baseline; gap:10px;">
                     ৳ ${Number(product.price).toLocaleString()} 
-                    ${product.oldPrice ? `<del style="font-size:15px; color:var(--danger); margin-left:8px;">৳ ${Number(product.oldPrice).toLocaleString()}</del>` : ''}
+                    <del style="font-size:16px; color:var(--text-muted);">৳ ${Number(originalPrice).toLocaleString()}</del>
                 </div>
-                <p style="color:var(--text-muted); font-size:14px; margin-bottom:15px;">
-                    ⭐ Rating: ${product.rating || '★★★★★'} (4.9/5 verified reviews)<br>
-                    🛡️ Warranty: ${product.warranty || '1 Year Official Warranty'}<br>
-                    🚚 Delivery: ${product.delivery || 'Free Delivery'}<br>
-                    📦 Stock: <b style="color:var(--success);">${product.inStock ? 'In Stock Ready to Ship' : 'Out of Stock'}</b>
-                </p>
-                <button onclick="addToCartById(${product.id}); toggleQuickModal(false);" style="width:100%; background:var(--primary); color:white; padding:12px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">
-                    🛒 Add to Cart & Order
+                <div style="color:var(--text-muted); font-size:13.5px; line-height:1.8; margin-bottom:18px;">
+                    <div>⭐ <b>Customer Rating:</b> ${product.rating || '★★★★★'} (4.9 / 5 verified)</div>
+                    <div>🛡️ <b>Brand Warranty:</b> ${product.warranty || '1 Year Official Brand Warranty'}</div>
+                    <div>🚚 <b>Delivery:</b> ${product.delivery || 'Express 24-48h Delivery'}</div>
+                    <div>📦 <b>Inventory Status:</b> <b style="color:var(--success);">${product.inStock ? 'In Stock (Ready to Dispatch)' : 'Pre-order'}</b></div>
+                </div>
+                <button onclick="addToCartById(${product.id}); toggleQuickModal(false);" style="width:100%; background:var(--primary); color:white; padding:14px; border-radius:var(--radius-sm); font-weight:800; border:none; cursor:pointer; font-size:15px; box-shadow:0 6px 20px rgba(37,99,235,0.4);">
+                    🛒 Add to Cart Now
                 </button>
             </div>
         </div>
@@ -560,12 +769,11 @@ function toggleQuickModal(open = true) {
     if (modal) modal.style.display = open ? "flex" : "none";
 }
 
-
-// ==================== CHECKOUT & INVOICE GENERATOR ====================
+// ==================== CHECKOUT & ORDER SUBMISSION ====================
 
 function openCheckoutModal() {
     if (cartItems.length === 0) {
-        alert("⚠️ Your cart is empty!");
+        alert("⚠️ Your cart is empty! Please add products first.");
         return;
     }
     toggleCartDrawer(false);
@@ -576,6 +784,13 @@ function openCheckoutModal() {
 function toggleCheckoutModal(open = true) {
     const modal = document.getElementById("checkoutModal");
     if (modal) modal.style.display = open ? "flex" : "none";
+}
+
+function handlePaymentMethodChange(val) {
+    const inst = document.getElementById("mobilePayInstructions");
+    if (inst) {
+        inst.style.display = (val && val.includes("bKash")) ? "block" : "none";
+    }
 }
 
 async function submitOrder(e) {
@@ -598,7 +813,8 @@ async function submitOrder(e) {
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
-    const grandTotal = Math.max(0, subtotal + currentShippingFee - discount);
+    const finalShippingFee = subtotal >= 2000 ? 0 : currentShippingFee;
+    const grandTotal = Math.max(0, subtotal + finalShippingFee - discount);
 
     const newOrder = {
         orderId: 'TV-' + Math.floor(100000 + Math.random() * 900000),
@@ -613,7 +829,7 @@ async function submitOrder(e) {
             quantity: item.quantity
         })),
         subtotal: subtotal,
-        shippingFee: currentShippingFee,
+        shippingFee: finalShippingFee,
         discountAmount: discount,
         totalAmount: grandTotal,
         paymentMethod: paymentMethod,
@@ -621,7 +837,7 @@ async function submitOrder(e) {
         createdAt: new Date().toISOString()
     };
 
-    // 1. Save to local storage first (reliable offline persistence)
+    // 1. Save to local storage first
     const existingOrders = getLocalOrders();
     existingOrders.unshift(newOrder);
     saveLocalOrders(existingOrders);
@@ -652,6 +868,133 @@ async function submitOrder(e) {
     document.getElementById("checkoutForm").reset();
     showToast(`🎉 Order #${newOrder.orderId} placed successfully!`);
 }
+
+// ==================== ORDER TRACKING SYSTEM ====================
+
+function toggleTrackModal(open = true) {
+    const modal = document.getElementById("trackModal");
+    if (modal) {
+        modal.style.display = open ? "flex" : "none";
+        if (open) {
+            const input = document.getElementById("trackInput");
+            if (input) input.focus();
+        }
+    }
+}
+
+async function trackOrderSubmit(e) {
+    e.preventDefault();
+    const input = document.getElementById("trackInput");
+    const container = document.getElementById("trackResult");
+    if (!input || !container) return;
+
+    const searchId = input.value.trim().toUpperCase();
+    if (!searchId) return;
+
+    let order = null;
+
+    // Check backend API first
+    try {
+        const response = await fetch(`${API_BASE_URL}/orders/${searchId}`, { signal: AbortSignal.timeout(2000) });
+        const data = await response.json();
+        if (data.success && data.data) {
+            order = data.data;
+        }
+    } catch (err) {}
+
+    // Fallback to local storage
+    if (!order) {
+        const orders = getLocalOrders();
+        order = orders.find(o => o.orderId.toUpperCase() === searchId);
+    }
+
+    if (!order) {
+        container.innerHTML = `
+            <div style="background:var(--card-elevated); padding:20px; border-radius:var(--radius-md); text-align:center; border:1px solid var(--border-color);">
+                <div style="font-size:32px; margin-bottom:8px;">⚠️</div>
+                <h4 style="font-size:16px; margin-bottom:4px; color:var(--danger);">Order Not Found</h4>
+                <p style="font-size:13px; color:var(--text-muted);">We could not find an order matching "<b>${searchId}</b>".<br>Try checking sample order: <b>TV-108809</b></p>
+            </div>
+        `;
+        return;
+    }
+
+    renderTrackResult(order);
+}
+
+function renderTrackResult(order) {
+    const container = document.getElementById("trackResult");
+    if (!container) return;
+
+    const status = order.status || 'Pending';
+    let step = 1;
+    if (status === 'Pending') step = 1;
+    else if (status === 'Processing') step = 2;
+    else if (status === 'Shipped') step = 3;
+    else if (status === 'Delivered') step = 4;
+
+    const formattedDate = order.createdAt 
+        ? new Date(order.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : 'Recent';
+
+    const itemsSummary = (order.items || []).map(i => `${i.name} (x${i.quantity || 1})`).join(", ");
+
+    container.innerHTML = `
+        <div style="background:var(--card-elevated); padding:20px; border-radius:var(--radius-md); border:1px solid var(--border-color); margin-top:15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:15px;">
+                <div>
+                    <h3 style="font-size:17px; margin:0; color:var(--primary);">Order #${order.orderId}</h3>
+                    <span style="font-size:12px; color:var(--text-muted);">Placed on: ${formattedDate}</span>
+                </div>
+                <span class="invoice-status-badge" style="margin:0;">Status: ${status}</span>
+            </div>
+
+            <!-- 4-Step Interactive Stepper -->
+            <div class="track-stepper">
+                <div class="track-step ${step >= 1 ? (step === 1 ? 'active' : 'done') : ''}">
+                    <div class="track-step-circle"><i class="fa-solid fa-receipt"></i></div>
+                    <div class="track-step-label">Placed</div>
+                </div>
+                <div class="track-step ${step >= 2 ? (step === 2 ? 'active' : 'done') : ''}">
+                    <div class="track-step-circle"><i class="fa-solid fa-box-open"></i></div>
+                    <div class="track-step-label">Processing</div>
+                </div>
+                <div class="track-step ${step >= 3 ? (step === 3 ? 'active' : 'done') : ''}">
+                    <div class="track-step-circle"><i class="fa-solid fa-truck-fast"></i></div>
+                    <div class="track-step-label">In Transit</div>
+                </div>
+                <div class="track-step ${step >= 4 ? 'done' : ''}">
+                    <div class="track-step-circle"><i class="fa-solid fa-house-circle-check"></i></div>
+                    <div class="track-step-label">Delivered</div>
+                </div>
+            </div>
+
+            <div style="font-size:13px; line-height:1.7; color:var(--text-color); margin-top:15px;">
+                <div><b>Customer:</b> ${order.customerName} (${order.customerPhone})</div>
+                <div><b>Delivery Address:</b> ${order.address}</div>
+                <div><b>Items:</b> <span style="color:var(--text-muted);">${itemsSummary || 'N/A'}</span></div>
+                <div><b>Total Paid:</b> <span style="font-size:15px; font-weight:800; color:var(--primary);">৳ ${Number(order.totalAmount).toLocaleString()}</span> (${order.paymentMethod || 'COD'})</div>
+            </div>
+
+            <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+                <button onclick="renderInvoiceFromTrack('${order.orderId}')" style="background:var(--primary); color:white; border:none; padding:9px 18px; border-radius:6px; font-weight:700; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+                    🖨️ View Official Tax Invoice
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderInvoiceFromTrack(orderId) {
+    const orders = getLocalOrders();
+    const order = orders.find(o => o.orderId === orderId);
+    if (order) {
+        toggleTrackModal(false);
+        renderInvoice(order);
+    }
+}
+
+// ==================== PRINTABLE TAX INVOICE GENERATOR ====================
 
 function renderInvoice(order) {
     const container = document.getElementById("invoiceContent");
@@ -687,8 +1030,8 @@ function renderInvoice(order) {
             <div class="invoice-header">
                 <div class="invoice-brand">
                     <h2>💻 TechVerse Online Store</h2>
-                    <p>Level 4, Tech Plaza, Multiplan Center, Dhaka-1205</p>
-                    <p>Phone: +880 1820-727102 | Email: support@techverse.com</p>
+                    <p>Level 4, Multiplan Center, Elephant Road, Dhaka-1205</p>
+                    <p>Helpline: +880 1820-727102 | Email: support@techverse.com</p>
                 </div>
                 <div class="invoice-meta">
                     <span class="invoice-status-badge">✓ ${order.status || 'CONFIRMED'}</span>
@@ -708,8 +1051,8 @@ function renderInvoice(order) {
                 <div class="invoice-details-card">
                     <h4>📋 Order Details</h4>
                     <p>Payment: <strong>${order.paymentMethod || 'Cash on Delivery'}</strong></p>
-                    <p>Status: <strong style="color:var(--warning,#f59e0b);">${order.status || 'Pending Delivery'}</strong></p>
-                    <p>Delivery: <strong>Standard Express Courier</strong></p>
+                    <p>Status: <strong style="color:var(--accent);">${order.status || 'Pending Delivery'}</strong></p>
+                    <p>Delivery: <strong>Express Nationwide Courier</strong></p>
                 </div>
             </div>
 
@@ -718,8 +1061,8 @@ function renderInvoice(order) {
                 <thead>
                     <tr>
                         <th style="width:40px; text-align:center;">#</th>
-                        <th>Item</th>
-                        <th>Price</th>
+                        <th>Item Description</th>
+                        <th>Unit Price</th>
                         <th style="text-align:center;">Qty</th>
                         <th style="text-align:right;">Total</th>
                     </tr>
@@ -732,11 +1075,11 @@ function renderInvoice(order) {
             <!-- INVOICE SUMMARY & NOTES -->
             <div class="invoice-summary-wrapper">
                 <div class="invoice-notes">
-                    <strong>📌 Important Information:</strong>
+                    <strong>📌 Terms & Official Warranty:</strong>
                     <ul style="margin: 4px 0 0 16px; padding: 0;">
-                        <li>All products carry standard manufacturer warranty.</li>
-                        <li>Please retain this invoice receipt for any service or return claims.</li>
-                        <li>Thank you for shopping with TechVerse!</li>
+                        <li>All products carry official manufacturer warranty.</li>
+                        <li>Please keep this official receipt for warranty claims & returns.</li>
+                        <li>Thank you for choosing TechVerse Bangladesh!</li>
                     </ul>
                 </div>
 
@@ -747,11 +1090,11 @@ function renderInvoice(order) {
                     </div>
                     <div class="invoice-summary-row">
                         <span>Shipping Fee:</span>
-                        <span>৳ ${shipping.toLocaleString()}</span>
+                        <span>${shipping === 0 ? 'FREE' : `৳ ${shipping.toLocaleString()}`}</span>
                     </div>
                     ${discount > 0 ? `
-                        <div class="invoice-summary-row" style="color:var(--danger,#ef4444);">
-                            <span>Discount Coupon:</span>
+                        <div class="invoice-summary-row" style="color:var(--danger); font-weight:700;">
+                            <span>Discount Voucher:</span>
                             <span>- ৳ ${discount.toLocaleString()}</span>
                         </div>
                     ` : ''}
@@ -764,8 +1107,8 @@ function renderInvoice(order) {
 
             <!-- INVOICE FOOTER -->
             <div class="invoice-footer-banner">
-                <p>TechVerse Online Store | www.techverse.com | Support Helpline: +880 1820-727102</p>
-                <div class="invoice-watermark">✓ OFFICIAL E-RECEIPT - VERIFIED ORDER</div>
+                <p>TechVerse Online Tech Megastore | Dhaka, Bangladesh | 24/7 Helpline: +880 1820-727102</p>
+                <div class="invoice-watermark">✓ OFFICIAL E-COMMERCE TAX INVOICE</div>
             </div>
         </div>
     `;
@@ -778,8 +1121,7 @@ function toggleInvoiceModal(open = true) {
     if (modal) modal.style.display = open ? "flex" : "none";
 }
 
-
-// ==================== ADMIN DASHBOARD ====================
+// ==================== ADMIN DASHBOARD SUITE ====================
 
 function toggleAdminModal(open = true) {
     const modal = document.getElementById("adminModal");
@@ -795,7 +1137,7 @@ async function loadAdminData() {
     if (activeTab) {
         if (activeTab.textContent.includes("Manage Products")) {
             loadAdminProducts();
-        } else if (activeTab.textContent.includes("Customer Messages")) {
+        } else if (activeTab.textContent.includes("Customer Inquiries")) {
             loadAdminMessages();
         } else {
             loadAdminOrders();
@@ -806,7 +1148,6 @@ async function loadAdminData() {
 }
 
 async function loadAdminStats() {
-    // 1. Compute stats immediately from local data (instant, zero delay, never stuck at 0)
     const prods = getLocalProducts();
     const orders = getLocalOrders();
     const msgs = getLocalMessages();
@@ -841,9 +1182,8 @@ async function loadAdminStats() {
         totalMessages: msgs.length
     });
 
-    // 2. Fetch from backend API if online
     try {
-        const response = await fetch(`${API_BASE_URL}/stats`, { signal: AbortSignal.timeout(2500) });
+        const response = await fetch(`${API_BASE_URL}/stats`, { signal: AbortSignal.timeout(2000) });
         const data = await response.json();
         if (data.success && data.stats) {
             updateBackendStatus(true);
@@ -874,7 +1214,7 @@ async function loadAdminOrders() {
     let orders = getLocalOrders();
 
     try {
-        const response = await fetch(`${API_BASE_URL}/orders`, { signal: AbortSignal.timeout(2500) });
+        const response = await fetch(`${API_BASE_URL}/orders`, { signal: AbortSignal.timeout(2000) });
         const data = await response.json();
         if (data.success && Array.isArray(data.data)) {
             orders = data.data;
@@ -888,10 +1228,12 @@ async function loadAdminOrders() {
     window.adminOrdersData = orders;
 
     if (!orders || orders.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">
-            <p style="font-size:16px;">📭 No customer orders placed yet.</p>
-            <small>Orders will appear here as soon as customers buy products.</small>
-        </div>`;
+        container.innerHTML = `
+            <div style="text-align:center; padding:30px; color:var(--text-muted);">
+                <p style="font-size:16px;">📭 No customer orders placed yet.</p>
+                <small>Orders will appear here as soon as customers buy products.</small>
+            </div>
+        `;
         return;
     }
 
@@ -900,21 +1242,22 @@ async function loadAdminOrders() {
         const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
 
         return `
-            <div style="background:var(--bg-main); padding:14px; margin-bottom:12px; border-radius:8px; border-left:4px solid var(--primary); box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+            <div style="background:var(--card-elevated); padding:14px; margin-bottom:12px; border-radius:var(--radius-sm); border-left:4px solid var(--primary); box-shadow:var(--shadow-xs);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                     <div>
                         <strong style="font-size:15px; color:var(--text-color);">Order #${o.orderId}</strong>
                         <span style="font-size:12px; color:var(--text-muted); margin-left:8px;">🕒 ${dateStr}</span>
                     </div>
                     <div style="display:flex; gap:8px; align-items:center;">
-                        <button onclick="printAdminOrder(${idx})" style="padding:5px 12px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">🖨️ Invoice</button>
-                        <select onchange="updateOrderStatus('${o.orderId}', this.value)" style="padding:4px 8px; border-radius:4px; font-weight:700; background:var(--card-bg); color:var(--text-color); border:1px solid var(--border-color);">
+                        <button onclick="printAdminOrder(${idx})" style="padding:6px 12px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">🖨️ Invoice</button>
+                        <select onchange="updateOrderStatus('${o.orderId}', this.value)" style="padding:5px 8px; border-radius:4px; font-weight:700; background:var(--card-bg); color:var(--text-color); border:1px solid var(--border-color);">
                             <option value="Pending" ${o.status==='Pending'?'selected':''}>⏳ Pending</option>
+                            <option value="Processing" ${o.status==='Processing'?'selected':''}>📦 Processing</option>
                             <option value="Shipped" ${o.status==='Shipped'?'selected':''}>🚚 Shipped</option>
                             <option value="Delivered" ${o.status==='Delivered'?'selected':''}>✅ Delivered</option>
                             <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>❌ Cancelled</option>
                         </select>
-                        <button onclick="deleteAdminOrder('${o.orderId}')" title="Delete Order" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440; padding:4px 8px; border-radius:4px; font-weight:700; cursor:pointer;">🗑️</button>
+                        <button onclick="deleteAdminOrder('${o.orderId}')" title="Delete Order" style="background:var(--danger-light); color:var(--danger); border:1px solid rgba(239,68,68,0.3); padding:5px 9px; border-radius:4px; font-weight:700; cursor:pointer;">🗑️</button>
                     </div>
                 </div>
                 <div style="margin-top:8px; font-size:13px; line-height:1.5;">
@@ -953,7 +1296,7 @@ async function updateOrderStatus(orderId, status) {
         updateBackendStatus(false);
     }
 
-    showToast(`Order #${orderId} status changed to ${status}`);
+    showToast(`Order #${orderId} status updated to ${status}`);
     loadAdminStats();
 }
 
@@ -980,7 +1323,7 @@ async function loadAdminProducts() {
     let products = getLocalProducts();
 
     try {
-        const response = await fetch(`${API_BASE_URL}/products`, { signal: AbortSignal.timeout(2500) });
+        const response = await fetch(`${API_BASE_URL}/products`, { signal: AbortSignal.timeout(2000) });
         const data = await response.json();
         if (data.success && Array.isArray(data.data)) {
             products = data.data;
@@ -997,7 +1340,7 @@ async function loadAdminProducts() {
     }
 
     container.innerHTML = products.map(p => `
-        <div style="background:var(--bg-main); padding:10px 14px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--warning); box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+        <div style="background:var(--card-elevated); padding:10px 14px; margin-bottom:10px; border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--accent); box-shadow:var(--shadow-xs);">
             <div style="display:flex; align-items:center; gap:12px;">
                 <img src="${p.image || 'images/laptop.jpg'}" alt="${p.name}" style="width:40px; height:40px; object-fit:contain; border-radius:4px; background:white; padding:2px; border:1px solid var(--border-color);">
                 <div>
@@ -1059,13 +1402,11 @@ async function submitAddProduct(e) {
         inStock: true
     };
 
-    // 1. Save to local storage
     const products = getLocalProducts();
     products.unshift(newProd);
     saveLocalProducts(products);
     productsList = products;
 
-    // 2. Send to backend if online
     try {
         await fetch(`${API_BASE_URL}/products`, {
             method: "POST",
@@ -1085,7 +1426,6 @@ async function submitAddProduct(e) {
     renderProducts(productsList);
     loadAdminStats();
 
-    // If currently on products tab, refresh it
     const activeTab = document.querySelector(".admin-tab.active");
     if (activeTab && activeTab.textContent.includes("Manage Products")) {
         loadAdminProducts();
@@ -1099,7 +1439,7 @@ async function loadAdminMessages() {
     let messages = getLocalMessages();
 
     try {
-        const response = await fetch(`${API_BASE_URL}/contact`, { signal: AbortSignal.timeout(2500) });
+        const response = await fetch(`${API_BASE_URL}/contact`, { signal: AbortSignal.timeout(2000) });
         const data = await response.json();
         if (data.success && Array.isArray(data.data)) {
             messages = data.data;
@@ -1111,17 +1451,19 @@ async function loadAdminMessages() {
     }
 
     if (!messages || messages.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">
-            <p style="font-size:16px;">💬 No customer messages received yet.</p>
-            <small>Customer inquiries submitted through the contact form will appear here.</small>
-        </div>`;
+        container.innerHTML = `
+            <div style="text-align:center; padding:30px; color:var(--text-muted);">
+                <p style="font-size:16px;">💬 No customer inquiries received yet.</p>
+                <small>Inquiries submitted through the contact form will appear here.</small>
+            </div>
+        `;
         return;
     }
 
     container.innerHTML = messages.map(m => {
         const dateStr = m.createdAt ? new Date(m.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
         return `
-            <div style="background:var(--bg-main); padding:14px; margin-bottom:12px; border-radius:8px; border-left:4px solid var(--accent); box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+            <div style="background:var(--card-elevated); padding:14px; margin-bottom:12px; border-radius:var(--radius-sm); border-left:4px solid var(--cyan); box-shadow:var(--shadow-xs);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                     <div>
                         <strong style="color:var(--text-color); font-size:15px;">👤 ${m.name}</strong>
@@ -1129,7 +1471,7 @@ async function loadAdminMessages() {
                     </div>
                     <div style="display:flex; align-items:center; gap:8px;">
                         <span style="font-size:11px; color:var(--text-muted);">🕒 ${dateStr}</span>
-                        <button onclick="deleteAdminMessage(${m.id})" style="background:#ef444420; color:#ef4444; border:1px solid #ef444440; padding:4px 10px; border-radius:4px; font-weight:700; cursor:pointer;">🗑️ Delete</button>
+                        <button onclick="deleteAdminMessage(${m.id})" style="background:var(--danger-light); color:var(--danger); border:1px solid rgba(239,68,68,0.3); padding:4px 10px; border-radius:4px; font-weight:700; cursor:pointer;">🗑️ Delete</button>
                     </div>
                 </div>
                 <p style="margin-top:10px; font-size:13px; line-height:1.5; color:var(--text-color); background:var(--card-bg); padding:10px 12px; border-radius:6px; border:1px solid var(--border-color);">
@@ -1141,7 +1483,7 @@ async function loadAdminMessages() {
 }
 
 async function deleteAdminMessage(id) {
-    if (!confirm("Are you sure you want to delete this customer message?")) return;
+    if (!confirm("Are you sure you want to delete this customer inquiry?")) return;
 
     let messages = getLocalMessages();
     messages = messages.filter(m => m.id !== id);
@@ -1156,12 +1498,31 @@ async function deleteAdminMessage(id) {
     loadAdminStats();
 }
 
+// ==================== INTERACTIVE ACCORDION & NEWSLETTER ====================
 
-// ==================== HELPERS & TIMER ====================
-
-function darkMode() {
-    document.body.classList.toggle("dark");
+function toggleFaq(item) {
+    if (!item) return;
+    const isActive = item.classList.contains("active");
+    // Close other FAQ items
+    document.querySelectorAll(".faq-item").forEach(el => el.classList.remove("active"));
+    if (!isActive) {
+        item.classList.add("active");
+    }
 }
+
+function subscribeNewsletter() {
+    const input = document.getElementById("newsletterEmail");
+    if (!input) return;
+    const val = input.value.trim();
+    if (!val || !val.includes("@")) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+    showToast(`🎉 Thank you! ${val} subscribed to TechVerse VIP Deals.`);
+    input.value = "";
+}
+
+// ==================== TIMERS & HELPERS ====================
 
 function startFlashTimer() {
     const timerBox = document.getElementById("flashTimer");
@@ -1180,34 +1541,36 @@ function startFlashTimer() {
 
 function showToast(message) {
     let toast = document.createElement("div");
-    toast.textContent = message;
+    toast.innerHTML = message;
     toast.style.cssText = `
         position: fixed;
         bottom: 30px;
         right: 30px;
-        background: var(--primary);
+        background: #0f172a;
         color: white;
+        border: 1px solid rgba(255, 255, 255, 0.15);
         padding: 14px 24px;
         border-radius: 30px;
-        box-shadow: 0 8px 25px rgba(13,110,253,0.4);
-        z-index: 4000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        z-index: 5000;
         font-weight: 700;
-        transition: opacity 0.4s ease;
+        font-size: 14px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        animation: fadeIn 0.3s ease;
     `;
     document.body.appendChild(toast);
     setTimeout(() => {
         toast.style.opacity = "0";
-        setTimeout(() => toast.remove(), 400);
-    }, 2500);
+        toast.style.transform = "translateY(10px)";
+        setTimeout(() => toast.remove(), 350);
+    }, 2800);
 }
 
 function setupEventListeners() {
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) {
-        searchInput.addEventListener("input", function () {
-            fetchProducts();
-        });
-    }
+    setupLiveSearch();
 
     const contactForm = document.querySelector("#contact form");
     if (contactForm) {
@@ -1233,12 +1596,10 @@ function setupEventListeners() {
                 createdAt: new Date().toISOString()
             };
 
-            // Save to local storage
             const msgs = getLocalMessages();
             msgs.unshift(newMsg);
             saveLocalMessages(msgs);
 
-            // Send to backend if available
             try {
                 await fetch(`${API_BASE_URL}/contact`, {
                     method: "POST",
@@ -1251,7 +1612,7 @@ function setupEventListeners() {
                 updateBackendStatus(false);
             }
 
-            alert(`✅ Thank you, ${name}! Your message has been received.`);
+            alert(`✅ Thank you, ${name}! Your inquiry has been dispatched to our tech specialist team.`);
             contactForm.reset();
             loadAdminStats();
         });

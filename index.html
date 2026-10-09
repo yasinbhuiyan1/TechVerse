@@ -4,9 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechVerse | Premium Online Tech Store</title>
-    <link rel="icon" href="images/logo.jpg">
+    <title>TechVerse | Premier Tech & Gaming Megastore Bangladesh</title>
+    <meta name="description" content="TechVerse - Authorized online store for authentic gaming laptops, mechanical keyboards, high-refresh displays, PC components, and genuine accessories in Bangladesh.">
+    <link rel="icon" href="images/laptop.jpg">
+    <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -14,53 +17,292 @@
 
     <!-- TOP ANNOUNCEMENT BAR -->
     <div class="top-bar">
-        <span>⚡ <b>FLASH SALE!</b> Get up to 30% OFF on selected gaming gear. Use coupon <b>TECHVERSE10</b></span>
-        <div>Ends in: <span id="flashTimer" class="timer-box">05h 42m 19s</span></div>
+        <div class="top-bar-left">
+            <span><i class="fa-solid fa-headset"></i> 24/7 Helpline: <a href="tel:+8801820727102" style="font-weight:700; color:#38bdf8;">+880 1820-727102</a></span>
+            <span><i class="fa-solid fa-location-dot"></i> Multiplan Center, Level 4, Dhaka</span>
+            <span class="highlight-badge"><i class="fa-solid fa-truck-fast"></i> Free Delivery on Orders over ৳2,000</span>
+        </div>
+        <div class="top-bar-right">
+            <button onclick="toggleTrackModal(true)" class="track-link-btn" title="Track Live Order">
+                <i class="fa-solid fa-magnifying-glass-location"></i> Track Order
+            </button>
+            <div class="timer-pill">
+                <span>⚡ Flash Sale Ends:</span>
+                <span id="flashTimer">05h 42m 19s</span>
+            </div>
+            <span class="currency-tag">🇧🇩 BDT (৳)</span>
+        </div>
     </div>
 
     <!-- MAIN HEADER -->
     <header>
-        <h1 onclick="window.scrollTo({top:0, behavior:'smooth'})">
-            💻 TechVerse
-        </h1>
+        <div class="header-container">
+            <!-- Brand Logo -->
+            <a class="brand-logo" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="TechVerse Homepage">
+                <div class="logo-icon-box">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div class="logo-text-box">
+                    <h1>TechVerse</h1>
+                    <span class="logo-tagline">Authorized Tech & Gaming Hub</span>
+                </div>
+            </a>
 
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#products">Products</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-        </nav>
+            <!-- Navigation Links -->
+            <nav>
+                <a href="#home" class="active"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="#categories"><i class="fa-solid fa-layer-group"></i> Categories</a>
+                <a href="#products"><i class="fa-solid fa-boxes-stacked"></i> Products</a>
+                <a href="#deals" class="nav-hot-deal"><i class="fa-solid fa-bolt"></i> Mega Deals</a>
+                <a href="#about"><i class="fa-solid fa-circle-info"></i> About</a>
+                <a href="#contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+            </nav>
 
-        <div class="search-wrapper">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="searchInput" placeholder="Search tech products...">
-        </div>
+            <!-- Live Search Bar with Instant Autocomplete Dropdown -->
+            <div class="search-wrapper">
+                <div class="search-input-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon-inside"></i>
+                    <input type="text" id="searchInput" placeholder="Search laptops, RTX GPUs, keyboards, mice..." autocomplete="off">
+                    <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearchInput()" title="Clear search">✕</button>
+                </div>
+                <!-- Instant Autocomplete Dropdown -->
+                <div id="searchDropdown" class="search-dropdown">
+                    <!-- Dynamic live matching items injected here -->
+                </div>
+            </div>
 
-        <div class="header-actions">
-            <button class="btn-icon" id="wishlistBtn" onclick="alert('Viewing saved wishlist items!')">
-                ❤️ <span id="wishlistCount">0</span>
-            </button>
+            <!-- Header Action Icons -->
+            <div class="header-actions">
+                <button class="btn-header-action" onclick="toggleTrackModal(true)" title="Track Your Order">
+                    <i class="fa-solid fa-route"></i> <span>Track</span>
+                </button>
 
-            <button class="btn-icon" id="cartBtn" onclick="toggleCartDrawer(true)">
-                🛒 Cart (<span id="cartCount" class="badge-count">0</span>)
-            </button>
+                <button class="btn-header-action btn-wishlist" id="wishlistBtn" onclick="toggleWishlistDrawer(true)" title="Saved Wishlist">
+                    ❤️ <span id="wishlistCount" class="badge-count">0</span>
+                </button>
 
-            <button class="btn-icon" onclick="darkMode()">🌙</button>
+                <button class="btn-header-action btn-cart" id="cartBtn" onclick="toggleCartDrawer(true)" title="Shopping Cart">
+                    <i class="fa-solid fa-cart-shopping"></i> <span>Cart</span> (<span id="cartCount" class="badge-count">0</span>)
+                </button>
 
-            <button class="btn-icon" onclick="toggleAdminModal(true)" style="background:var(--primary);">
-                ⚙️ Admin
-            </button>
+                <button class="btn-header-action" id="themeToggleBtn" onclick="toggleDarkMode()" title="Toggle Dark / Light Mode">
+                    🌙
+                </button>
+
+                <button class="btn-header-action btn-admin" onclick="toggleAdminModal(true)" title="Admin Control Center">
+                    <i class="fa-solid fa-shield-halved"></i> <span>Admin</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section id="home">
-        <div class="banner-text">
-            <h2>Next-Gen Tech Essentials</h2>
-            <p>Your trusted destination for genuine laptops, gaming gear & components.</p>
-            <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'});">
-                Explore Products 🛍️
-            </button>
+    <!-- MEGA SUB-NAV CATEGORIES BAR -->
+    <div class="sub-nav">
+        <div class="sub-nav-container">
+            <div class="sub-nav-links">
+                <button onclick="document.getElementById('deals').scrollIntoView({behavior:'smooth'})" class="sub-nav-link hot">
+                    <i class="fa-solid fa-fire"></i> Flash Deals
+                </button>
+                <button onclick="filterCategory('All', this)" class="sub-nav-link active">
+                    <i class="fa-solid fa-grid-2"></i> All Catalog
+                </button>
+                <button onclick="filterCategory('Laptop', this)" class="sub-nav-link">
+                    💻 Laptops
+                </button>
+                <button onclick="filterCategory('Keyboard', this)" class="sub-nav-link">
+                    ⌨️ Keyboards
+                </button>
+                <button onclick="filterCategory('Mouse', this)" class="sub-nav-link">
+                    🖱️ Mice
+                </button>
+                <button onclick="filterCategory('Headphone', this)" class="sub-nav-link">
+                    🎧 Audio & Headsets
+                </button>
+                <button onclick="filterCategory('Monitor', this)" class="sub-nav-link">
+                    🖥️ Displays & 4K
+                </button>
+                <button onclick="filterCategory('SSD', this)" class="sub-nav-link">
+                    ⚡ NVMe Storage
+                </button>
+                <button onclick="filterCategory('Graphics Card', this)" class="sub-nav-link">
+                    🎮 RTX Graphics
+                </button>
+                <button onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})" class="sub-nav-link">
+                    🛡️ Official Warranty FAQ
+                </button>
+            </div>
+            <div class="sub-nav-badge">
+                <i class="fa-solid fa-circle-check"></i> 100% Genuine Authorized Tech
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION (REAL TECH E-COMMERCE SHOWCASE) -->
+    <div class="hero-wrapper" id="home">
+        <div class="hero-grid">
+            <div>
+                <span class="hero-badge-tag">
+                    <i class="fa-solid fa-fire"></i> MEGA TECH FEST 2026 • UP TO 30% OFF OFFICIAL GEAR
+                </span>
+                <h2 class="hero-title">
+                    Unleash Pure Gaming & Ultimate Workstation Power
+                </h2>
+                <p class="hero-desc">
+                    Authorized distributor of Asus ROG, MSI, Intel Core, RTX 40-Series Laptops, Custom Mechanical Keyboards, and 4K High-Refresh Displays across Bangladesh.
+                </p>
+                <div class="hero-cta-group">
+                    <button class="hero-btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                        Explore Featured Catalog 🛍️
+                    </button>
+                    <button class="hero-btn-outline" onclick="claimWelcomeCoupon();">
+                        Claim ৳500 Voucher 🎁
+                    </button>
+                </div>
+                <div class="hero-stats-row">
+                    <div class="hero-stat-pill">
+                        <i class="fa-solid fa-truck-fast" style="font-size:22px; color:#38bdf8;"></i>
+                        <div>
+                            <strong>Fast Delivery</strong>
+                            <span>24-48 Hours Inside BD</span>
+                        </div>
+                    </div>
+                    <div class="hero-stat-pill">
+                        <i class="fa-solid fa-shield-halved" style="font-size:22px; color:#38bdf8;"></i>
+                        <div>
+                            <strong>Official Warranty</strong>
+                            <span>Up to 3 Years Brand Coverage</span>
+                        </div>
+                    </div>
+                    <div class="hero-stat-pill">
+                        <i class="fa-solid fa-rotate-left" style="font-size:22px; color:#38bdf8;"></i>
+                        <div>
+                            <strong>7-Day Returns</strong>
+                            <span>Instant Replacement Policy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HERO SHOWCASE CARD -->
+            <div class="hero-showcase-box">
+                <span class="hero-floating-badge">🔥 SAVE ৳20,000</span>
+                <img src="images/laptop.jpg" alt="Asus ROG Strix Gaming Laptop" class="hero-showcase-img">
+                <div class="hero-specs-pills">
+                    <span class="hero-spec-pill">Intel Core i7 13th Gen</span>
+                    <span class="hero-spec-pill">RTX 4060 8GB</span>
+                    <span class="hero-spec-pill">16GB DDR5</span>
+                    <span class="hero-spec-pill">144Hz IPS</span>
+                </div>
+                <h3 style="font-size:22px; font-weight:800; color:white; margin:10px 0 6px;">Asus ROG Strix G16</h3>
+                <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:16px;">
+                    <del style="color:#94a3b8; font-size:16px;">৳ 185,000</del>
+                    <span style="font-size:26px; font-weight:900; color:#38bdf8;">৳ 165,000</span>
+                </div>
+                <button onclick="addToCartById(25)" style="background:var(--primary); color:white; border:none; padding:14px 28px; border-radius:var(--radius-full); font-weight:800; cursor:pointer; width:100%; box-shadow:0 8px 25px rgba(37,99,235,0.45); font-size:15px;">
+                    🛒 Add to Cart Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OFFICIAL BRAND PARTNERS -->
+    <div class="brands-section">
+        <div class="brands-container">
+            <span class="brands-label">Authorized Partners:</span>
+            <div class="brands-list">
+                <button class="brand-chip" onclick="filterCategory('Laptop')">💻 ASUS ROG</button>
+                <button class="brand-chip" onclick="filterCategory('Laptop')">🐉 MSI Gaming</button>
+                <button class="brand-chip" onclick="filterCategory('Processor')">⚡ Intel</button>
+                <button class="brand-chip" onclick="filterCategory('Mouse')">🖱️ Logitech G</button>
+                <button class="brand-chip" onclick="filterCategory('Keyboard')">⌨️ Razer</button>
+                <button class="brand-chip" onclick="filterCategory('Monitor')">🖥️ Samsung Odyssey</button>
+                <button class="brand-chip" onclick="filterCategory('Headphone')">🎧 HyperX</button>
+                <button class="brand-chip" onclick="filterCategory('SSD')">⚡ Western Digital</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHOP BY CATEGORIES GRID -->
+    <section id="categories" class="categories-section">
+        <div class="section-title">
+            <h2>Explore By Category</h2>
+            <p>Find genuine gaming laptops, mechanical gear, and premium PC components</p>
+        </div>
+
+        <div class="categories-grid">
+            <div class="cat-card-item" onclick="filterCategory('Laptop'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-laptop"></i></div>
+                <h4>Laptops</h4>
+                <span>Gaming & Ultrabooks</span>
+            </div>
+            <div class="cat-card-item" onclick="filterCategory('Keyboard'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-keyboard"></i></div>
+                <h4>Keyboards</h4>
+                <span>RGB Mechanical</span>
+            </div>
+            <div class="cat-card-item" onclick="filterCategory('Mouse'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-computer-mouse"></i></div>
+                <h4>Gaming Mice</h4>
+                <span>Wireless & Ultra-light</span>
+            </div>
+            <div class="cat-card-item" onclick="filterCategory('Headphone'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-headphones"></i></div>
+                <h4>Audio & Headsets</h4>
+                <span>7.1 Spatial Audio</span>
+            </div>
+            <div class="cat-card-item" onclick="filterCategory('Monitor'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-desktop"></i></div>
+                <h4>Displays</h4>
+                <span>4K & Curved 240Hz</span>
+            </div>
+            <div class="cat-card-item" onclick="filterCategory('SSD'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-hard-drive"></i></div>
+                <h4>NVMe SSDs</h4>
+                <span>High-Speed Storage</span>
+            </div>
+            <div class="cat-card-item" onclick="filterCategory('Graphics Card'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-memory"></i></div>
+                <h4>Graphics Cards</h4>
+                <span>RTX 40-Series</span>
+            </div>
+            <div class="cat-card-item" onclick="filterCategory('Processor'); document.getElementById('products').scrollIntoView({behavior:'smooth'});">
+                <div class="cat-card-icon"><i class="fa-solid fa-microchip"></i></div>
+                <h4>Processors</h4>
+                <span>Intel & High Core</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEAL OF THE DAY (SPOTLIGHT) -->
+    <section id="deals" class="deal-section">
+        <div class="deal-card">
+            <div class="deal-content">
+                <span style="background:rgba(239,68,68,0.25); color:#fca5a5; font-size:12px; font-weight:800; padding:5px 14px; border-radius:15px; text-transform:uppercase; letter-spacing:0.5px;">
+                    ⚡ Deal of the Day • Limited Stock
+                </span>
+                <h3>Asus ROG Strix Gaming Laptop</h3>
+                <p style="color:#cbd5e1; font-size:15px; line-height:1.65;">
+                    Ultra-powerful gaming laptop with Core i7, 16GB DDR5 high-speed memory, RTX 4060 ray-tracing GPU, and RGB Aura Sync Keyboard.
+                </p>
+                <div class="deal-price-row">
+                    <span class="deal-price">৳ 165,000</span>
+                    <span class="deal-old-price">৳ 185,000</span>
+                    <span class="deal-badge-save">Save ৳20,000</span>
+                </div>
+                <div style="font-size:13px; color:#e2e8f0; display:flex; justify-content:space-between;">
+                    <span>🔥 Stock Claimed: <b>78%</b></span>
+                    <span>Only <b>3 Left</b> at this price</span>
+                </div>
+                <div class="deal-progress-bar">
+                    <div class="deal-progress-fill"></div>
+                </div>
+                <button onclick="addToCartById(25)" style="margin-top:22px; background:#f59e0b; color:#0f172a; border:none; padding:15px 32px; border-radius:var(--radius-full); font-weight:800; cursor:pointer; font-size:15px; box-shadow:0 8px 25px rgba(245,158,11,0.45); display:inline-flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-cart-shopping"></i> Grab This Deal Now
+                </button>
+            </div>
+            <div style="text-align:center;">
+                <img src="images/laptop.jpg" alt="Deal laptop" style="max-width:100%; max-height:280px; object-fit:contain; filter:drop-shadow(0 20px 35px rgba(0,0,0,0.65));">
+            </div>
         </div>
     </section>
 
@@ -69,29 +311,29 @@
         <div class="trust-item">
             <div class="trust-icon"><i class="fa-solid fa-truck-fast"></i></div>
             <div class="trust-text">
-                <h4>Express Delivery</h4>
-                <p>24-48 Hours across Bangladesh</p>
+                <h4>Express Nationwide Delivery</h4>
+                <p>24-48 Hours delivery across all 64 districts in Bangladesh</p>
             </div>
         </div>
         <div class="trust-item">
             <div class="trust-icon"><i class="fa-solid fa-shield-halved"></i></div>
             <div class="trust-text">
-                <h4>100% Genuine</h4>
-                <p>Official Brand Warranty</p>
+                <h4>100% Genuine Guaranteed</h4>
+                <p>Official manufacturer warranty & authentic serial numbers</p>
             </div>
         </div>
         <div class="trust-item">
             <div class="trust-icon"><i class="fa-solid fa-arrow-rotate-left"></i></div>
             <div class="trust-text">
-                <h4>7 Days Return</h4>
-                <p>Hassle-free replacement</p>
+                <h4>7-Day Replacement Policy</h4>
+                <p>Hassle-free replacement for any verified defect</p>
             </div>
         </div>
         <div class="trust-item">
             <div class="trust-icon"><i class="fa-solid fa-wallet"></i></div>
             <div class="trust-text">
-                <h4>Flexible Payment</h4>
-                <p>COD / bKash / Cards</p>
+                <h4>Flexible Secure Payment</h4>
+                <p>Cash on Delivery, bKash, Nagad, Visa & MasterCard</p>
             </div>
         </div>
     </div>
@@ -99,19 +341,19 @@
     <!-- SPECIAL OFFER BANNER -->
     <div id="offer">
         <div>
-            <h2>🔥 Mega Gaming Offer 🔥</h2>
+            <h2>🔥 Mega Welcome Offer 🔥</h2>
             <p>Get instant <b>৳500 OFF</b> on orders over ৳2,000 using promo code <b>WELCOME500</b></p>
         </div>
-        <button onclick="toggleCartDrawer(true)" style="background:#2563eb; color:white; padding:12px 24px; border-radius:30px; border:none; font-weight:700; cursor:pointer;">
-            Claim Offer 🎁
+        <button onclick="claimWelcomeCoupon()">
+            Claim ৳500 OFF 🎁
         </button>
     </div>
 
-    <!-- PRODUCTS SECTION -->
+    <!-- PRODUCTS CATALOG SECTION -->
     <section id="products">
         <div class="section-title">
-            <h2>Featured Catalog</h2>
-            <p id="productCountBadge">Loading products from backend API...</p>
+            <h2>Featured Tech Catalog</h2>
+            <p id="productCountBadge">Loading products from database...</p>
         </div>
 
         <!-- CONTROLS BAR -->
@@ -123,6 +365,8 @@
                 <button class="cat-btn" onclick="filterCategory('Mouse', this)">🖱️ Mice</button>
                 <button class="cat-btn" onclick="filterCategory('Headphone', this)">🎧 Headphones</button>
                 <button class="cat-btn" onclick="filterCategory('Monitor', this)">🖥️ Monitors</button>
+                <button class="cat-btn" onclick="filterCategory('SSD', this)">⚡ Storage</button>
+                <button class="cat-btn" onclick="filterCategory('Graphics Card', this)">🎮 GPUs</button>
                 <button class="cat-btn" onclick="filterCategory('Speaker', this)">🔊 Audio</button>
             </div>
 
@@ -138,7 +382,125 @@
 
         <!-- PRODUCTS GRID -->
         <div class="products">
-            <!-- Dynamic REST API Product Cards -->
+            <!-- Dynamic REST API / LocalStorage Product Cards Rendered by script.js -->
+        </div>
+    </section>
+
+    <!-- CUSTOMER REVIEWS & TESTIMONIALS -->
+    <section class="testimonials-section">
+        <div class="section-title">
+            <h2>⭐ Verified Buyer Reviews</h2>
+            <p>Read what verified tech enthusiasts across Bangladesh say about shopping with TechVerse</p>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar">TI</div>
+                    <div class="testimonial-info">
+                        <h4>Tanvir Islam</h4>
+                        <small><i class="fa-solid fa-circle-check"></i> Verified Purchase • Dhaka</small>
+                    </div>
+                </div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-body">
+                    "Bought the Asus ROG Strix laptop. Got it delivered within 24 hours in Dhanmondi. Box was factory sealed with authentic warranty papers. Super satisfied!"
+                </p>
+                <small style="color:var(--primary); font-weight:700; margin-top:10px; display:block;">Purchased: Asus ROG Strix G16</small>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar" style="background:linear-gradient(135deg, #10b981, #059669);">ZR</div>
+                    <div class="testimonial-info">
+                        <h4>Ziniya Richi</h4>
+                        <small><i class="fa-solid fa-circle-check"></i> Verified Purchase • Cumilla</small>
+                    </div>
+                </div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-body">
+                    "Ordered mechanical RGB keyboard and wireless mouse. The packaging was top-notch and delivery to Cumilla took only 2 days. The coupon code worked instantly!"
+                </p>
+                <small style="color:var(--primary); font-weight:700; margin-top:10px; display:block;">Purchased: RGB Keyboard & Mouse</small>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar" style="background:linear-gradient(135deg, #f59e0b, #d97706);">AH</div>
+                    <div class="testimonial-info">
+                        <h4>Arif Hossain</h4>
+                        <small><i class="fa-solid fa-circle-check"></i> Verified Purchase • Chittagong</small>
+                    </div>
+                </div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-body">
+                    "Customer service helpline answered right away when I asked about SSD compatibility. Paid via bKash and received instant invoice receipt. 10/10 service."
+                </p>
+                <small style="color:var(--primary); font-weight:700; margin-top:10px; display:block;">Purchased: 1TB NVMe High-Speed SSD</small>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed);">SN</div>
+                    <div class="testimonial-info">
+                        <h4>Sadia Nusrat</h4>
+                        <small><i class="fa-solid fa-circle-check"></i> Verified Purchase • Sylhet</small>
+                    </div>
+                </div>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-body">
+                    "HyperX Cloud II headphone sounds incredible for both competitive gaming and meetings. Very prompt delivery and cash on delivery option made it worry-free."
+                </p>
+                <small style="color:var(--primary); font-weight:700; margin-top:10px; display:block;">Purchased: HyperX Gaming Headset</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION (INTERACTIVE ACCORDION) -->
+    <section id="faq" class="faq-section">
+        <div class="section-title">
+            <h2>❓ Frequently Asked Questions</h2>
+            <p>Everything you need to know about purchasing, warranty, and delivery</p>
+        </div>
+
+        <div class="faq-item active" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>🚚 How long does express delivery take in Bangladesh?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                Inside Dhaka metropolitan area, orders are typically delivered within 24 to 36 hours. For areas outside Dhaka, deliveries take 48 to 72 hours via our partnered express courier services with real-time tracking.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>🛡️ What kind of warranty do you provide?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                All products sold on TechVerse are 100% genuine with official brand warranty. Laptops carry 2 years official warranty, monitors 3 years, and peripherals 1 to 2 years warranty with full service support.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>💳 What payment options do you support?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                We accept Cash on Delivery (COD), bKash, Nagad, Rocket, as well as Visa, Mastercard, and American Express credit/debit cards.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                <span>🔄 What is your 7-day replacement policy?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                If your product arrives damaged or encounters any manufacturing defect within 7 days of receiving it, simply contact our helpline or email us with your invoice, and we will arrange an instant replacement.
+            </div>
         </div>
     </section>
 
@@ -148,80 +510,151 @@
             <h2>ℹ️ About TechVerse</h2>
             <p>Bangladesh's Premier Online Computer & Tech Retailer</p>
         </div>
-        <p style="max-width:800px; margin:0 auto; font-size:16px; line-height:1.7; color:var(--text-muted);">
+        <p style="max-width:850px; margin:0 auto; font-size:16px; line-height:1.75; color:var(--text-muted); text-align:center;">
             TechVerse is an authorized distributor and online store bringing cutting-edge technology, authentic laptops,
             gaming accessories, components, and gadgets to customers across Bangladesh. We ensure 100% genuine products,
-            official brand warranty, and dedicated customer service.
+            official brand warranty, transparent pricing, and dedicated customer service.
         </p>
     </section>
 
     <!-- CONTACT SECTION -->
     <section id="contact">
         <div class="section-title">
-            <h2>📩 Contact Us</h2>
-            <p>Get in touch with our tech specialists</p>
+            <h2>📩 Contact Tech Specialists</h2>
+            <p>Have questions about compatibility or bulk orders? Send us a message</p>
         </div>
 
-        <div style="display:flex; justify-content:center; gap:30px; margin-bottom:20px; flex-wrap:wrap;">
+        <div style="display:flex; justify-content:center; gap:35px; margin-bottom:25px; flex-wrap:wrap; font-size:14.5px;">
             <div>📧 <b>Email:</b> support@techverse.com</div>
-            <div>📞 <b>Phone:</b> +8801820727102</div>
-            <div>📍 <b>Address:</b> Khilgaon, Dhaka, Bangladesh</div>
+            <div>📞 <b>Helpline:</b> +880 1820-727102</div>
+            <div>📍 <b>Store:</b> Level 4, Multiplan Center, Dhaka</div>
         </div>
 
         <form>
-            <input type="text" placeholder="👤 Your Full Name" required>
-            <input type="email" placeholder="📧 Your Email Address" required>
-            <textarea rows="4" placeholder="💬 Your Message or Query" required></textarea>
-            <button type="submit" style="width:100%; background:var(--primary); color:white; padding:14px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">
+            <input type="text" placeholder="👤 Your Full Name *" required>
+            <input type="email" placeholder="📧 Your Email Address *" required>
+            <textarea rows="4" placeholder="💬 Your Message or Inquiry *" required></textarea>
+            <button type="submit" style="width:100%; background:var(--primary); color:white; padding:14px; border-radius:var(--radius-sm); font-weight:800; border:none; cursor:pointer; font-size:15px; box-shadow:0 6px 20px rgba(37,99,235,0.35);">
                 Send Message 🚀
             </button>
         </form>
     </section>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2026 TechVerse Online Tech Store | All Rights Reserved.</p>
-        <p style="margin-top:6px; font-size:14px;">Designed by <b>Md Yeasin Bhuiyan</b></p>
-        
-        <br>
-        <h3 style="font-size:18px; margin-bottom:10px;">🌐 Follow Us</h3>
-        <p style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; font-size:16px;">
-            <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i> Facebook</a>
-            <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
-            <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
-            <a href="https://twitter.com" target="_blank"><i class="fab fa-x-twitter"></i> Twitter</a>
-        </p>
+    <!-- RICH 4-COLUMN E-COMMERCE FOOTER -->
+    <footer class="rich-footer">
+        <div class="footer-top-grid">
+            <div class="footer-col">
+                <h3 style="font-size:22px; color:white; display:flex; align-items:center; gap:10px;">
+                    💻 TechVerse
+                </h3>
+                <p style="font-size:13.5px; line-height:1.65; margin-bottom:16px;">
+                    Bangladesh's leading authorized destination for genuine gaming laptops, high-performance PC components, and authentic gadgets.
+                </p>
+                <div style="font-size:13px; line-height:1.8;">
+                    <div><i class="fa-solid fa-phone" style="color:var(--primary);"></i> Helpline: <b>+880 1820-727102</b></div>
+                    <div><i class="fa-solid fa-envelope" style="color:var(--primary);"></i> support@techverse.com</div>
+                    <div><i class="fa-solid fa-clock" style="color:var(--primary);"></i> 10:00 AM - 08:00 PM (Everyday)</div>
+                </div>
+            </div>
 
-        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.2); margin:20px 0;">
-        <p style="font-size:14px; opacity:0.9;">❤️‍🔥 Thank you for visiting TechVerse ❤️</p>
+            <div class="footer-col">
+                <h3>Popular Categories</h3>
+                <ul>
+                    <li><a href="#products" onclick="filterCategory('Laptop')">Gaming Laptops</a></li>
+                    <li><a href="#products" onclick="filterCategory('Keyboard')">Mechanical Keyboards</a></li>
+                    <li><a href="#products" onclick="filterCategory('Mouse')">Precision Gaming Mice</a></li>
+                    <li><a href="#products" onclick="filterCategory('Headphone')">Headsets & Audio</a></li>
+                    <li><a href="#products" onclick="filterCategory('Monitor')">Curved & 4K Displays</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="javascript:void(0)" onclick="toggleTrackModal(true)">Track Order Status</a></li>
+                    <li><a href="#faq">Warranty & Support FAQ</a></li>
+                    <li><a href="#about">About TechVerse</a></li>
+                    <li><a href="#contact">Contact Helpline</a></li>
+                    <li><a href="javascript:void(0)" onclick="toggleAdminModal(true)">Admin Control Portal</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Get Exclusive Deals</h3>
+                <p style="font-size:13px;">Subscribe for insider discounts, new product arrivals, and flash sales alerts.</p>
+                <div class="newsletter-form">
+                    <input type="email" id="newsletterEmail" placeholder="Enter your email...">
+                    <button type="button" onclick="subscribeNewsletter()">Join</button>
+                </div>
+
+                <div class="payment-partners-badge">
+                    <span style="font-size:12px; font-weight:700; color:white;">Accepted Payment Gateways:</span>
+                    <div class="payment-badges-row">
+                        <span class="pay-badge">💵 Cash on Delivery</span>
+                        <span class="pay-badge" style="color:#e2136e; font-weight:800;">📱 bKash</span>
+                        <span class="pay-badge" style="color:#f7921e; font-weight:800;">📱 Nagad</span>
+                        <span class="pay-badge">💳 Visa / Master</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom-bar">
+            <div>© 2026 TechVerse Online Tech Store | All Rights Reserved.</div>
+            <div>Designed with ❤️ by <b>Md Yeasin Bhuiyan</b></div>
+            <div style="display:flex; gap:16px;">
+                <a href="https://facebook.com" target="_blank" style="color:#94a3b8;"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com" target="_blank" style="color:#94a3b8;"><i class="fab fa-instagram"></i></a>
+                <a href="https://youtube.com" target="_blank" style="color:#94a3b8;"><i class="fab fa-youtube"></i></a>
+                <a href="https://github.com/yasinbhuiyan1" target="_blank" style="color:#94a3b8;"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
     </footer>
 
     <!-- BACK TO TOP BUTTON -->
-    <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-        ⬆
+    <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">
+        <i class="fa-solid fa-arrow-up"></i>
     </button>
 
     <!-- SLIDE-OUT CART DRAWER -->
-    <div id="drawerOverlay" class="drawer-overlay" onclick="toggleCartDrawer(false)"></div>
+    <div id="drawerOverlay" class="drawer-overlay" onclick="toggleCartDrawer(false); toggleWishlistDrawer(false);"></div>
     <div id="cartDrawer" class="drawer">
         <div class="drawer-header">
-            <h3>🛒 Your Cart</h3>
+            <h3>🛒 Shopping Cart</h3>
             <span onclick="toggleCartDrawer(false)" style="font-size:24px; cursor:pointer; font-weight:700;">&times;</span>
         </div>
 
-        <div id="drawerCartItems" class="drawer-body">
+        <div class="drawer-body">
+            <!-- Free Shipping Progress Meter -->
+            <div class="free-shipping-meter" id="freeShippingMeterBox">
+                <div class="free-shipping-text">
+                    <span id="freeShippingText">Add ৳2,000 for FREE delivery</span>
+                    <span id="freeShippingPercent">0%</span>
+                </div>
+                <div class="free-shipping-bar">
+                    <div id="freeShippingFill" class="free-shipping-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+
             <!-- Items rendered by script.js -->
+            <div id="drawerCartItems"></div>
         </div>
 
         <div class="drawer-footer">
             <div class="coupon-box">
-                <input type="text" id="couponInput" placeholder="Coupon Code (e.g. TECHVERSE10)">
+                <input type="text" id="couponInput" placeholder="Coupon Code (e.g. WELCOME500)">
                 <button onclick="applyCouponCode()">Apply</button>
+            </div>
+
+            <div class="coupon-suggestions">
+                <span style="font-size:11.5px; color:var(--text-muted); align-self:center;">Try:</span>
+                <span class="coupon-chip" onclick="quickApplyCoupon('WELCOME500')">WELCOME500 (৳500 OFF)</span>
+                <span class="coupon-chip" onclick="quickApplyCoupon('TECHVERSE10')">TECHVERSE10 (10% OFF)</span>
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-size:13px; font-weight:700; display:block; margin-bottom:4px;">Delivery Location:</label>
-                <select onchange="updateShippingFee(this.value)" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                <select id="shippingLocationSelect" onchange="updateShippingFee(this.value)" style="width:100%; padding:9px; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color); font-weight:600;">
                     <option value="60">Inside Dhaka (৳60)</option>
                     <option value="120">Outside Dhaka (৳120)</option>
                 </select>
@@ -231,27 +664,69 @@
                 <span>Subtotal:</span>
                 <span id="drawerSubtotal">৳ 0</span>
             </div>
-            <div id="drawerDiscountRow" class="summary-row" style="display:none; color:var(--danger);">
+            <div id="drawerDiscountRow" class="summary-row" style="display:none; color:var(--danger); font-weight:700;">
                 <span>Discount:</span>
                 <span id="drawerDiscountAmount">- ৳ 0</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping:</span>
+                <span id="drawerShippingAmount">৳ 60</span>
             </div>
             <div class="summary-row total">
                 <span>Grand Total:</span>
                 <span id="drawerGrandTotal">৳ 0</span>
             </div>
 
-            <button onclick="openCheckoutModal()" style="width:100%; margin-top:15px; background:var(--primary); color:white; padding:14px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">
+            <button onclick="openCheckoutModal()" style="width:100%; margin-top:14px; background:var(--primary); color:white; padding:14px; border-radius:var(--radius-sm); font-weight:800; border:none; cursor:pointer; font-size:15px; box-shadow:0 6px 20px rgba(37,99,235,0.35);">
                 Proceed to Checkout ➡️
             </button>
         </div>
     </div>
 
+    <!-- SLIDE-OUT WISHLIST DRAWER -->
+    <div id="wishlistDrawer" class="drawer">
+        <div class="drawer-header">
+            <h3>❤️ Saved Wishlist</h3>
+            <span onclick="toggleWishlistDrawer(false)" style="font-size:24px; cursor:pointer; font-weight:700;">&times;</span>
+        </div>
+        <div id="drawerWishlistItems" class="drawer-body">
+            <!-- Wishlist rendered by script.js -->
+        </div>
+        <div class="drawer-footer">
+            <button onclick="toggleWishlistDrawer(false); document.getElementById('products').scrollIntoView({behavior:'smooth'});" style="width:100%; background:var(--primary); color:white; padding:13px; border-radius:var(--radius-sm); font-weight:700; border:none; cursor:pointer;">
+                Continue Shopping 🛍️
+            </button>
+        </div>
+    </div>
+
+    <!-- ORDER TRACKING MODAL -->
+    <div id="trackModal" class="modal">
+        <div class="modal-content" style="max-width:580px;">
+            <span class="close-modal" onclick="toggleTrackModal(false)">&times;</span>
+            <h2 style="color:var(--primary); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-truck-ramp-box"></i> Track Your Order
+            </h2>
+            <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:16px;">
+                Enter your Order ID (e.g. <b>TV-108809</b>) from your invoice to track real-time dispatch and delivery status:
+            </p>
+            <form onsubmit="trackOrderSubmit(event)" style="display:flex; gap:10px; margin-bottom:20px;">
+                <input type="text" id="trackInput" placeholder="Enter Order ID (e.g. TV-108809)" required style="flex:1; padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color); font-weight:700; text-transform:uppercase;">
+                <button type="submit" style="background:var(--primary); color:white; border:none; padding:12px 22px; border-radius:var(--radius-sm); font-weight:700; cursor:pointer;">
+                    Track
+                </button>
+            </form>
+            <div id="trackResult">
+                <!-- Dynamic Visual Stepper & Order Details -->
+            </div>
+        </div>
+    </div>
+
     <!-- QUICK VIEW MODAL -->
     <div id="quickModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width:700px;">
             <span class="close-modal" onclick="toggleQuickModal(false)">&times;</span>
             <div id="quickViewContent">
-                <!-- Content dynamically filled -->
+                <!-- Content dynamically filled by script.js -->
             </div>
         </div>
     </div>
@@ -260,20 +735,26 @@
     <div id="checkoutModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="toggleCheckoutModal(false)">&times;</span>
-            <h2 style="color:var(--primary); margin-bottom:15px;">📦 Customer Shipping & Payment</h2>
+            <h2 style="color:var(--primary); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                📦 Customer Shipping & Payment
+            </h2>
             <form id="checkoutForm" onsubmit="submitOrder(event)">
-                <input type="text" id="custName" placeholder="👤 Full Name" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border-color);">
-                <input type="tel" id="custPhone" placeholder="📞 Mobile Phone Number" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border-color);">
-                <input type="text" id="custAddress" placeholder="📍 Full Delivery Address" required style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border-color);">
+                <input type="text" id="custName" placeholder="👤 Full Name *" required style="width:100%; padding:11px; margin-bottom:12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                <input type="tel" id="custPhone" placeholder="📞 Mobile Phone Number *" required style="width:100%; padding:11px; margin-bottom:12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                <input type="text" id="custAddress" placeholder="📍 Delivery Address (House, Road, Area, City) *" required style="width:100%; padding:11px; margin-bottom:12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
                 
-                <label style="font-size:14px; font-weight:700; display:block; margin-bottom:6px;">Payment Method:</label>
-                <select id="paymentMethod" style="width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
+                <label style="font-size:13.5px; font-weight:700; display:block; margin-bottom:6px;">Select Payment Method:</label>
+                <select id="paymentMethod" onchange="handlePaymentMethodChange(this.value)" style="width:100%; padding:11px; margin-bottom:14px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color); font-weight:600;">
                     <option value="Cash on Delivery">💵 Cash on Delivery (COD)</option>
-                    <option value="bKash / Nagad / Rocket">📱 bKash / Nagad / Rocket</option>
-                    <option value="Credit/Debit Card">💳 Credit / Debit Card</option>
+                    <option value="bKash / Nagad / Rocket">📱 bKash / Nagad / Rocket (Mobile Banking)</option>
+                    <option value="Credit/Debit Card">💳 Credit / Debit Card (Visa, MasterCard)</option>
                 </select>
 
-                <button type="submit" style="width:100%; background:var(--success); color:white; padding:14px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">
+                <div id="mobilePayInstructions" style="display:none; background:rgba(226,19,110,0.1); border:1px solid #e2136e; padding:12px; border-radius:var(--radius-sm); margin-bottom:14px; font-size:13px; line-height:1.5;">
+                    📱 Please send money to TechVerse Merchant number: <b>01820-727102</b> and enter your transaction ID in the delivery address notes.
+                </div>
+
+                <button type="submit" style="width:100%; background:var(--success); color:white; padding:14px; border-radius:var(--radius-sm); font-weight:800; border:none; cursor:pointer; font-size:15px; box-shadow:0 6px 20px rgba(16,185,129,0.35);">
                     ✅ Confirm Order Now
                 </button>
             </form>
@@ -285,28 +766,31 @@
         <div class="modal-content" style="max-width:760px; padding:25px;">
             <span class="close-modal no-print" onclick="toggleInvoiceModal(false)">&times;</span>
             <div id="invoiceContent">
-                <!-- Receipt content filled dynamically -->
+                <!-- Receipt content filled dynamically by script.js -->
             </div>
             <div class="no-print" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:15px;">
-                <button onclick="toggleInvoiceModal(false)" style="background:var(--bg-main); color:var(--text-color); padding:10px 22px; border-radius:6px; border:1px solid var(--border-color); font-weight:600; cursor:pointer;">✖ Close</button>
-                <button onclick="window.print()" style="background:var(--primary); color:white; padding:11px 28px; border-radius:6px; border:none; font-weight:700; cursor:pointer; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;">🖨️ Print Invoice Receipt</button>
+                <button onclick="toggleInvoiceModal(false)" style="background:var(--card-elevated); color:var(--text-color); padding:10px 22px; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-weight:700; cursor:pointer;">✖ Close</button>
+                <button onclick="window.print()" style="background:var(--primary); color:white; padding:11px 28px; border-radius:var(--radius-sm); border:none; font-weight:700; cursor:pointer; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;">🖨️ Print Invoice Receipt</button>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN DASHBOARD MODAL -->
+    <!-- ADMIN CONTROL SUITE MODAL -->
     <div id="adminModal" class="modal">
-        <div class="modal-content" style="max-width:780px;">
+        <div class="modal-content" style="max-width:800px;">
             <span class="close-modal" onclick="toggleAdminModal(false)">&times;</span>
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px; padding-right:30px;">
-                <h2 style="color:var(--primary); margin:0;">⚙️ Admin Control Suite</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px; padding-right:30px;">
+                <h2 style="color:var(--primary); margin:0; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-gear"></i> Admin Control Center
+                </h2>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span id="backendStatusBadge" style="font-size:12px; font-weight:700; padding:4px 12px; border-radius:20px; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3);">🟢 Live Backend</span>
-                    <button type="button" onclick="loadAdminData()" title="Refresh Dashboard" style="background:var(--bg-main); border:1px solid var(--border-color); color:var(--text-color); padding:5px 12px; border-radius:6px; font-weight:600; cursor:pointer;">🔄 Refresh</button>
+                    <button type="button" onclick="loadAdminData()" title="Refresh Dashboard" style="background:var(--card-elevated); border:1px solid var(--border-color); color:var(--text-color); padding:5px 12px; border-radius:var(--radius-sm); font-weight:600; cursor:pointer;">🔄 Refresh</button>
                 </div>
             </div>
 
-            <div class="stat-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+            <!-- Stats Grid -->
+            <div class="stat-grid">
                 <div class="stat-card" style="background:linear-gradient(135deg, #0d6efd, #0284c7);">
                     <h3 id="statProducts">0</h3>
                     <small>Total Products</small>
@@ -321,33 +805,36 @@
                 </div>
                 <div class="stat-card" style="background:linear-gradient(135deg, #f59e0b, #d97706);">
                     <h3 id="statRevenue">৳ 0</h3>
-                    <small>Total Sales Revenue</small>
+                    <small>Sales Revenue</small>
                 </div>
                 <div class="stat-card" style="background:linear-gradient(135deg, #06b6d4, #0891b2);">
                     <h3 id="statMessages">0</h3>
-                    <small>Customer Messages</small>
+                    <small>Inquiries</small>
                 </div>
             </div>
 
+            <!-- Admin Tabs -->
             <div class="admin-tabs">
                 <button class="admin-tab active" onclick="switchAdminTab('orders', this)">📋 Customer Orders</button>
-                <button class="admin-tab" onclick="switchAdminTab('products', this)">📦 Manage Products (Delete)</button>
-                <button class="admin-tab" onclick="switchAdminTab('messages', this)">💬 Customer Messages</button>
+                <button class="admin-tab" onclick="switchAdminTab('products', this)">📦 Manage Products</button>
+                <button class="admin-tab" onclick="switchAdminTab('messages', this)">💬 Customer Inquiries</button>
             </div>
 
-            <div id="adminOrdersList" style="max-height: 280px; overflow-y: auto; margin-bottom: 20px;">
-                <!-- Filled dynamically -->
+            <!-- Dynamic Tab Content -->
+            <div id="adminOrdersList" style="max-height: 290px; overflow-y: auto; margin-bottom: 20px;">
+                <!-- Filled dynamically by script.js -->
             </div>
 
-            <div style="border-top:1px solid var(--border-color); padding-top:15px;">
-                <h4 style="color:var(--primary); margin-bottom:10px;">➕ Add Product to Live Store</h4>
+            <!-- Add Product Section -->
+            <div style="border-top:1px solid var(--border-color); padding-top:16px;">
+                <h4 style="color:var(--primary); margin-bottom:12px;">➕ Add Product to Live Store</h4>
                 <form id="addProductForm" onsubmit="submitAddProduct(event)" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <input type="text" id="prodName" placeholder="Product Name *" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
-                    <input type="text" id="prodCategory" placeholder="Category (e.g. Laptop) *" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
-                    <input type="number" id="prodPrice" placeholder="Selling Price (BDT) *" required style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
-                    <input type="number" id="prodOldPrice" placeholder="Regular Price (Optional BDT)" style="padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
-                    <input type="text" id="prodImage" placeholder="Image URL (e.g. images/laptop.jpg)" value="images/laptop.jpg" style="grid-column: span 2; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-color);">
-                    <button type="submit" style="grid-column: span 2; background:var(--primary); color:white; padding:12px; border-radius:6px; border:none; font-weight:700; cursor:pointer;">
+                    <input type="text" id="prodName" placeholder="Product Name *" required style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    <input type="text" id="prodCategory" placeholder="Category (e.g. Laptop) *" required style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    <input type="number" id="prodPrice" placeholder="Selling Price (BDT) *" required style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    <input type="number" id="prodOldPrice" placeholder="Regular Price (Optional BDT)" style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    <input type="text" id="prodImage" placeholder="Image URL (e.g. images/laptop.jpg)" value="images/laptop.jpg" style="grid-column: span 2; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    <button type="submit" style="grid-column: span 2; background:var(--primary); color:white; padding:12px; border-radius:var(--radius-sm); border:none; font-weight:800; cursor:pointer;">
                         ➕ Add Product to Live Store & Database
                     </button>
                 </form>
