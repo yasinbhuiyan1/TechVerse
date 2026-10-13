@@ -1,0 +1,50 @@
+[
+  {
+    "id": "SMS-1791877308815",
+    "orderId": "TV-348832",
+    "customerName": "Md Yeasin Bhuiyan",
+    "recipientPhone": "01820727102",
+    "standardPhone": "8801820727102",
+    "eventType": "DELIVERED",
+    "message": "TechVerse: প্রিয় Md Yeasin Bhuiyan, আপনার TechVerse অর্ডার #TV-348832 সফলভাবে ডেলিভার করা হয়েছে! অফিসিয়াল ওয়ারেন্টির জন্য রশিদটি সংরক্ষণ করুন। আমাদের সাথে কেনাকাটার জন্য ধন্যবাদ!",
+    "whatsappUrl": "https://api.whatsapp.com/send?phone=8801820727102&text=TechVerse%3A%20%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%BF%E0%A6%AF%E0%A6%BC%20Md%20Yeasin%20Bhuiyan%2C%20%E0%A6%86%E0%A6%AA%E0%A6%A8%E0%A6%BE%E0%A6%B0%20TechVerse%20%E0%A6%85%E0%A6%B0%E0%A7%8D%E0%A6%A1%E0%A6%BE%E0%A6%B0%20%23TV-348832%20%E0%A6%B8%E0%A6%AB%E0%A6%B2%E0%A6%AD%E0%A6%BE%E0%A6%AC%E0%A7%87%20%E0%A6%A1%E0%A7%87%E0%A6%B2%E0%A6%BF%E0%A6%AD%E0%A6%BE%E0%A6%B0%20%E0%A6%95%E0%A6%B0%E0%A6%BE%20%E0%A6%B9%E0%A6%AF%E0%A6%BC%E0%A7%87%E0%A6%9B%E0%A7%87!%20%E0%A6%85%E0%A6%AB%E0%A6%BF%E0%A6%B8%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B2%20%E0%A6%93%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B0%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%BF%E0%A6%B0%20%E0%A6%9C%E0%A6%A8%E0%A7%8D%E0%A6%AF%20%E0%A6%B0%E0%A6%B6%E0%A6%BF%E0%A6%A6%E0%A6%9F%E0%A6%BF%20%E0%A6%B8%E0%A6%82%E0%A6%B0%E0%A6%95%E0%A7%8D%E0%A6%B7%E0%A6%A3%20%E0%A6%95%E0%A6%B0%E0%A7%81%E0%A6%A8%E0%A5%A4%20%E0%A6%86%E0%A6%AE%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B0%20%E0%A6%B8%E0%A6%BE%E0%A6%A5%E0%A7%87%20%E0%A6%95%E0%A7%87%E0%A6%A8%E0%A6%BE%E0%A6%95%E0%A6%BE%E0%A6%9F%E0%A6%BE%E0%A6%B0%20%E0%A6%9C%E0%A6%A8%E0%A7%8D%E0%A6%AF%20%E0%A6%A7%E0%A6%A8%E0%A7%8D%E0%A6%AF%E0%A6%AC%E0%A6%BE%E0%A6%A6!",
+    "status": "Dispatched (Sent)",
+    "timestamp": "2026-10-13T07:41:48.815Z"
+  },
+  {
+    "id": "SMS-1791877291826",
+    "orderId": "TV-348832",
+    "customerName": "Md Yeasin Bhuiyan",
+    "recipientPhone": "01820727102",
+    "standardPhone": "8801820727102",
+    "eventType": "OUT_FOR_DELIVERY",
+    "message": "TechVerse: প্রিয় Md Yeasin Bhuiyan, আপনার অর্ডার #TV-348832 আজ ডেলিভারির জন্য বের হয়েছে! আনুমানিক সময়: দুপুর ২টা - সন্ধ্যা ৬টা। ক্যাশ বিল: ৳120,060 প্রস্তুত রাখুন। হেল্পলাইন: 01820-727102",
+    "whatsappUrl": "https://api.whatsapp.com/send?phone=8801820727102&text=TechVerse%3A%20%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%BF%E0%A6%AF%E0%A6%BC%20Md%20Yeasin%20Bhuiyan%2C%20%E0%A6%86%E0%A6%AA%E0%A6%A8%E0%A6%BE%E0%A6%B0%20%E0%A6%85%E0%A6%B0%E0%A7%8D%E0%A6%A1%E0%A6%BE%E0%A6%B0%20%23TV-348832%20%E0%A6%86%E0%A6%9C%20%E0%A6%A1%E0%A7%87%E0%A6%B2%E0%A6%BF%E0%A6%AD%E0%A6%BE%E0%A6%B0%E0%A6%BF%E0%A6%B0%20%E0%A6%9C%E0%A6%A8%E0%A7%8D%E0%A6%AF%20%E0%A6%AC%E0%A7%87%E0%A6%B0%20%E0%A6%B9%E0%A6%AF%E0%A6%BC%E0%A7%87%E0%A6%9B%E0%A7%87!%20%E0%A6%86%E0%A6%A8%E0%A7%81%E0%A6%AE%E0%A6%BE%E0%A6%A8%E0%A6%BF%E0%A6%95%20%E0%A6%B8%E0%A6%AE%E0%A6%AF%E0%A6%BC%3A%20%E0%A6%A6%E0%A7%81%E0%A6%AA%E0%A7%81%E0%A6%B0%20%E0%A7%A8%E0%A6%9F%E0%A6%BE%20-%20%E0%A6%B8%E0%A6%A8%E0%A7%8D%E0%A6%A7%E0%A7%8D%E0%A6%AF%E0%A6%BE%20%E0%A7%AC%E0%A6%9F%E0%A6%BE%E0%A5%A4%20%E0%A6%95%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%B6%20%E0%A6%AC%E0%A6%BF%E0%A6%B2%3A%20%E0%A7%B3120%2C060%20%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%B8%E0%A7%8D%E0%A6%A4%E0%A7%81%E0%A6%A4%20%E0%A6%B0%E0%A6%BE%E0%A6%96%E0%A7%81%E0%A6%A8%E0%A5%A4%20%E0%A6%B9%E0%A7%87%E0%A6%B2%E0%A7%8D%E0%A6%AA%E0%A6%B2%E0%A6%BE%E0%A6%87%E0%A6%A8%3A%2001820-727102",
+    "status": "Dispatched (Sent)",
+    "timestamp": "2026-10-13T07:41:31.826Z"
+  },
+  {
+    "id": "SMS-1789908120000",
+    "orderId": "TV-348832",
+    "customerName": "Md Yeasin Bhuiyan",
+    "recipientPhone": "01820727102",
+    "standardPhone": "8801820727102",
+    "eventType": "ORDER_PLACED",
+    "message": "TechVerse: প্রিয় Md Yeasin Bhuiyan, আপনার অর্ডার #TV-348832 সফলভাবে গৃহীত হয়েছে! আইটেম: Gaming Laptop (x1)। মোট বিল: ৳120,060 (Cash on Delivery)। ডেলিভারি: ২৪-৪৮ ঘণ্টার মধ্যে। হেল্পলাইন: 01820-727102",
+    "whatsappUrl": "https://api.whatsapp.com/send?phone=8801820727102&text=TechVerse%3A%20%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%BF%E0%A6%AF%E0%A6%BC%20Md%20Yeasin%20Bhuiyan%2C%20%E0%A6%86%E0%A6%AA%E0%A6%A8%E0%A6%BE%E0%A6%B0%20%E0%A6%85%E0%A6%B0%E0%A7%8D%E0%A6%A1%E0%A6%BE%E0%A6%B0%20%23TV-348832%20%E0%A6%B8%E0%A6%AB%E0%A6%B2%E0%A6%AD%E0%A6%BE%E0%A6%AC%E0%A7%87%20%E0%A6%97%E0%A7%83%E0%A6%B9%E0%A7%80%E0%A6%A4%20%E0%A6%B9%E0%A6%AF%E0%A6%BC%E0%A7%87%E0%A6%9B%E0%A7%87!",
+    "status": "Dispatched (Sent)",
+    "timestamp": "2026-10-13T07:19:11.000Z"
+  },
+  {
+    "id": "SMS-1789908000000",
+    "orderId": "TV-108809",
+    "customerName": "Ziniya Islam Richi",
+    "recipientPhone": "01884443329",
+    "standardPhone": "8801884443329",
+    "eventType": "DELIVERED",
+    "message": "TechVerse: প্রিয় Ziniya Islam Richi, আপনার TechVerse অর্ডার #TV-108809 সফলভাবে ডেলিভার করা হয়েছে! অফিসিয়াল ওয়ারেন্টির জন্য রশিদটি সংরক্ষণ করুন। আমাদের সাথে কেনাকাটার জন্য ধন্যবাদ!",
+    "whatsappUrl": "https://api.whatsapp.com/send?phone=8801884443329&text=TechVerse%20Delivered",
+    "status": "Dispatched (Sent)",
+    "timestamp": "2026-09-20T19:16:18.000Z"
+  }
+]

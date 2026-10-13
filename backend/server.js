@@ -16,6 +16,7 @@ const productsFilePath = path.join(__dirname, 'data', 'products.json');
 const messagesFilePath = path.join(__dirname, 'data', 'messages.json');
 const ordersFilePath = path.join(__dirname, 'data', 'orders.json');
 const couponsFilePath = path.join(__dirname, 'data', 'coupons.json');
+const smsLogsFilePath = path.join(__dirname, 'data', 'sms_logs.json');
 
 // Safe JSON file reader
 const readJsonFile = (filePath, fallback = []) => {
@@ -216,6 +217,83 @@ app.post('/api/coupons/validate', (req, res) => {
 });
 
 
+// ==================== SMS NOTIFICATION ENGINE ====================
+
+// Build SMS Templates in Bengali
+const generateOrderSmsText = (order, eventType) => {
+  const itemsText = Array.isArray(order.items) 
+    ? order.items.map(i => `${i.name} (x${i.quantity || 1})`).join(', ') 
+    : 'Tech Accessories';
+  const total = Number(order.totalAmount || 0).toLocaleString();
+
+  switch (eventType) {
+    case 'ORDER_PLACED':
+      return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার অর্ডার #${order.orderId} সফলভাবে গৃহীত হয়েছে! আইটেম: ${itemsText}। মোট বিল: ৳${total} (${order.paymentMethod || 'COD'})। ডেলিভারি: ২৪-৪৮ ঘণ্টার মধ্যে। হেল্পলাইন: 01820-727102`;
+
+    case 'OUT_FOR_DELIVERY':
+      return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার অর্ডার #${order.orderId} আজ ডেলিভারির জন্য বের হয়েছে! আনুমানিক সময়: দুপুর ২টা - সন্ধ্যা ৬টা। ক্যাশ বিল: ৳${total} প্রস্তুত রাখুন। হেল্পলাইন: 01820-727102`;
+
+    case 'DELIVERED':
+      return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার TechVerse অর্ডার #${order.orderId} সফলভাবে ডেলিভার করা হয়েছে! অফিসিয়াল ওয়ারেন্টির জন্য রশিদটি সংরক্ষণ করুন। আমাদের সাথে কেনাকাটার জন্য ধন্যবাদ!`;
+
+    case 'PROCESSING':
+      return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার অর্ডার #${order.orderId} প্রসেসিং হচ্ছে এবং দ্রুত প্যাকিং সম্পন্ন করা হচ্ছে। হেল্পলাইন: 01820-727102`;
+
+    case 'CANCELLED':
+      return `TechVerse: আপনার অর্ডার #${order.orderId} বাতিল করা হয়েছে। যেকোনো প্রয়োজনে কল করুন: 01820-727102।`;
+
+    default:
+      return `TechVerse: আপনার অর্ডার #${order.orderId} স্ট্যাটাস আপডেট হয়েছে: ${eventType}। হেল্পলাইন: 01820-727102`;
+  }
+};
+
+// Dispatch SMS Function (Supports Gateway Hook + JSON Logs + WhatsApp Direct)
+const dispatchSmsNotification = (order, eventType) => {
+  if (!order || !order.customerPhone) return null;
+
+  const rawPhone = String(order.customerPhone).trim();
+  let cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+  if (cleanPhone.startsWith('880')) {
+    // Already has country code
+  } else if (cleanPhone.startsWith('0')) {
+    cleanPhone = '88' + cleanPhone;
+  } else if (cleanPhone.length === 10) {
+    cleanPhone = '880' + cleanPhone;
+  }
+
+  const messageText = generateOrderSmsText(order, eventType);
+  const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(messageText)}`;
+
+  const smsRecord = {
+    id: 'SMS-' + Date.now(),
+    orderId: order.orderId,
+    customerName: order.customerName,
+    recipientPhone: rawPhone,
+    standardPhone: cleanPhone,
+    eventType: eventType,
+    message: messageText,
+    whatsappUrl: whatsappUrl,
+    status: 'Dispatched (Sent)',
+    timestamp: new Date().toISOString()
+  };
+
+  // 1. Save to SMS Log File
+  const smsLogs = readJsonFile(smsLogsFilePath, []);
+  smsLogs.unshift(smsRecord);
+  if (smsLogs.length > 200) smsLogs.length = 200;
+  writeJsonFile(smsLogsFilePath, smsLogs);
+
+  // 2. Terminal Live Logging
+  console.log(`\n================= 📱 SMS DISPATCH ENGINE =================`);
+  console.log(`📡 EVENT: ${eventType} | ORDER: #${order.orderId}`);
+  console.log(`📞 TO: ${rawPhone} (${order.customerName})`);
+  console.log(`💬 MESSAGE:\n"${messageText}"`);
+  console.log(`🔗 WhatsApp Instant Link: ${whatsappUrl}`);
+  console.log(`==========================================================\n`);
+
+  return smsRecord;
+};
+
 // ==================== ORDERS API ====================
 
 // GET /api/orders - Get all orders
@@ -236,7 +314,7 @@ app.get('/api/orders/:orderId', (req, res) => {
   res.json({ success: true, data: order });
 });
 
-// POST /api/orders - Submit Order
+// POST /api/orders - Submit Order + Auto Stage 1 SMS Dispatch
 app.post('/api/orders', (req, res) => {
   const { items, customerName, customerPhone, address, shippingFee, discountAmount, paymentMethod } = req.body;
 
@@ -268,16 +346,20 @@ app.post('/api/orders', (req, res) => {
   orders.unshift(newOrder);
   writeJsonFile(ordersFilePath, orders);
 
+  // Auto-dispatch Stage 1 Confirmation SMS
+  const smsResult = dispatchSmsNotification(newOrder, 'ORDER_PLACED');
+
   console.log(`🛒 New Order Placed: ${newOrder.orderId} (Total: ৳${grandTotal})`);
 
   res.status(201).json({
     success: true,
-    message: 'Order placed successfully!',
-    data: newOrder
+    message: 'Order placed successfully and confirmation SMS dispatched!',
+    data: newOrder,
+    sms: smsResult
   });
 });
 
-// PUT /api/orders/:orderId/status - Update order status
+// PUT /api/orders/:orderId/status - Update order status + Auto Stage 2 or 3 SMS Dispatch
 app.put('/api/orders/:orderId/status', (req, res) => {
   const { status } = req.body;
   if (!status) {
@@ -294,7 +376,21 @@ app.put('/api/orders/:orderId/status', (req, res) => {
   order.status = status;
   writeJsonFile(ordersFilePath, orders);
 
-  res.json({ success: true, message: `Order #${order.orderId} updated to ${status}`, data: order });
+  // Trigger Stage 2 (Out for Delivery) or Stage 3 (Delivered)
+  let eventType = 'STATUS_UPDATE';
+  if (status === 'Shipped') eventType = 'OUT_FOR_DELIVERY';
+  else if (status === 'Delivered') eventType = 'DELIVERED';
+  else if (status === 'Processing') eventType = 'PROCESSING';
+  else if (status === 'Cancelled') eventType = 'CANCELLED';
+
+  const smsResult = dispatchSmsNotification(order, eventType);
+
+  res.json({ 
+    success: true, 
+    message: `Order #${order.orderId} updated to ${status}. SMS dispatched!`, 
+    data: order,
+    sms: smsResult 
+  });
 });
 
 // DELETE /api/orders/:orderId - Delete order
@@ -304,6 +400,44 @@ app.delete('/api/orders/:orderId', (req, res) => {
   orders = orders.filter(o => o.orderId !== orderId);
   writeJsonFile(ordersFilePath, orders);
   res.json({ success: true, message: 'Order deleted successfully' });
+});
+
+
+// ==================== SMS API ENDPOINTS ====================
+
+// GET /api/sms/logs - Get all dispatched SMS logs
+app.get('/api/sms/logs', (req, res) => {
+  const smsLogs = readJsonFile(smsLogsFilePath, []);
+  res.json({ success: true, count: smsLogs.length, data: smsLogs });
+});
+
+// POST /api/sms/send-direct - Manual or Custom SMS trigger from Admin
+app.post('/api/sms/send-direct', (req, res) => {
+  const { phone, message, customerName, orderId } = req.body;
+  if (!phone || !message) {
+    return res.status(400).json({ success: false, message: 'Phone and message are required' });
+  }
+
+  const cleanPhone = phone.replace(/[^0-9]/g, '');
+  const smsRecord = {
+    id: 'SMS-' + Date.now(),
+    orderId: orderId || 'MANUAL-' + Math.floor(1000 + Math.random() * 9000),
+    customerName: customerName || 'Valued Customer',
+    recipientPhone: phone,
+    standardPhone: cleanPhone,
+    eventType: 'DIRECT_CUSTOM',
+    message: message,
+    whatsappUrl: `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`,
+    status: 'Dispatched (Sent)',
+    timestamp: new Date().toISOString()
+  };
+
+  const smsLogs = readJsonFile(smsLogsFilePath, []);
+  smsLogs.unshift(smsRecord);
+  writeJsonFile(smsLogsFilePath, smsLogs);
+
+  console.log(`📱 Direct custom SMS sent to ${phone}: ${message}`);
+  res.json({ success: true, message: 'SMS dispatched successfully!', data: smsRecord });
 });
 
 

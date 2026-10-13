@@ -223,41 +223,42 @@ function updateBackendStatus(isOnline) {
 
 // ==================== PRODUCTS API & RENDERING ====================
 
-async function fetchProducts() {
-    const searchVal = document.querySelector("#searchInput") ? document.querySelector("#searchInput").value.trim() : "";
-    let url = `${API_BASE_URL}/products?category=${encodeURIComponent(activeCategory)}&sort=${activeSort}`;
+let backendCheckFailed = false;
+
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function updateProductBadge(count, searchVal) {
+    const countEl = document.getElementById("productCountBadge");
+    if (!countEl) return;
     if (searchVal) {
-        url += `&search=${encodeURIComponent(searchVal)}`;
+        countEl.innerHTML = `Found <strong>${count}</strong> product${count === 1 ? '' : 's'} matching "<strong>${escapeHtml(searchVal)}</strong>"`;
+    } else if (activeCategory && activeCategory !== "All") {
+        countEl.textContent = `${count} Products in ${activeCategory}`;
+    } else {
+        countEl.textContent = `${count} Verified Products In Catalog`;
     }
+}
 
-    try {
-        const response = await fetch(url, { signal: AbortSignal.timeout(2500) });
-        const data = await response.json();
-
-        if (data.success && data.data) {
-            productsList = data.data;
-            saveLocalProducts(productsList);
-            renderProducts(productsList);
-            const countEl = document.getElementById("productCountBadge");
-            if (countEl) countEl.textContent = `${productsList.length} Verified Products In Catalog`;
-            updateBackendStatus(true);
-            return;
-        }
-    } catch (error) {
-        console.warn("Backend API offline or unreachable. Using local storage products.");
-        updateBackendStatus(false);
-    }
-
-    // Fallback logic from local storage
+function renderLocalFiltered(searchVal) {
     let stored = getLocalProducts();
     let filtered = [...stored];
-    if (activeCategory && activeCategory !== "All") {
+
+    if (activeCategory && activeCategory !== "All" && !searchVal) {
         filtered = filtered.filter(p => p.category && p.category.toLowerCase() === activeCategory.toLowerCase());
     }
+
     if (searchVal) {
         const s = searchVal.toLowerCase();
-        filtered = filtered.filter(p => p.name.toLowerCase().includes(s) || (p.category && p.category.toLowerCase().includes(s)));
+        filtered = filtered.filter(p =>
+            (p.name && p.name.toLowerCase().includes(s)) ||
+            (p.category && p.category.toLowerCase().includes(s)) ||
+            (p.warranty && p.warranty.toLowerCase().includes(s))
+        );
     }
+
     if (activeSort === "price-asc") {
         filtered.sort((a, b) => a.price - b.price);
     } else if (activeSort === "price-desc") {
@@ -265,10 +266,46 @@ async function fetchProducts() {
     } else if (activeSort === "rating") {
         filtered.sort((a, b) => (b.rating ? b.rating.length : 5) - (a.rating ? a.rating.length : 5));
     }
+
     productsList = filtered;
     renderProducts(productsList);
-    const countEl = document.getElementById("productCountBadge");
-    if (countEl) countEl.textContent = `${productsList.length} Verified Products In Catalog`;
+    updateProductBadge(productsList.length, searchVal);
+}
+
+async function fetchProducts() {
+    const searchInput = document.querySelector("#searchInput");
+    const searchVal = searchInput ? searchInput.value.trim() : "";
+
+    // Instant local rendering (0ms lag)
+    renderLocalFiltered(searchVal);
+
+    // If backend was checked and is offline, no need to hang on network timeout
+    if (backendCheckFailed) {
+        return;
+    }
+
+    let url = `${API_BASE_URL}/products?category=${encodeURIComponent(activeCategory)}&sort=${activeSort}`;
+    if (searchVal) {
+        url += `&search=${encodeURIComponent(searchVal)}`;
+    }
+
+    try {
+        const response = await fetch(url, { signal: AbortSignal.timeout(1200) });
+        const data = await response.json();
+
+        if (data.success && data.data) {
+            backendCheckFailed = false;
+            productsList = data.data;
+            saveLocalProducts(productsList);
+            renderProducts(productsList);
+            updateProductBadge(productsList.length, searchVal);
+            updateBackendStatus(true);
+            return;
+        }
+    } catch (error) {
+        backendCheckFailed = true;
+        updateBackendStatus(false);
+    }
 }
 
 function renderProducts(products) {
@@ -349,6 +386,8 @@ function handleSortChange(sortValue) {
 
 // ==================== LIVE SEARCH AUTOCOMPLETE ====================
 
+let searchDebounceTimer = null;
+
 function setupLiveSearch() {
     const searchInput = document.getElementById("searchInput");
     const clearBtn = document.getElementById("searchClearBtn");
@@ -358,57 +397,138 @@ function setupLiveSearch() {
 
     searchInput.addEventListener("input", function () {
         const val = this.value.trim();
-        if (clearBtn) clearBtn.style.display = val.length > 0 ? "block" : "none";
-        
-        fetchProducts();
+        if (clearBtn) clearBtn.style.display = val.length > 0 ? "flex" : "none";
 
+        // Sync with catalog search box
+        const catSearch = document.getElementById("catalogSearchInput");
+        if (catSearch && catSearch.value !== this.value) {
+            catSearch.value = this.value;
+        }
+
+        // If user is searching, reset activeCategory to "All" visually so results aren't blocked
+        if (val.length > 0 && activeCategory !== "All") {
+            activeCategory = "All";
+            document.querySelectorAll(".cat-btn").forEach(btn => btn.classList.remove("active"));
+            const allBtn = document.querySelector(".cat-btn");
+            if (allBtn) allBtn.classList.add("active");
+        }
+
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+            fetchProducts();
+        }, 100);
+
+        // Autocomplete Dropdown
         if (val.length < 2) {
             if (dropdown) dropdown.style.display = "none";
             return;
         }
 
         const prods = getLocalProducts();
-        const matches = prods.filter(p => 
-            p.name.toLowerCase().includes(val.toLowerCase()) || 
+        const matches = prods.filter(p =>
+            (p.name && p.name.toLowerCase().includes(val.toLowerCase())) ||
             (p.category && p.category.toLowerCase().includes(val.toLowerCase()))
-        ).slice(0, 5);
+        ).slice(0, 6);
 
         if (matches.length > 0 && dropdown) {
             dropdown.innerHTML = matches.map(p => `
-                <div class="search-dropdown-item" onclick="openQuickView(${p.id}); closeSearchDropdown();">
-                    <img src="${p.image}" alt="${p.name}" class="search-dropdown-img">
+                <div class="search-dropdown-item" onclick="selectSearchResult(${p.id})">
+                    <img src="${p.image}" alt="${escapeHtml(p.name)}" class="search-dropdown-img">
                     <div class="search-dropdown-info">
-                        <div class="search-dropdown-title">${p.name}</div>
+                        <div class="search-dropdown-title">${escapeHtml(p.name)}</div>
                         <div class="search-dropdown-meta">
-                            <span style="color:var(--primary); font-weight:700;">${p.category}</span>
+                            <span style="color:var(--primary); font-weight:700;">${escapeHtml(p.category || 'Tech')}</span>
                             <span>•</span>
                             <span class="search-dropdown-price">৳ ${Number(p.price).toLocaleString()}</span>
                         </div>
                     </div>
-                    <button onclick="event.stopPropagation(); addToCartById(${p.id}); closeSearchDropdown();" style="background:var(--primary-light); color:var(--primary); border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer;">
+                    <button type="button" onclick="event.stopPropagation(); addToCartById(${p.id}); closeSearchDropdown();" style="background:var(--primary-light); color:var(--primary); border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer;">
                         + Cart
                     </button>
                 </div>
             `).join("");
             dropdown.style.display = "block";
         } else if (dropdown) {
-            dropdown.style.display = "none";
+            dropdown.innerHTML = `
+                <div style="padding:16px; text-align:center; color:var(--text-muted); font-size:13px;">
+                    No products found matching "<strong>${escapeHtml(val)}</strong>"
+                </div>
+            `;
+            dropdown.style.display = "block";
+        }
+    });
+
+    // Enter key handler
+    searchInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSearchSubmit(e);
         }
     });
 
     // Close dropdown on click outside
-    document.addEventListener("click", function(e) {
+    document.addEventListener("click", function (e) {
         if (!e.target.closest(".search-wrapper") && dropdown) {
             dropdown.style.display = "none";
         }
     });
 }
 
+function handleSearchSubmit(event) {
+    if (event) event.preventDefault();
+    const input = document.getElementById("searchInput");
+    const val = input ? input.value.trim() : "";
+    closeSearchDropdown();
+
+    if (val && activeCategory !== "All") {
+        activeCategory = "All";
+        document.querySelectorAll(".cat-btn").forEach(btn => btn.classList.remove("active"));
+        const allBtn = document.querySelector(".cat-btn");
+        if (allBtn) allBtn.classList.add("active");
+    }
+
+    fetchProducts();
+
+    const productsSection = document.getElementById("products");
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+function selectSearchResult(id) {
+    closeSearchDropdown();
+    const productsSection = document.getElementById("products");
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: "smooth" });
+    }
+    openQuickView(id);
+}
+
+function syncCatalogSearch(val) {
+    const mainInput = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("searchClearBtn");
+    if (mainInput) {
+        mainInput.value = val;
+        if (clearBtn) clearBtn.style.display = val.trim().length > 0 ? "flex" : "none";
+    }
+
+    if (val.trim().length > 0 && activeCategory !== "All") {
+        activeCategory = "All";
+        document.querySelectorAll(".cat-btn").forEach(btn => btn.classList.remove("active"));
+        const allBtn = document.querySelector(".cat-btn");
+        if (allBtn) allBtn.classList.add("active");
+    }
+
+    fetchProducts();
+}
+
 function clearSearchInput() {
     const input = document.getElementById("searchInput");
+    const catInput = document.getElementById("catalogSearchInput");
     const clearBtn = document.getElementById("searchClearBtn");
     const dropdown = document.getElementById("searchDropdown");
     if (input) input.value = "";
+    if (catInput) catInput.value = "";
     if (clearBtn) clearBtn.style.display = "none";
     if (dropdown) dropdown.style.display = "none";
     fetchProducts();
@@ -867,6 +987,163 @@ async function submitOrder(e) {
     toggleCheckoutModal(false);
     document.getElementById("checkoutForm").reset();
     showToast(`🎉 Order #${newOrder.orderId} placed successfully!`);
+
+    // 5. Auto-trigger Stage 1 Order Confirmation SMS
+    setTimeout(() => {
+        triggerSmsNotification(newOrder, 'ORDER_PLACED');
+    }, 700);
+}
+
+// ==================== MULTI-STAGE SMS AUTOMATION ENGINE ====================
+
+let activeSmsData = null;
+
+function getLocalSmsLogs() {
+    const data = localStorage.getItem("techverse_sms_logs");
+    if (data) {
+        try {
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) return parsed;
+        } catch(e) {}
+    }
+    return [];
+}
+
+function saveLocalSmsLogs(logs) {
+    localStorage.setItem("techverse_sms_logs", JSON.stringify(logs));
+}
+
+function generateSmsText(order, eventType) {
+    const itemsText = Array.isArray(order.items) 
+        ? order.items.map(i => `${i.name} (x${i.quantity || 1})`).join(', ') 
+        : 'Tech Gear';
+    const total = Number(order.totalAmount || 0).toLocaleString();
+
+    switch (eventType) {
+        case 'ORDER_PLACED':
+            return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার অর্ডার #${order.orderId} সফলভাবে গৃহীত হয়েছে! আইটেম: ${itemsText}। মোট বিল: ৳${total} (${order.paymentMethod || 'COD'})। ডেলিভারি: ২৪-৪৮ ঘণ্টার মধ্যে। হেল্পলাইন: 01820-727102`;
+        case 'OUT_FOR_DELIVERY':
+            return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার অর্ডার #${order.orderId} আজ ডেলিভারির জন্য বের হয়েছে! আনুমানিক সময়: দুপুর ২টা - সন্ধ্যা ৬টা। ক্যাশ বিল বাবদ ৳${total} প্রস্তুত রাখুন। হেল্পলাইন: 01820-727102`;
+        case 'DELIVERED':
+            return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার TechVerse অর্ডার #${order.orderId} সফলভাবে ডেলিভার করা হয়েছে! অফিসিয়াল ওয়ারেন্টির জন্য রশিদটি সংরক্ষণ করুন। আমাদের সাথে কেনাকাটার জন্য ধন্যবাদ!`;
+        case 'PROCESSING':
+            return `TechVerse: প্রিয় ${order.customerName || 'গ্রাহক'}, আপনার অর্ডার #${order.orderId} প্রসেসিং হচ্ছে এবং দ্রুত প্যাকিং সম্পন্ন করা হচ্ছে। হেল্পলাইন: 01820-727102`;
+        case 'CANCELLED':
+            return `TechVerse: আপনার অর্ডার #${order.orderId} বাতিল করা হয়েছে। হেল্পলাইন: 01820-727102।`;
+        default:
+            return `TechVerse: আপনার অর্ডার #${order.orderId} আপডেট: ${eventType}। হেল্পলাইন: 01820-727102`;
+    }
+}
+
+function getCleanPhone(phone) {
+    let clean = String(phone || '').replace(/[^0-9]/g, '');
+    if (clean.startsWith('880')) return clean;
+    if (clean.startsWith('0')) return '88' + clean;
+    if (clean.length === 10) return '880' + clean;
+    return clean;
+}
+
+function getWhatsAppUrl(order, eventType) {
+    const cleanPhone = getCleanPhone(order.customerPhone);
+    const msg = generateSmsText(order, eventType);
+    return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+}
+
+function getDirectSmsUri(phone, message) {
+    const rawPhone = String(phone || '').trim();
+    // Keep digits and possible plus
+    const cleanDigits = rawPhone.replace(/[^0-9+]/g, '');
+    return `sms:${cleanDigits}?body=${encodeURIComponent(message)}`;
+}
+
+function triggerSmsNotification(order, eventType = 'ORDER_PLACED') {
+    if (!order || !order.customerPhone) return;
+
+    const message = generateSmsText(order, eventType);
+    const cleanPhone = getCleanPhone(order.customerPhone);
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+
+    const smsRecord = {
+        id: 'SMS-' + Date.now(),
+        orderId: order.orderId,
+        customerName: order.customerName,
+        recipientPhone: order.customerPhone,
+        eventType: eventType,
+        message: message,
+        whatsappUrl: whatsappUrl,
+        timestamp: new Date().toISOString()
+    };
+
+    const logs = getLocalSmsLogs();
+    logs.unshift(smsRecord);
+    if (logs.length > 100) logs.length = 100;
+    saveLocalSmsLogs(logs);
+
+    activeSmsData = smsRecord;
+
+    toggleSmsModal(true, smsRecord);
+}
+
+function toggleSmsModal(open = true, data = null) {
+    const modal = document.getElementById("smsModal");
+    if (!modal) return;
+
+    if (!open) {
+        modal.style.display = "none";
+        return;
+    }
+
+    const payload = data || activeSmsData;
+    if (!payload) return;
+
+    const titleEl = document.getElementById("smsModalTitle");
+    const badgeEl = document.getElementById("smsModalBadge");
+    const phoneEl = document.getElementById("smsModalPhone");
+    const msgEl = document.getElementById("smsModalMessage");
+    const waBtn = document.getElementById("smsModalWhatsappBtn");
+    const simBtn = document.getElementById("smsModalSimBtn");
+    const callBtn = document.getElementById("smsModalCallBtn");
+
+    if (phoneEl) phoneEl.textContent = payload.recipientPhone || 'N/A';
+    if (msgEl) msgEl.textContent = payload.message || '';
+    if (waBtn) waBtn.href = payload.whatsappUrl || '#';
+    if (simBtn) simBtn.href = getDirectSmsUri(payload.recipientPhone, payload.message);
+    if (callBtn) callBtn.href = `tel:${payload.recipientPhone || ''}`;
+
+    let badgeText = 'Stage 1: Order Confirmation SMS';
+    let badgeBg = 'rgba(37,99,235,0.12)';
+    let badgeColor = 'var(--primary)';
+
+    if (payload.eventType === 'OUT_FOR_DELIVERY') {
+        badgeText = '🚚 Stage 2: Out For Delivery (Today) SMS';
+        badgeBg = 'rgba(245,158,11,0.15)';
+        badgeColor = '#d97706';
+    } else if (payload.eventType === 'DELIVERED') {
+        badgeText = '✅ Stage 3: Product Delivered & Warranty SMS';
+        badgeBg = 'rgba(16,185,129,0.15)';
+        badgeColor = '#10b981';
+    } else if (payload.eventType === 'PROCESSING') {
+        badgeText = '📦 Stage: Order Processing SMS';
+        badgeBg = 'rgba(139,92,246,0.15)';
+        badgeColor = '#8b5cf6';
+    }
+
+    if (badgeEl) {
+        badgeEl.textContent = badgeText;
+        badgeEl.style.background = badgeBg;
+        badgeEl.style.color = badgeColor;
+    }
+
+    modal.style.display = "flex";
+}
+
+function copySmsText() {
+    if (!activeSmsData || !activeSmsData.message) return;
+    navigator.clipboard.writeText(activeSmsData.message).then(() => {
+        showToast("📋 SMS text copied to clipboard!");
+    }).catch(() => {
+        showToast("Copied to clipboard!");
+    });
 }
 
 // ==================== ORDER TRACKING SYSTEM ====================
@@ -1110,8 +1387,31 @@ function renderInvoice(order) {
                 <p>TechVerse Online Tech Megastore | Dhaka, Bangladesh | 24/7 Helpline: +880 1820-727102</p>
                 <div class="invoice-watermark">✓ OFFICIAL E-COMMERCE TAX INVOICE</div>
             </div>
+
+            <!-- LIVE SMS DISPATCH & WHATSAPP ACTION BAR (NO-PRINT) -->
+            <div class="no-print" style="margin-top:16px; padding:12px 16px; background:rgba(37,99,235,0.08); border-radius:8px; border:1px solid rgba(37,99,235,0.25); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="font-size:13px; color:var(--text-color);">
+                    <i class="fa-solid fa-paper-plane" style="color:var(--primary); margin-right:4px;"></i> <b>SMS Notification:</b> Confirmation SMS dispatched to <b>${order.customerPhone}</b>
+                </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <a href="${getDirectSmsUri(order.customerPhone, generateSmsText(order, 'ORDER_PLACED'))}" style="background:#0284c7; color:white; text-decoration:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:12px; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(2,132,199,0.3);">
+                        <i class="fa-solid fa-comment-sms"></i> SIM SMS
+                    </a>
+                    <a href="tel:${order.customerPhone}" style="background:#10b981; color:white; text-decoration:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:12px; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(16,185,129,0.3);">
+                        <i class="fa-solid fa-phone"></i> Call
+                    </a>
+                    <button type="button" onclick="triggerSmsNotification(window.currentInvoiceOrder, 'ORDER_PLACED')" style="background:var(--primary); color:white; border:none; padding:7px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; display:inline-flex; align-items:center; gap:5px;">
+                        📱 View
+                    </button>
+                    <a href="${getWhatsAppUrl(order, 'ORDER_PLACED')}" target="_blank" style="background:#25D366; color:white; text-decoration:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:12px; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(37,211,102,0.3);">
+                        <i class="fa-brands fa-whatsapp" style="font-size:13px;"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
         </div>
     `;
+
+    window.currentInvoiceOrder = order;
 
     toggleInvoiceModal(true);
 }
@@ -1131,7 +1431,7 @@ function toggleAdminModal(open = true) {
     }
 }
 
-async function loadAdminData() {
+async function loadAdminData(isManual = false) {
     loadAdminStats();
     const activeTab = document.querySelector(".admin-tab.active");
     if (activeTab) {
@@ -1139,11 +1439,16 @@ async function loadAdminData() {
             loadAdminProducts();
         } else if (activeTab.textContent.includes("Customer Inquiries")) {
             loadAdminMessages();
+        } else if (activeTab.textContent.includes("SMS Logs")) {
+            loadAdminSmsLogs();
         } else {
             loadAdminOrders();
         }
     } else {
         loadAdminOrders();
+    }
+    if (isManual) {
+        showToast("🔄 Dashboard & Stats Refreshed!");
     }
 }
 
@@ -1204,6 +1509,8 @@ async function switchAdminTab(tab, btn) {
         loadAdminProducts();
     } else if (tab === 'messages') {
         loadAdminMessages();
+    } else if (tab === 'sms') {
+        loadAdminSmsLogs();
     }
 }
 
@@ -1248,8 +1555,17 @@ async function loadAdminOrders() {
                         <strong style="font-size:15px; color:var(--text-color);">Order #${o.orderId}</strong>
                         <span style="font-size:12px; color:var(--text-muted); margin-left:8px;">🕒 ${dateStr}</span>
                     </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <button onclick="printAdminOrder(${idx})" style="padding:6px 12px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;">🖨️ Invoice</button>
+                    <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+                        <a href="tel:${o.customerPhone}" style="padding:6px 9px; background:#10b981; color:white; border-radius:4px; text-decoration:none; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 6px rgba(16,185,129,0.3);" title="Call Customer">
+                            <i class="fa-solid fa-phone"></i> Call
+                        </a>
+                        <a href="${getDirectSmsUri(o.customerPhone, generateSmsText(o, o.status === 'Shipped' ? 'OUT_FOR_DELIVERY' : o.status === 'Delivered' ? 'DELIVERED' : 'ORDER_PLACED'))}" style="padding:6px 9px; background:#0284c7; color:white; border-radius:4px; text-decoration:none; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 6px rgba(2,132,199,0.3);" title="Send SIM SMS">
+                            <i class="fa-solid fa-comment-sms"></i> SIM SMS
+                        </a>
+                        <button onclick="sendDirectAdminSms('${o.orderId}')" style="padding:6px 9px; background:#25D366; color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="Send SMS / WhatsApp Notification">
+                            <i class="fa-brands fa-whatsapp"></i> SMS
+                        </button>
+                        <button onclick="printAdminOrder(${idx})" style="padding:6px 9px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer;" title="View Invoice">🖨️ Invoice</button>
                         <select onchange="updateOrderStatus('${o.orderId}', this.value)" style="padding:5px 8px; border-radius:4px; font-weight:700; background:var(--card-bg); color:var(--text-color); border:1px solid var(--border-color);">
                             <option value="Pending" ${o.status==='Pending'?'selected':''}>⏳ Pending</option>
                             <option value="Processing" ${o.status==='Processing'?'selected':''}>📦 Processing</option>
@@ -1261,7 +1577,7 @@ async function loadAdminOrders() {
                     </div>
                 </div>
                 <div style="margin-top:8px; font-size:13px; line-height:1.5;">
-                    <div>Customer: <b>${o.customerName}</b> (${o.customerPhone})</div>
+                    <div>Customer: <b>${o.customerName}</b> (<a href="tel:${o.customerPhone}" style="color:var(--primary); text-decoration:none; font-weight:700;">${o.customerPhone}</a>)</div>
                     <div>Address: <span>${o.address}</span></div>
                     <div>Items: <span style="color:var(--text-muted);">${itemsSummary || 'N/A'}</span></div>
                     <div style="margin-top:4px;">Total Amount: <b style="color:var(--primary); font-size:14px;">৳ ${Number(o.totalAmount).toLocaleString()}</b> <span style="font-size:11px; color:var(--text-muted);">(${o.paymentMethod||'COD'})</span></div>
@@ -1277,20 +1593,40 @@ function printAdminOrder(index) {
     }
 }
 
+function sendDirectAdminSms(orderId) {
+    const orders = getLocalOrders();
+    const order = orders.find(o => o.orderId === orderId);
+    if (!order) return;
+
+    let eventType = 'ORDER_PLACED';
+    if (order.status === 'Shipped') eventType = 'OUT_FOR_DELIVERY';
+    else if (order.status === 'Delivered') eventType = 'DELIVERED';
+    else if (order.status === 'Processing') eventType = 'PROCESSING';
+
+    triggerSmsNotification(order, eventType);
+}
+
 async function updateOrderStatus(orderId, status) {
     let orders = getLocalOrders();
     const idx = orders.findIndex(o => o.orderId === orderId);
+    let targetOrder = null;
+
     if (idx !== -1) {
         orders[idx].status = status;
+        targetOrder = orders[idx];
         saveLocalOrders(orders);
     }
 
     try {
-        await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status })
         });
+        const data = await response.json();
+        if (data.success && data.data) {
+            targetOrder = data.data;
+        }
         updateBackendStatus(true);
     } catch (e) {
         updateBackendStatus(false);
@@ -1298,6 +1634,17 @@ async function updateOrderStatus(orderId, status) {
 
     showToast(`Order #${orderId} status updated to ${status}`);
     loadAdminStats();
+
+    // Auto-trigger Stage 2 (Out for Delivery) or Stage 3 (Delivered) SMS notification
+    if (targetOrder) {
+        if (status === 'Shipped') {
+            triggerSmsNotification(targetOrder, 'OUT_FOR_DELIVERY');
+        } else if (status === 'Delivered') {
+            triggerSmsNotification(targetOrder, 'DELIVERED');
+        } else if (status === 'Processing') {
+            triggerSmsNotification(targetOrder, 'PROCESSING');
+        }
+    }
 }
 
 async function deleteAdminOrder(orderId) {
@@ -1315,6 +1662,74 @@ async function deleteAdminOrder(orderId) {
     loadAdminOrders();
     loadAdminStats();
 }
+
+async function loadAdminSmsLogs() {
+    const container = document.getElementById("adminOrdersList");
+    if (!container) return;
+
+    let smsLogs = getLocalSmsLogs();
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/sms/logs`, { signal: AbortSignal.timeout(2000) });
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            smsLogs = data.data;
+            saveLocalSmsLogs(smsLogs);
+        }
+    } catch(e) {}
+
+    if (!smsLogs || smsLogs.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:30px; color:var(--text-muted);">
+                <p style="font-size:16px;">📱 No SMS sent yet.</p>
+                <small>As soon as an order is placed or status changed, SMS will appear here.</small>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; font-weight:700; color:var(--text-color);">Total SMS Dispatched: ${smsLogs.length}</span>
+            <span style="font-size:11.5px; color:var(--success); font-weight:700;">🟢 Live Telecom & WhatsApp Sync</span>
+        </div>
+        ${smsLogs.map(s => {
+            const dateStr = s.timestamp ? new Date(s.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
+            let stageBadge = 'Stage 1: Placed';
+            if (s.eventType === 'OUT_FOR_DELIVERY') stageBadge = '🚚 Stage 2: Out for Delivery';
+            else if (s.eventType === 'DELIVERED') stageBadge = '✅ Stage 3: Delivered';
+            else if (s.eventType === 'PROCESSING') stageBadge = '📦 Stage: Processing';
+
+            return `
+                <div style="background:var(--card-elevated); padding:12px; margin-bottom:10px; border-radius:var(--radius-sm); border-left:4px solid var(--primary); font-size:13px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+                        <div>
+                            <strong>Order #${s.orderId}</strong>
+                            <span style="font-size:11px; background:rgba(37,99,235,0.12); color:var(--primary); padding:2px 8px; border-radius:10px; font-weight:700; margin-left:6px;">${stageBadge}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                            <span style="font-size:11px; color:var(--text-muted);">🕒 ${dateStr}</span>
+                            <a href="tel:${s.recipientPhone}" style="background:#10b981; color:white; padding:4px 8px; border-radius:4px; text-decoration:none; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:3px;">
+                                <i class="fa-solid fa-phone"></i> Call
+                            </a>
+                            <a href="${getDirectSmsUri(s.recipientPhone, s.message)}" style="background:#0284c7; color:white; padding:4px 8px; border-radius:4px; text-decoration:none; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:3px;">
+                                <i class="fa-solid fa-comment-sms"></i> SIM SMS
+                            </a>
+                            <a href="${s.whatsappUrl}" target="_blank" style="background:#25D366; color:white; padding:4px 8px; border-radius:4px; text-decoration:none; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:3px;">
+                                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                    <div style="color:var(--text-color); margin-bottom:6px;">To: <b>${s.recipientPhone}</b> (${s.customerName || 'Customer'})</div>
+                    <div style="background:var(--card-bg); padding:10px 12px; border-radius:6px; color:var(--text-color); font-size:12.5px; line-height:1.55; border:1px solid var(--border-color); word-break:break-word;">
+                        ${s.message}
+                    </div>
+                </div>
+            `;
+        }).join("")}
+    `;
+}
+
 
 async function loadAdminProducts() {
     const container = document.getElementById("adminOrdersList");
