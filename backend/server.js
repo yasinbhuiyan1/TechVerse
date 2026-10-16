@@ -17,6 +17,8 @@ const messagesFilePath = path.join(__dirname, 'data', 'messages.json');
 const ordersFilePath = path.join(__dirname, 'data', 'orders.json');
 const couponsFilePath = path.join(__dirname, 'data', 'coupons.json');
 const smsLogsFilePath = path.join(__dirname, 'data', 'sms_logs.json');
+const usersFilePath = path.join(__dirname, 'data', 'users.json');
+const settingsFilePath = path.join(__dirname, 'data', 'settings.json');
 
 // Safe JSON file reader
 const readJsonFile = (filePath, fallback = []) => {
@@ -119,20 +121,22 @@ app.post('/api/products', (req, res) => {
   }
 
   const products = readJsonFile(productsFilePath);
-  const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+  const parsedPrice = parseInt(price);
+  const parsedOldPrice = oldPrice ? parseInt(oldPrice) : Math.round(parsedPrice * 1.2);
+  const newId = req.body.id ? parseInt(req.body.id) : (products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1);
 
   const newProduct = {
     id: newId,
     name,
     category: category || 'General',
     image: image || 'images/laptop.jpg',
-    oldPrice: oldPrice ? parseInt(oldPrice) : parseInt(price) * 1.2,
-    price: parseInt(price),
-    discountBadge: oldPrice ? `-${Math.round((1 - price / oldPrice) * 100)}%` : '-10%',
-    rating: '★★★★★',
+    oldPrice: parsedOldPrice,
+    price: parsedPrice,
+    discountBadge: (parsedOldPrice && parsedOldPrice > parsedPrice) ? `-${Math.round((1 - parsedPrice / parsedOldPrice) * 100)}%` : '-10%',
+    rating: req.body.rating || '★★★★★',
     delivery: delivery || '🚚 Free Delivery',
     warranty: warranty || '🛡️ 1 Year Warranty',
-    inStock: true
+    inStock: req.body.inStock !== undefined ? req.body.inStock : true
   };
 
   products.unshift(newProduct);
@@ -150,7 +154,20 @@ app.put('/api/products/:id', (req, res) => {
     return res.status(404).json({ success: false, message: 'Product not found' });
   }
 
-  products[index] = { ...products[index], ...req.body };
+  const current = products[index];
+  const updatedPrice = req.body.price !== undefined ? parseInt(req.body.price) : current.price;
+  const updatedOldPrice = req.body.oldPrice !== undefined ? parseInt(req.body.oldPrice) : current.oldPrice;
+  const discountBadge = (updatedOldPrice && updatedOldPrice > updatedPrice)
+    ? `-${Math.round((1 - updatedPrice / updatedOldPrice) * 100)}%`
+    : current.discountBadge;
+
+  products[index] = {
+    ...current,
+    ...req.body,
+    price: updatedPrice,
+    oldPrice: updatedOldPrice,
+    discountBadge
+  };
   writeJsonFile(productsFilePath, products);
 
   res.json({ success: true, message: 'Product updated successfully', data: products[index] });
@@ -173,6 +190,61 @@ app.delete('/api/products/:id', (req, res) => {
 
 // ==================== COUPONS API ====================
 
+// GET /api/coupons - List all coupons
+app.get('/api/coupons', (req, res) => {
+  const coupons = readJsonFile(couponsFilePath, []);
+  res.json({ success: true, count: coupons.length, data: coupons });
+});
+
+// POST /api/coupons - Create new promo coupon
+app.post('/api/coupons', (req, res) => {
+  const { code, discountPercent, discountFlat, minSpend, maxDiscount, description } = req.body;
+
+  if (!code || (!discountPercent && !discountFlat)) {
+    return res.status(400).json({ success: false, message: 'Coupon code and discount rate/amount are required.' });
+  }
+
+  const cleanCode = String(code).trim().toUpperCase();
+  const coupons = readJsonFile(couponsFilePath, []);
+
+  const exists = coupons.some(c => c.code.toUpperCase() === cleanCode);
+  if (exists) {
+    return res.status(400).json({ success: false, message: `Coupon with code "${cleanCode}" already exists.` });
+  }
+
+  const newCoupon = {
+    code: cleanCode,
+    ...(discountPercent ? { discountPercent: Number(discountPercent) } : {}),
+    ...(discountFlat ? { discountFlat: Number(discountFlat) } : {}),
+    minSpend: minSpend ? Number(minSpend) : 0,
+    maxDiscount: maxDiscount ? Number(maxDiscount) : 0,
+    description: description ? String(description).trim() : `${cleanCode} Special Discount Voucher`
+  };
+
+  coupons.unshift(newCoupon);
+  writeJsonFile(couponsFilePath, coupons);
+
+  console.log(`🎟️ New Promo Coupon Created: ${cleanCode}`);
+  res.status(201).json({ success: true, message: `Coupon "${cleanCode}" created successfully!`, data: newCoupon });
+});
+
+// DELETE /api/coupons/:code - Delete coupon
+app.delete('/api/coupons/:code', (req, res) => {
+  const targetCode = String(req.params.code).trim().toUpperCase();
+  let coupons = readJsonFile(couponsFilePath, []);
+  const initialLen = coupons.length;
+
+  coupons = coupons.filter(c => c.code.toUpperCase() !== targetCode);
+
+  if (coupons.length === initialLen) {
+    return res.status(404).json({ success: false, message: 'Coupon code not found.' });
+  }
+
+  writeJsonFile(couponsFilePath, coupons);
+  console.log(`🗑️ Coupon Deleted: ${targetCode}`);
+  res.json({ success: true, message: `Coupon "${targetCode}" deleted successfully.` });
+});
+
 // POST /api/coupons/validate - Validate coupon code
 app.post('/api/coupons/validate', (req, res) => {
   const { code, subtotal } = req.body;
@@ -180,7 +252,7 @@ app.post('/api/coupons/validate', (req, res) => {
     return res.status(400).json({ success: false, message: 'Coupon code required' });
   }
 
-  const coupons = readJsonFile(couponsFilePath);
+  const coupons = readJsonFile(couponsFilePath, []);
   const coupon = coupons.find(c => c.code.toUpperCase() === code.trim().toUpperCase());
 
   if (!coupon) {
@@ -215,6 +287,7 @@ app.post('/api/coupons/validate', (req, res) => {
     }
   });
 });
+
 
 
 // ==================== SMS NOTIFICATION ENGINE ====================
@@ -440,6 +513,26 @@ app.post('/api/sms/send-direct', (req, res) => {
   res.json({ success: true, message: 'SMS dispatched successfully!', data: smsRecord });
 });
 
+// DELETE /api/sms/logs/:id - Delete single SMS record
+app.delete('/api/sms/logs/:id', (req, res) => {
+  let smsLogs = readJsonFile(smsLogsFilePath, []);
+  const initialLen = smsLogs.length;
+  smsLogs = smsLogs.filter(s => s.id !== req.params.id);
+
+  if (smsLogs.length === initialLen) {
+    return res.status(404).json({ success: false, message: 'SMS record not found.' });
+  }
+
+  writeJsonFile(smsLogsFilePath, smsLogs);
+  res.json({ success: true, message: 'SMS record deleted successfully.' });
+});
+
+// DELETE /api/sms/logs - Clear all SMS logs
+app.delete('/api/sms/logs', (req, res) => {
+  writeJsonFile(smsLogsFilePath, []);
+  res.json({ success: true, message: 'All SMS notification logs cleared.' });
+});
+
 
 // ==================== CONTACT MESSAGES API ====================
 
@@ -491,6 +584,8 @@ app.get('/api/stats', (req, res) => {
   const products = readJsonFile(productsFilePath);
   const messages = readJsonFile(messagesFilePath);
   const orders = readJsonFile(ordersFilePath);
+  const coupons = readJsonFile(couponsFilePath, []);
+  const smsLogs = readJsonFile(smsLogsFilePath, []);
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
   const totalSoldItems = orders.reduce((sum, o) => {
@@ -511,7 +606,148 @@ app.get('/api/stats', (req, res) => {
       totalOrders: orders.length,
       pendingOrders,
       completedOrders,
-      totalRevenueBDT: totalRevenue
+      totalRevenueBDT: totalRevenue,
+      totalCoupons: coupons.length,
+      totalSmsLogs: smsLogs.length
+    }
+  });
+});
+
+// ==================== CUSTOMER AUTHENTICATION API ====================
+
+app.post('/api/auth/register', (req, res) => {
+  const { name, phone, email, password } = req.body;
+  if (!name || (!phone && !email) || !password) {
+    return res.status(400).json({ success: false, message: 'Name, phone/email, and password are required' });
+  }
+
+  const users = readJsonFile(usersFilePath, []);
+  const identifier = (phone || email).toLowerCase().trim();
+
+  if (users.some(u => (u.phone && u.phone === identifier) || (u.email && u.email.toLowerCase() === identifier))) {
+    return res.status(400).json({ success: false, message: 'An account already exists with this phone or email' });
+  }
+
+  const newUser = {
+    id: 'USR-' + Date.now(),
+    name: name.trim(),
+    phone: phone ? phone.trim() : '',
+    email: email ? email.trim() : '',
+    password: password, // In production, hash with bcrypt
+    loyaltyPoints: 100, // Welcome bonus points
+    savedAddresses: [],
+    createdAt: new Date().toISOString()
+  };
+
+  users.unshift(newUser);
+  writeJsonFile(usersFilePath, users);
+
+  res.status(201).json({
+    success: true,
+    message: 'Account created successfully! Enjoy 100 welcome reward points.',
+    data: {
+      id: newUser.id,
+      name: newUser.name,
+      phone: newUser.phone,
+      email: newUser.email,
+      loyaltyPoints: newUser.loyaltyPoints
+    }
+  });
+});
+
+app.post('/api/auth/login', (req, res) => {
+  const { identifier, password } = req.body;
+  if (!identifier || !password) {
+    return res.status(400).json({ success: false, message: 'Please enter phone/email and password' });
+  }
+
+  const users = readJsonFile(usersFilePath, []);
+  const cleanId = identifier.toLowerCase().trim();
+  const user = users.find(u => 
+    (u.phone && u.phone.includes(cleanId)) || 
+    (u.email && u.email.toLowerCase() === cleanId)
+  );
+
+  if (!user || user.password !== password) {
+    return res.status(401).json({ success: false, message: 'Invalid phone/email or password' });
+  }
+
+  res.json({
+    success: true,
+    message: `Welcome back, ${user.name}!`,
+    data: {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      loyaltyPoints: user.loyaltyPoints || 100,
+      savedAddresses: user.savedAddresses || []
+    }
+  });
+});
+
+// ==================== STEADFAST / PATHAO COURIER DISPATCH API ====================
+
+app.post('/api/courier/dispatch', (req, res) => {
+  const { orderId, courierName = 'Steadfast Courier', customerName, customerPhone, address, amount } = req.body;
+  if (!orderId) {
+    return res.status(400).json({ success: false, message: 'orderId is required' });
+  }
+
+  const consignmentId = 'ST-' + Math.floor(10000000 + Math.random() * 90000000);
+  const trackingUrl = `https://steadfast.com.bd/tracking/${consignmentId}`;
+
+  // Update order with courier tracking info
+  let orders = readJsonFile(ordersFilePath, []);
+  const idx = orders.findIndex(o => o.orderId === orderId);
+  if (idx !== -1) {
+    orders[idx].courier = {
+      provider: courierName,
+      consignmentId,
+      trackingUrl,
+      status: 'In Transit with Rider',
+      dispatchedAt: new Date().toISOString()
+    };
+    orders[idx].status = 'Shipped';
+    writeJsonFile(ordersFilePath, orders);
+  }
+
+  res.json({
+    success: true,
+    message: `Order #${orderId} booked with ${courierName}! Consignment: ${consignmentId}`,
+    data: {
+      orderId,
+      consignmentId,
+      provider: courierName,
+      trackingUrl,
+      status: 'In Transit'
+    }
+  });
+});
+
+// ==================== BKASH / CARD PAYMENT GATEWAY PROCESSOR ====================
+
+app.post('/api/payment/verify-bkash', (req, res) => {
+  const { orderId, phone, amount } = req.body;
+  const trxId = 'BKX' + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+  let orders = readJsonFile(ordersFilePath, []);
+  const idx = orders.findIndex(o => o.orderId === orderId);
+  if (idx !== -1) {
+    orders[idx].paymentStatus = 'Paid (bKash Verified)';
+    orders[idx].transactionId = trxId;
+    writeJsonFile(ordersFilePath, orders);
+  }
+
+  res.json({
+    success: true,
+    message: 'bKash Merchant Payment Successfully Verified!',
+    data: {
+      transactionId: trxId,
+      orderId,
+      amount,
+      paymentMethod: 'bKash Tokenized Checkout',
+      status: 'Success'
     }
   });
 });

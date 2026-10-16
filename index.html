@@ -5,8 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechVerse | Premier Tech & Gaming Megastore Bangladesh</title>
-    <meta name="description" content="TechVerse - Authorized online store for authentic gaming laptops, mechanical keyboards, high-refresh displays, PC components, and genuine accessories in Bangladesh.">
+    <meta name="description" content="TechVerse - Premier authorized tech store founded by Md Yeasin Bhuiyan. 100% genuine gaming laptops, PC components, displays, and gadgets with nationwide delivery across Bangladesh.">
+    <meta name="author" content="Md Yeasin Bhuiyan">
+    <meta name="theme-color" content="#2563eb">
     <link rel="icon" href="images/laptop.jpg">
+
+    <!-- Open Graph / Facebook / WhatsApp Social Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yasinbhuiyan1.github.io/TechVerse/">
+    <meta property="og:title" content="TechVerse | Premier Tech & Computer Store in Bangladesh">
+    <meta property="og:description" content="Founded by Md Yeasin Bhuiyan. Authorized retailer for authentic laptops, PC components, gaming gear & gadgets with official warranty and fast delivery across Bangladesh.">
+    <meta property="og:image" content="https://yasinbhuiyan1.github.io/TechVerse/images/founder.jpg">
+    <meta property="og:site_name" content="TechVerse Bangladesh">
+
+    <!-- Twitter / X Preview Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TechVerse | Premier Tech Store Bangladesh">
+    <meta name="twitter:description" content="Founded by Md Yeasin Bhuiyan. 100% genuine laptops, PC parts, and official brand warranty across 64 districts.">
+    <meta name="twitter:image" content="https://yasinbhuiyan1.github.io/TechVerse/images/founder.jpg">
+
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- Main Stylesheet -->
@@ -23,6 +40,9 @@
             <span class="highlight-badge"><i class="fa-solid fa-truck-fast"></i> Free Delivery on Orders over ৳2,000</span>
         </div>
         <div class="top-bar-right">
+            <button onclick="toggleStoreLocatorModal(true)" class="track-link-btn" title="Physical Store Outlets">
+                <i class="fa-solid fa-shop"></i> Store Outlets
+            </button>
             <button onclick="toggleTrackModal(true)" class="track-link-btn" title="Track Live Order">
                 <i class="fa-solid fa-magnifying-glass-location"></i> Track Order
             </button>
@@ -54,7 +74,7 @@
                 <a href="#categories"><i class="fa-solid fa-layer-group"></i> Categories</a>
                 <a href="#products"><i class="fa-solid fa-boxes-stacked"></i> Products</a>
                 <a href="#deals" class="nav-hot-deal"><i class="fa-solid fa-bolt"></i> Mega Deals</a>
-                <a href="#about"><i class="fa-solid fa-circle-info"></i> About</a>
+                <a href="#founder"><i class="fa-solid fa-user-tie"></i> Founder</a>
                 <a href="#contact"><i class="fa-solid fa-envelope"></i> Contact</a>
             </nav>
 
@@ -64,7 +84,7 @@
                     <button type="submit" class="search-btn-icon" title="Search Catalog">
                         <i class="fa-solid fa-magnifying-glass search-icon-inside"></i>
                     </button>
-                    <input type="text" id="searchInput" placeholder="Search laptops, GPUs, keyboards, mice..." autocomplete="off">
+                    <input type="text" id="searchInput" placeholder="Search laptops, GPUs, keyboards..." autocomplete="off">
                     <button type="button" class="search-clear-btn" id="searchClearBtn" onclick="clearSearchInput()" title="Clear search">✕</button>
                 </form>
                 <!-- Instant Autocomplete Dropdown -->
@@ -75,8 +95,16 @@
 
             <!-- Header Action Icons -->
             <div class="header-actions">
-                <button class="btn-header-action btn-header-track" onclick="toggleTrackModal(true)" title="Track Your Order">
-                    <i class="fa-solid fa-route"></i> <span>Track</span>
+                <button class="btn-header-action btn-admin" onclick="toggleAdminModal(true)" title="Admin Control Center">
+                    <i class="fa-solid fa-shield-halved"></i> <span>Admin</span>
+                </button>
+
+                <button class="btn-header-action btn-account" id="accountHeaderBtn" onclick="toggleAuthModal(true)" title="Customer Account & Orders">
+                    <i class="fa-solid fa-user"></i> <span id="accountBtnLabel">Login</span>
+                </button>
+
+                <button class="btn-header-action btn-compare-badge" id="compareHeaderBtn" onclick="toggleCompareModal(true)" title="Compare Products">
+                    <i class="fa-solid fa-code-compare"></i> <span class="action-text">Compare</span> (<span id="compareCountBadge" class="badge-count">0</span>)
                 </button>
 
                 <button class="btn-header-action btn-header-wishlist" id="wishlistBtn" onclick="toggleWishlistDrawer(true)" title="Saved Wishlist">
@@ -84,15 +112,11 @@
                 </button>
 
                 <button class="btn-header-action btn-cart" id="cartBtn" onclick="toggleCartDrawer(true)" title="Shopping Cart">
-                    <i class="fa-solid fa-cart-shopping"></i> <span>Cart</span> (<span id="cartCount" class="badge-count">0</span>)
+                    <i class="fa-solid fa-cart-shopping"></i> <span class="action-text">Cart</span> (<span id="cartCount" class="badge-count">0</span>)
                 </button>
 
                 <button class="btn-header-action btn-theme-toggle" id="themeToggleBtn" onclick="toggleDarkMode()" title="Toggle Dark / Light Mode">
                     🌙
-                </button>
-
-                <button class="btn-header-action btn-admin" onclick="toggleAdminModal(true)" title="Admin Control Center">
-                    <i class="fa-solid fa-shield-halved"></i> <span>Admin</span>
                 </button>
             </div>
         </div>
@@ -104,6 +128,12 @@
             <div class="sub-nav-links">
                 <button onclick="document.getElementById('deals').scrollIntoView({behavior:'smooth'})" class="sub-nav-link hot">
                     <i class="fa-solid fa-fire"></i> Flash Deals
+                </button>
+                <button onclick="togglePcBuilderModal(true)" class="sub-nav-link" style="color:#a855f7; font-weight:800;">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> PC Builder Studio
+                </button>
+                <button onclick="toggleSpinWheelModal(true)" class="sub-nav-link" style="color:#f59e0b; font-weight:800;">
+                    <i class="fa-solid fa-gift"></i> Lucky Spin
                 </button>
                 <button onclick="filterCategory('All', this)" class="sub-nav-link active">
                     <i class="fa-solid fa-grid-2"></i> All Catalog
@@ -397,11 +427,16 @@
     <!-- CUSTOMER REVIEWS & TESTIMONIALS -->
     <section class="testimonials-section">
         <div class="section-title">
-            <h2>⭐ Verified Buyer Reviews</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:8px;">
+                <h2 style="margin:0;">⭐ Verified Buyer Reviews</h2>
+                <button type="button" onclick="toggleWriteReviewModal(true)" style="background:var(--primary); color:white; border:none; padding:8px 16px; border-radius:var(--radius-sm); font-size:12.5px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:var(--shadow-sm);">
+                    <i class="fa-solid fa-pen-to-square"></i> Write a Review
+                </button>
+            </div>
             <p>Read what verified tech enthusiasts across Bangladesh say about shopping with TechVerse</p>
         </div>
 
-        <div class="testimonials-grid">
+        <div class="testimonials-grid" id="testimonialsGrid">
             <div class="testimonial-card">
                 <div class="testimonial-header">
                     <div class="testimonial-avatar">TI</div>
@@ -525,6 +560,90 @@
         </p>
     </section>
 
+    <!-- MEET THE FOUNDER & STORE PROPRIETOR SECTION -->
+    <section id="founder" class="founder-section">
+        <div class="section-title">
+            <h2>👑 Meet The Founder & Owner</h2>
+            <p>Direct Leadership, 100% Genuine Commitment & Uncompromised Customer Trust</p>
+        </div>
+
+        <div class="founder-card-wrapper">
+            <div class="founder-card">
+                <!-- Founder Photo Column -->
+                <div class="founder-photo-col">
+                    <div class="founder-photo-frame">
+                        <img id="founderPhotoDisplay" 
+                             src="images/founder.jpg" 
+                             alt="Md Yeasin Bhuiyan - Founder & Managing Director" 
+                             class="founder-img">
+                        <div class="founder-verified-badge">
+                            <i class="fa-solid fa-certificate"></i> Verified Store Owner
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn-founder-photo-upload" id="founderPhotoUploadBtn" onclick="triggerFounderPhotoUpload()" title="ছবি পরিবর্তন করুন (শুধুমাত্র অ্যাডমিন)" style="display:none;">
+                        <i class="fa-solid fa-camera"></i> <span>ছবি পরিবর্তন করুন (Admin)</span>
+                    </button>
+                    <input type="file" id="founderPhotoFileInput" accept="image/*" style="display:none;" onchange="handleFounderPhotoFile(event)">
+                    <small class="founder-photo-tip" id="founderPhotoTip" style="display:none;">🔒 শুধুমাত্র অ্যাডমিন পিন দিয়ে লগইন করলেই এটি পরিবর্তন করা সম্ভব</small>
+                </div>
+
+                <!-- Founder Details & Message Column -->
+                <div class="founder-info-col">
+                    <div class="founder-badge-row">
+                        <span class="founder-tag">
+                            <i class="fa-solid fa-crown"></i> Founder & Managing Director
+                        </span>
+                        <span class="founder-store-tag">
+                            <i class="fa-solid fa-shield-halved"></i> TechVerse Proprietor
+                        </span>
+                    </div>
+
+                    <h3 class="founder-name">MD YEASIN BHUIYAN</h3>
+                    <div class="founder-designation">Founder, CEO & Lead Tech Enthusiast</div>
+
+                    <div class="founder-quote-box">
+                        <i class="fa-solid fa-quote-left quote-icon-decor"></i>
+                        <p class="founder-speech">
+                            "TechVerse-এ আপনাকে স্বাগতম। এই শপটির প্রতিটি পণ্য সরাসরি অনুমোদিত ব্র্যান্ড ডিস্ট্রিবিউটর থেকে সংগ্রহ করা এবং ১০০% জেনুইন। আমাদের মূল লক্ষ্য গ্রাহকের সাথে দীর্ঘমেয়াদী আস্থার সম্পর্ক তৈরি করা। যেকোনো টেক পরামর্শ, অর্ডার সাপোর্ট বা সরাসরি অনুসন্ধানের জন্য আমি এবং আমার টিম সবসময় আপনাদের সেবায় নিয়োজিত।"
+                        </p>
+                    </div>
+
+                    <!-- Trust Pillars -->
+                    <div class="founder-pillars-grid">
+                        <div class="founder-pillar-item">
+                            <div class="pillar-icon"><i class="fa-solid fa-award"></i></div>
+                            <div>
+                                <strong>১০০% অরিজিনাল অফিসিয়াল পণ্য</strong>
+                                <span>অফিসিয়াল ব্র্যান্ড ওয়ারেন্টি ও ইনভয়েস সহ</span>
+                            </div>
+                        </div>
+                        <div class="founder-pillar-item">
+                            <div class="pillar-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                            <div>
+                                <strong>সরাসরি ফাউন্ডার গ্যারান্টি</strong>
+                                <span>৭ দিনের রিপ্লেসমেন্ট ও কাস্টমার প্রায়োরিটি</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Contact Buttons -->
+                    <div class="founder-actions-row">
+                        <a href="https://wa.me/8801820727102?text=Hello%20Md%20Yeasin%20Bhuiyan,%20I%20have%20an%20inquiry%20regarding%20TechVerse" target="_blank" class="btn-founder-whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i> সরাসরি WhatsApp-এ বার্তা দিন
+                        </a>
+                        <a href="tel:+8801820727102" class="btn-founder-call">
+                            <i class="fa-solid fa-phone"></i> +880 1820-727102
+                        </a>
+                        <a href="mailto:support@techverse.com" class="btn-founder-email">
+                            <i class="fa-solid fa-envelope"></i> ডিরেক্ট ইমেইল
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CONTACT SECTION -->
     <section id="contact">
         <div class="section-title">
@@ -609,7 +728,7 @@
 
         <div class="footer-bottom-bar">
             <div>© 2026 TechVerse Online Tech Store | All Rights Reserved.</div>
-            <div>Designed with ❤️ by <b>Md Yeasin Bhuiyan</b></div>
+            <div>Founded & Owned with ❤️ by <b>Md Yeasin Bhuiyan</b></div>
             <div style="display:flex; gap:16px;">
                 <a href="https://facebook.com" target="_blank" style="color:#94a3b8;"><i class="fab fa-facebook-f"></i></a>
                 <a href="https://instagram.com" target="_blank" style="color:#94a3b8;"><i class="fab fa-instagram"></i></a>
@@ -776,78 +895,571 @@
             <div id="invoiceContent">
                 <!-- Receipt content filled dynamically by script.js -->
             </div>
-            <div class="no-print" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:15px;">
+            <div class="no-print" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:15px; flex-wrap:wrap; gap:10px;">
                 <button onclick="toggleInvoiceModal(false)" style="background:var(--card-elevated); color:var(--text-color); padding:10px 22px; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-weight:700; cursor:pointer;">✖ Close</button>
-                <button onclick="window.print()" style="background:var(--primary); color:white; padding:11px 28px; border-radius:var(--radius-sm); border:none; font-weight:700; cursor:pointer; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;">🖨️ Print Invoice Receipt</button>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="downloadInvoicePdf()" style="background:#10b981; color:white; padding:11px 22px; border-radius:var(--radius-sm); border:none; font-weight:700; cursor:pointer; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;">📥 Download PDF</button>
+                    <button onclick="window.print()" style="background:var(--primary); color:white; padding:11px 26px; border-radius:var(--radius-sm); border:none; font-weight:700; cursor:pointer; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;">🖨️ Print Invoice Receipt</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- ADMIN CONTROL SUITE MODAL -->
     <div id="adminModal" class="modal">
-        <div class="modal-content" style="max-width:800px;">
+        <div class="modal-content admin-modal-container">
             <span class="close-modal" onclick="toggleAdminModal(false)">&times;</span>
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px; padding-right:30px;">
-                <h2 style="color:var(--primary); margin:0; display:flex; align-items:center; gap:8px;">
-                    <i class="fa-solid fa-gear"></i> Admin Control Center
-                </h2>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span id="backendStatusBadge" style="font-size:12px; font-weight:700; padding:4px 12px; border-radius:20px; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3);">🟢 Live Backend</span>
-                    <button type="button" onclick="loadAdminData(true)" title="Refresh Dashboard" style="background:var(--card-elevated); border:1px solid var(--border-color); color:var(--text-color); padding:5px 12px; border-radius:var(--radius-sm); font-weight:600; cursor:pointer;">🔄 Refresh</button>
+            
+            <!-- ADMIN LOGIN GATE (Visible when not authenticated) -->
+            <div id="adminLoginGate" class="admin-login-card" style="display:none;">
+                <div class="admin-login-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="stat-grid">
-                <div class="stat-card" style="background:linear-gradient(135deg, #0d6efd, #0284c7);">
-                    <h3 id="statProducts">0</h3>
-                    <small>Total Products</small>
-                </div>
-                <div class="stat-card" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9);">
-                    <h3 id="statSoldItems">0</h3>
-                    <small>Total Sold Items</small>
-                </div>
-                <div class="stat-card" style="background:linear-gradient(135deg, #10b981, #059669);">
-                    <h3 id="statOrders">0</h3>
-                    <small>Total Orders</small>
-                </div>
-                <div class="stat-card" style="background:linear-gradient(135deg, #f59e0b, #d97706);">
-                    <h3 id="statRevenue">৳ 0</h3>
-                    <small>Sales Revenue</small>
-                </div>
-                <div class="stat-card" style="background:linear-gradient(135deg, #06b6d4, #0891b2);">
-                    <h3 id="statMessages">0</h3>
-                    <small>Inquiries</small>
-                </div>
-            </div>
-
-            <!-- Admin Tabs -->
-            <div class="admin-tabs">
-                <button class="admin-tab active" onclick="switchAdminTab('orders', this)">📋 Customer Orders</button>
-                <button class="admin-tab" onclick="switchAdminTab('products', this)">📦 Manage Products</button>
-                <button class="admin-tab" onclick="switchAdminTab('messages', this)">💬 Customer Inquiries</button>
-                <button class="admin-tab" onclick="switchAdminTab('sms', this)">📱 SMS Logs (লাইভ নোটিফিকেশন)</button>
-            </div>
-
-            <!-- Dynamic Tab Content -->
-            <div id="adminOrdersList" style="max-height: 290px; overflow-y: auto; margin-bottom: 20px;">
-                <!-- Filled dynamically by script.js -->
-            </div>
-
-            <!-- Add Product Section -->
-            <div style="border-top:1px solid var(--border-color); padding-top:16px;">
-                <h4 style="color:var(--primary); margin-bottom:12px;">➕ Add Product to Live Store</h4>
-                <form id="addProductForm" onsubmit="submitAddProduct(event)" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <input type="text" id="prodName" placeholder="Product Name *" required style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
-                    <input type="text" id="prodCategory" placeholder="Category (e.g. Laptop) *" required style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
-                    <input type="number" id="prodPrice" placeholder="Selling Price (BDT) *" required style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
-                    <input type="number" id="prodOldPrice" placeholder="Regular Price (Optional BDT)" style="padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
-                    <input type="text" id="prodImage" placeholder="Image URL (e.g. images/laptop.jpg)" value="images/laptop.jpg" style="grid-column: span 2; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
-                    <button type="submit" style="grid-column: span 2; background:var(--primary); color:white; padding:12px; border-radius:var(--radius-sm); border:none; font-weight:800; cursor:pointer;">
-                        ➕ Add Product to Live Store & Database
+                <h2>TechVerse Admin Security Gate</h2>
+                <p>Please enter your administrator passcode to access store orders, sales finances, and product inventory controls.</p>
+                <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                    <div class="admin-input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="adminPassInput" placeholder="Enter Admin Passcode" required autocomplete="current-password">
+                        <button type="button" class="btn-toggle-pass" onclick="toggleAdminPassVisibility()" title="Show/Hide Passcode">
+                            <i class="fa-regular fa-eye" id="adminPassEyeIcon"></i>
+                        </button>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; font-size:12.5px;">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="adminRememberCheckbox" checked> Remember session
+                        </label>
+                    </div>
+                    <div id="adminLoginError" class="admin-login-error" style="display:none;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Incorrect administrator passcode. Access denied.
+                    </div>
+                    <button type="submit" class="btn-admin-unlock">
+                        <i class="fa-solid fa-lock-open"></i> Unlock Admin Panel
                     </button>
                 </form>
             </div>
+
+            <!-- MAIN ADMIN DASHBOARD (Visible when authenticated) -->
+            <div id="adminDashboardView" style="display:block;">
+                <!-- Header -->
+                <div class="admin-header-row">
+                    <div class="admin-title-area">
+                        <h2>
+                            <i class="fa-solid fa-shield-halved"></i> Admin Control Center
+                        </h2>
+                        <span id="backendStatusBadge" class="backend-status-pill">🟢 Live Backend</span>
+                    </div>
+                    <div class="admin-header-actions">
+                        <button type="button" class="btn-admin-header" onclick="triggerFounderPhotoUpload(); toggleAdminModal(false);" title="Change Founder Profile Photo">
+                            <i class="fa-solid fa-camera"></i> <span>Owner Photo</span>
+                        </button>
+                        <button type="button" class="btn-admin-header" onclick="toggleDirectSmsModal(true)" title="Send direct SMS / WhatsApp to customer">
+                            <i class="fa-solid fa-paper-plane"></i> <span>Direct SMS</span>
+                        </button>
+                        <button type="button" class="btn-admin-header" onclick="toggleChangePinModal(true)" title="Change Administrator Security PIN">
+                            <i class="fa-solid fa-key"></i> <span>Change PIN</span>
+                        </button>
+                        <button type="button" class="btn-admin-header" onclick="exportOrdersToCsv()" title="Export all orders to CSV spreadsheet">
+                            <i class="fa-solid fa-file-csv"></i> <span>Export Orders</span>
+                        </button>
+                        <button type="button" class="btn-admin-header" onclick="loadAdminData(true)" title="Refresh data from server">
+                            <i class="fa-solid fa-rotate"></i> <span>Refresh</span>
+                        </button>
+                        <button type="button" class="btn-admin-header btn-admin-lock" onclick="lockAdminSession()" title="Lock / Logout of Admin Panel">
+                            <i class="fa-solid fa-lock"></i> <span>Lock</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stat-grid admin-stat-grid">
+                    <div class="stat-card stat-revenue">
+                        <div class="stat-icon"><i class="fa-solid fa-bangladeshi-taka-sign"></i></div>
+                        <div>
+                            <h3 id="statRevenue">৳ 0</h3>
+                            <small>Sales Revenue</small>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-orders">
+                        <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                        <div>
+                            <h3 id="statOrders">0</h3>
+                            <small>Total Orders</small>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-pending">
+                        <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <h3 id="statPendingOrders">0</h3>
+                            <small>Pending Orders</small>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-delivered">
+                        <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div>
+                            <h3 id="statDeliveredOrders">0</h3>
+                            <small>Delivered</small>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-products">
+                        <div class="stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                        <div>
+                            <h3 id="statProducts">0</h3>
+                            <small>Products in Store</small>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-coupons">
+                        <div class="stat-icon"><i class="fa-solid fa-ticket"></i></div>
+                        <div>
+                            <h3 id="statCoupons">0</h3>
+                            <small>Active Coupons</small>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-inquiries">
+                        <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+                        <div>
+                            <h3 id="statMessages">0</h3>
+                            <small>Inquiries</small>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-sms">
+                        <div class="stat-icon"><i class="fa-solid fa-comment-sms"></i></div>
+                        <div>
+                            <h3 id="statSmsDispatches">0</h3>
+                            <small>SMS Logs</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs -->
+                <div class="admin-tabs">
+                    <button class="admin-tab active" id="tabBtnOrders" onclick="switchAdminTab('orders', this)">
+                        <i class="fa-solid fa-clipboard-list"></i> Customer Orders <span id="badgeOrdersCount" class="tab-badge">0</span>
+                    </button>
+                    <button class="admin-tab" id="tabBtnProducts" onclick="switchAdminTab('products', this)">
+                        <i class="fa-solid fa-boxes-stacked"></i> Manage Products <span id="badgeProductsCount" class="tab-badge">0</span>
+                    </button>
+                    <button class="admin-tab" id="tabBtnAddProduct" onclick="switchAdminTab('add-product', this)">
+                        <i class="fa-solid fa-circle-plus"></i> Add New Product
+                    </button>
+                    <button class="admin-tab" id="tabBtnCoupons" onclick="switchAdminTab('coupons', this)">
+                        <i class="fa-solid fa-ticket"></i> Coupons & Promos <span id="badgeCouponsCount" class="tab-badge">0</span>
+                    </button>
+                    <button class="admin-tab" id="tabBtnMessages" onclick="switchAdminTab('messages', this)">
+                        <i class="fa-solid fa-envelope-open-text"></i> Customer Inquiries <span id="badgeMessagesCount" class="tab-badge">0</span>
+                    </button>
+                    <button class="admin-tab" id="tabBtnSms" onclick="switchAdminTab('sms', this)">
+                        <i class="fa-solid fa-comment-sms"></i> SMS Logs <span id="badgeSmsCount" class="tab-badge">0</span>
+                    </button>
+                </div>
+
+                <!-- Dynamic Tab Content Viewports -->
+                <div id="adminTabContentOrders" class="admin-tab-pane">
+                    <!-- Orders Toolbar -->
+                    <div class="admin-toolbar">
+                        <div class="admin-filter-chips" id="orderStatusChips">
+                            <button class="chip active" onclick="filterAdminOrdersStatus('All', this)">All (<span id="chipCountAll">0</span>)</button>
+                            <button class="chip chip-pending" onclick="filterAdminOrdersStatus('Pending', this)">⏳ Pending (<span id="chipCountPending">0</span>)</button>
+                            <button class="chip chip-processing" onclick="filterAdminOrdersStatus('Processing', this)">📦 Processing (<span id="chipCountProcessing">0</span>)</button>
+                            <button class="chip chip-shipped" onclick="filterAdminOrdersStatus('Shipped', this)">🚚 Shipped (<span id="chipCountShipped">0</span>)</button>
+                            <button class="chip chip-delivered" onclick="filterAdminOrdersStatus('Delivered', this)">✅ Delivered (<span id="chipCountDelivered">0</span>)</button>
+                            <button class="chip chip-cancelled" onclick="filterAdminOrdersStatus('Cancelled', this)">❌ Cancelled (<span id="chipCountCancelled">0</span>)</button>
+                        </div>
+                        <div class="admin-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="orderSearchInput" oninput="handleAdminOrderSearch(this.value)" placeholder="Search orders by ID, name, phone, address...">
+                            <button type="button" class="btn-clear-search" onclick="clearAdminOrderSearch()">✕</button>
+                        </div>
+                    </div>
+                    <div id="adminOrdersList" class="admin-scroll-pane">
+                        <!-- Filled dynamically by script.js -->
+                    </div>
+                </div>
+
+                <!-- Manage Products Tab Pane -->
+                <div id="adminTabContentProducts" class="admin-tab-pane" style="display:none;">
+                    <div class="admin-toolbar">
+                        <div class="admin-search-box" style="flex:1;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="productSearchInput" oninput="handleAdminProductSearch(this.value)" placeholder="Search products by title or category...">
+                            <button type="button" class="btn-clear-search" onclick="clearAdminProductSearch()">✕</button>
+                        </div>
+                        <select id="productCategoryFilter" onchange="handleAdminProductCategoryFilter(this.value)" class="admin-select-filter">
+                            <option value="All">All Categories</option>
+                            <option value="Laptop">Laptops</option>
+                            <option value="Keyboard">Keyboards</option>
+                            <option value="Mouse">Mice</option>
+                            <option value="Headphone">Headphones</option>
+                            <option value="Monitor">Monitors</option>
+                            <option value="SSD">SSD / Storage</option>
+                            <option value="Graphics Card">Graphics Cards</option>
+                            <option value="Speaker">Speakers</option>
+                            <option value="RAM">RAM</option>
+                            <option value="Processor">Processors</option>
+                        </select>
+                        <button type="button" class="btn-primary-action" onclick="switchAdminTab('add-product', document.getElementById('tabBtnAddProduct'))">
+                            <i class="fa-solid fa-plus"></i> Add Product
+                        </button>
+                    </div>
+                    <div id="adminProductsList" class="admin-scroll-pane">
+                        <!-- Filled dynamically by script.js -->
+                    </div>
+                </div>
+
+                <!-- Add New Product Tab Pane -->
+                <div id="adminTabContentAddProduct" class="admin-tab-pane" style="display:none;">
+                    <div class="add-product-wrapper">
+                        <div class="add-product-card">
+                            <h3 style="color:var(--primary); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                                <i class="fa-solid fa-box-open"></i> Add New Product to Store Catalog
+                            </h3>
+                            <form id="addProductForm" onsubmit="submitAddProduct(event)">
+                                <div class="form-row-2">
+                                    <div class="form-group">
+                                        <label>Product Name *</label>
+                                        <input type="text" id="prodName" oninput="updateLiveProductPreview()" placeholder="e.g. Asus ROG Strix G16" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Category *</label>
+                                        <div style="display:flex; gap:6px;">
+                                            <select id="prodCategorySelect" onchange="handleCategorySelectChange(this.value)" style="flex:1;">
+                                                <option value="Laptop">Laptop</option>
+                                                <option value="Keyboard">Keyboard</option>
+                                                <option value="Mouse">Mouse</option>
+                                                <option value="Headphone">Headphone</option>
+                                                <option value="Monitor">Monitor</option>
+                                                <option value="SSD">SSD</option>
+                                                <option value="Graphics Card">Graphics Card</option>
+                                                <option value="Speaker">Speaker</option>
+                                                <option value="RAM">RAM</option>
+                                                <option value="Processor">Processor</option>
+                                                <option value="Webcam">Webcam</option>
+                                                <option value="Custom">Custom Category...</option>
+                                            </select>
+                                            <input type="text" id="prodCategoryCustom" oninput="updateLiveProductPreview()" placeholder="Custom Category" style="display:none; flex:1;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row-3">
+                                    <div class="form-group">
+                                        <label>Selling Price (BDT ৳) *</label>
+                                        <input type="number" id="prodPrice" oninput="updateLiveProductPreview()" placeholder="e.g. 125000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Regular / Old Price (BDT ৳)</label>
+                                        <input type="number" id="prodOldPrice" oninput="updateLiveProductPreview()" placeholder="e.g. 145000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Warranty Coverage</label>
+                                        <input type="text" id="prodWarranty" oninput="updateLiveProductPreview()" value="🛡️ 2 Years Warranty" placeholder="e.g. 🛡️ 2 Years Warranty">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Product Image Path or URL</label>
+                                    <input type="text" id="prodImage" oninput="updateLiveProductPreview()" value="images/laptop.jpg" placeholder="e.g. images/laptop.jpg or https://...">
+                                    <div class="image-preset-tags">
+                                        <span class="preset-label">Quick Image Presets:</span>
+                                        <button type="button" onclick="setAddProductImagePreset('images/laptop.jpg')">💻 Laptop</button>
+                                        <button type="button" onclick="setAddProductImagePreset('images/keyboard.jpg')">⌨️ Keyboard</button>
+                                        <button type="button" onclick="setAddProductImagePreset('images/mouse.jpg')">🖱️ Mouse</button>
+                                        <button type="button" onclick="setAddProductImagePreset('images/headphone.jpg')">🎧 Headphone</button>
+                                        <button type="button" onclick="setAddProductImagePreset('images/monitor.jpg')">🖥️ Monitor</button>
+                                        <button type="button" onclick="setAddProductImagePreset('images/ssd.jpg')">⚡ SSD</button>
+                                        <button type="button" onclick="setAddProductImagePreset('images/gpu.jpg')">🎮 GPU</button>
+                                        <button type="button" onclick="setAddProductImagePreset('images/speaker.jpg')">🔊 Speaker</button>
+                                    </div>
+                                </div>
+                                <div class="form-row-2" style="align-items:center;">
+                                    <label style="display:flex; align-items:center; gap:8px; font-weight:700; cursor:pointer;">
+                                        <input type="checkbox" id="prodInStock" checked onchange="updateLiveProductPreview()"> In Stock & Ready to Ship
+                                    </label>
+                                    <div class="form-group" style="margin:0;">
+                                        <input type="text" id="prodDelivery" oninput="updateLiveProductPreview()" value="🚚 Free Delivery Inside BD" placeholder="Delivery tag">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-submit-add-product">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> Add Product to Live Store & Database
+                                </button>
+                            </form>
+                        </div>
+                        <!-- Live Preview Card -->
+                        <div class="preview-product-container">
+                            <span class="preview-title">Live Storefront Preview</span>
+                            <div class="preview-card" id="liveProductPreviewCard">
+                                <div class="preview-img-box">
+                                    <img id="prevImg" src="images/laptop.jpg" alt="Preview">
+                                    <span id="prevBadge" class="prev-discount-tag">-14%</span>
+                                </div>
+                                <div class="preview-body">
+                                    <span id="prevCategory" class="prev-cat-badge">Laptop</span>
+                                    <h4 id="prevName">Asus ROG Gaming Laptop</h4>
+                                    <div class="prev-price-row">
+                                        <strong id="prevPrice" class="prev-current-price">৳ 125,000</strong>
+                                        <span id="prevOldPrice" class="prev-old-price">৳ 145,000</span>
+                                    </div>
+                                    <div class="prev-features">
+                                        <span id="prevWarranty">🛡️ 2 Years Warranty</span>
+                                        <span id="prevDelivery">🚚 Free Delivery</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Inquiries Tab Pane -->
+                <div id="adminTabContentMessages" class="admin-tab-pane" style="display:none;">
+                    <div class="admin-toolbar">
+                        <div class="admin-search-box" style="flex:1;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="messageSearchInput" oninput="handleAdminMessageSearch(this.value)" placeholder="Search inquiries by sender name, email, or content...">
+                            <button type="button" class="btn-clear-search" onclick="clearAdminMessageSearch()">✕</button>
+                        </div>
+                    </div>
+                    <div id="adminMessagesList" class="admin-scroll-pane">
+                        <!-- Filled dynamically by script.js -->
+                    </div>
+                </div>
+
+                <!-- Coupons Management Tab Pane -->
+                <div id="adminTabContentCoupons" class="admin-tab-pane" style="display:none;">
+                    <div style="background:var(--card-elevated); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:16px 18px; margin-bottom:14px;">
+                        <h4 style="color:var(--primary); margin:0 0 12px 0; font-size:14.5px; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-ticket"></i> Create New Discount Voucher / Promo Code
+                        </h4>
+                        <form id="addCouponForm" onsubmit="submitAddCoupon(event)">
+                            <div class="form-row-3" style="display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:10px; margin-bottom:10px;">
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Coupon Code *</label>
+                                    <input type="text" id="couponCodeInput" placeholder="e.g. FLASH25, EID2026" required style="text-transform:uppercase; font-weight:700; width:100%; padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                                </div>
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Discount Type *</label>
+                                    <select id="couponTypeSelect" onchange="handleCouponTypeChange(this.value)" style="width:100%; padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color); font-weight:600;">
+                                        <option value="percent">Percentage Discount (%)</option>
+                                        <option value="flat">Flat Cash Discount (৳)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;" id="couponValueLabel">Discount Rate (%) *</label>
+                                    <input type="number" id="couponValueInput" placeholder="e.g. 15" required style="width:100%; padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                                </div>
+                            </div>
+                            <div class="form-row-3" style="display:grid; grid-template-columns:1fr 1fr 1.5fr; gap:10px; margin-bottom:12px;">
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Minimum Spend (৳)</label>
+                                    <input type="number" id="couponMinSpendInput" placeholder="e.g. 1000" style="width:100%; padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                                </div>
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Max Discount Cap (৳)</label>
+                                    <input type="number" id="couponMaxDiscountInput" placeholder="e.g. 5000 (0 for no cap)" style="width:100%; padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                                </div>
+                                <div>
+                                    <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Description / Promo Tagline</label>
+                                    <input type="text" id="couponDescInput" placeholder="e.g. 15% OFF on all TechVerse orders!" style="width:100%; padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                                </div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end;">
+                                <button type="submit" style="background:linear-gradient(135deg, #ec4899, #db2777); color:white; border:none; padding:9px 20px; border-radius:var(--radius-sm); font-weight:800; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 3px 10px rgba(236,72,153,0.3);">
+                                    <i class="fa-solid fa-plus-circle"></i> Create Promo Coupon
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="admin-toolbar">
+                        <div class="admin-search-box" style="flex:1;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="couponSearchInput" oninput="handleAdminCouponSearch(this.value)" placeholder="Search coupons by code or description...">
+                            <button type="button" class="btn-clear-search" onclick="clearAdminCouponSearch()">✕</button>
+                        </div>
+                    </div>
+                    <div id="adminCouponsList" class="admin-scroll-pane">
+                        <!-- Filled dynamically by script.js -->
+                    </div>
+                </div>
+
+                <!-- SMS Logs Tab Pane -->
+                <div id="adminTabContentSms" class="admin-tab-pane" style="display:none;">
+                    <div class="admin-toolbar">
+                        <div class="admin-search-box" style="flex:1;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="smsSearchInput" oninput="handleAdminSmsSearch(this.value)" placeholder="Search SMS logs by recipient phone or Order ID...">
+                            <button type="button" class="btn-clear-search" onclick="clearAdminSmsSearch()">✕</button>
+                        </div>
+                        <button type="button" class="btn-primary-action" onclick="toggleDirectSmsModal(true)" style="background:#0284c7;">
+                            <i class="fa-solid fa-paper-plane"></i> Send Custom SMS
+                        </button>
+                        <button type="button" onclick="clearAllAdminSmsLogs()" style="background:var(--danger-light); color:var(--danger); border:1px solid rgba(239,68,68,0.3); padding:7px 12px; border-radius:var(--radius-sm); font-weight:700; cursor:pointer; font-size:12.5px;">
+                            <i class="fa-solid fa-trash-can"></i> Clear All Logs
+                        </button>
+                    </div>
+                    <div id="adminSmsList" class="admin-scroll-pane">
+                        <!-- Filled dynamically by script.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT PRODUCT MODAL -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content" style="max-width:560px; padding:24px;">
+            <span class="close-modal" onclick="toggleEditProductModal(false)">&times;</span>
+            <h3 style="color:var(--primary); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Product
+            </h3>
+            <form id="editProductForm" onsubmit="submitEditProduct(event)">
+                <input type="hidden" id="editProdId">
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Product Name *</label>
+                    <input type="text" id="editProdName" required style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                </div>
+                <div class="form-row-2" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div class="form-group">
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Category *</label>
+                        <input type="text" id="editProdCategory" required style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Selling Price (BDT ৳) *</label>
+                        <input type="number" id="editProdPrice" required style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    </div>
+                </div>
+                <div class="form-row-2" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div class="form-group">
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Regular Price (BDT ৳)</label>
+                        <input type="number" id="editProdOldPrice" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Warranty</label>
+                        <input type="text" id="editProdWarranty" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    </div>
+                </div>
+                <div class="form-row-2" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div class="form-group">
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Image URL / Path</label>
+                        <input type="text" id="editProdImage" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Delivery Badge / Tag</label>
+                        <input type="text" id="editProdDelivery" placeholder="e.g. 🚚 Free Delivery" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    </div>
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; cursor:pointer;">
+                        <input type="checkbox" id="editProdInStock"> Product is In Stock & Available for Purchase
+                    </label>
+                </div>
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" onclick="toggleEditProductModal(false)" style="padding:10px 18px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color); font-weight:700; cursor:pointer;">Cancel</button>
+                    <button type="submit" style="padding:10px 22px; border-radius:var(--radius-sm); border:none; background:var(--primary); color:white; font-weight:800; cursor:pointer; box-shadow:var(--shadow-sm);">💾 Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DIRECT CUSTOM SMS BROADCASTER MODAL -->
+    <div id="directSmsModal" class="modal">
+        <div class="modal-content" style="max-width:580px; padding:24px;">
+            <span class="close-modal" onclick="toggleDirectSmsModal(false)">&times;</span>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                <div style="width:48px; height:48px; border-radius:50%; background:rgba(2,132,199,0.15); display:flex; align-items:center; justify-content:center; font-size:24px; color:#0284c7;">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <div>
+                    <h3 style="margin:0; font-size:18px; color:var(--text-color);">Direct SMS & WhatsApp Broadcaster</h3>
+                    <span style="font-size:11.5px; color:var(--text-muted);">Send custom instant notifications, promos, or status alerts to any customer</span>
+                </div>
+            </div>
+
+            <form id="directSmsForm" onsubmit="submitDirectSms(event)">
+                <div class="form-row-2" style="display:grid; grid-template-columns:1.2fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div>
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Recipient Phone Number *</label>
+                        <input type="text" id="directSmsPhone" required placeholder="e.g. 018XXXXXXXX" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color); font-weight:700;">
+                    </div>
+                    <div>
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Customer Name</label>
+                        <input type="text" id="directSmsCustomerName" placeholder="Customer Name" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color);">
+                    </div>
+                </div>
+
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Choose Quick SMS Template</label>
+                    <select id="directSmsTemplateSelect" onchange="applyDirectSmsTemplate(this.value)" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color); font-weight:600;">
+                        <option value="custom">✏️ Custom Message (Write your own)</option>
+                        <option value="order_confirmation">🛒 Order Confirmed & Packing Notice</option>
+                        <option value="out_for_delivery">🚚 Out for Delivery Today</option>
+                        <option value="delivery_completed">✅ Delivery Completed & Warranty Info</option>
+                        <option value="vip_discount">🎁 VIP Exclusive Discount Code (WELCOME500)</option>
+                        <option value="payment_reminder">💳 Payment Verification / Confirmation</option>
+                        <option value="delay_notice">⏳ Delivery Schedule Update</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <label style="font-size:12.5px; font-weight:700;">SMS Message Body *</label>
+                        <span id="directSmsCharCount" style="font-size:11px; color:var(--text-muted);">0 chars</span>
+                    </div>
+                    <textarea id="directSmsMessage" rows="4" required oninput="updateDirectSmsCharCount()" placeholder="Enter message text..." style="width:100%; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color); font-size:13px; line-height:1.5; resize:vertical; font-family:inherit;"></textarea>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                        <button type="submit" style="background:#0284c7; color:white; border:none; padding:11px; border-radius:var(--radius-sm); font-weight:800; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 10px rgba(2,132,199,0.3);">
+                            <i class="fa-solid fa-paper-plane"></i> Dispatch via API & Log
+                        </button>
+                        <a id="directSmsWhatsappLink" href="#" target="_blank" onclick="prepareDirectWhatsapp(event)" style="background:#25D366; color:white; padding:11px; border-radius:var(--radius-sm); font-weight:800; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px; box-shadow:0 3px 10px rgba(37,211,102,0.3);">
+                            <i class="fa-brands fa-whatsapp"></i> Send via WhatsApp
+                        </a>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                        <a id="directSmsSimLink" href="#" onclick="prepareDirectSimSms(event)" style="background:var(--card-elevated); color:var(--text-color); border:1px solid var(--border-color); padding:10px; border-radius:var(--radius-sm); font-weight:700; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; font-size:12.5px;">
+                            <i class="fa-solid fa-comment-sms"></i> Open SIM SMS App
+                        </a>
+                        <button type="button" onclick="copyDirectSmsText()" style="background:var(--card-elevated); color:var(--text-color); border:1px solid var(--border-color); padding:10px; border-radius:var(--radius-sm); font-weight:700; cursor:pointer; font-size:12.5px;">
+                            📋 Copy Text
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CHANGE ADMIN PIN MODAL -->
+    <div id="adminChangePinModal" class="modal">
+        <div class="modal-content" style="max-width:440px; padding:24px;">
+            <span class="close-modal" onclick="toggleChangePinModal(false)">&times;</span>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                <div style="width:44px; height:44px; border-radius:50%; background:rgba(37,99,235,0.15); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--primary);">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <div>
+                    <h3 style="margin:0; font-size:17px; color:var(--text-color);">Change Admin PIN / Password</h3>
+                    <small style="color:var(--text-muted);">Set a customized passcode for dashboard security</small>
+                </div>
+            </div>
+
+            <form id="changeAdminPinForm" onsubmit="submitChangeAdminPin(event)">
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Current PIN *</label>
+                    <input type="password" id="pinCurrentInput" required placeholder="Enter current PIN" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">New Admin PIN *</label>
+                    <input type="password" id="pinNewInput" required placeholder="Enter new PIN / password" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                </div>
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Confirm New PIN *</label>
+                    <input type="password" id="pinConfirmInput" required placeholder="Re-enter new PIN" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                </div>
+                <div id="changePinMsg" style="display:none; padding:8px 12px; border-radius:4px; font-size:12.5px; margin-bottom:12px; font-weight:600;"></div>
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" onclick="toggleChangePinModal(false)" style="padding:10px 18px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color); font-weight:700; cursor:pointer;">Cancel</button>
+                    <button type="submit" style="padding:10px 22px; border-radius:var(--radius-sm); border:none; background:var(--primary); color:white; font-weight:800; cursor:pointer; box-shadow:var(--shadow-sm);">💾 Update PIN</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -896,6 +1508,627 @@
                     <button type="button" onclick="toggleSmsModal(false)" style="flex:1; background:var(--primary); color:white; border:none; padding:10px; border-radius:var(--radius-sm); font-weight:700; cursor:pointer; font-size:13px;">
                         Close
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. RECENT SALES LIVE SOCIAL PROOF TOAST -->
+    <div id="recentSalesToast" class="recent-sales-toast" style="display:none;">
+        <button class="toast-close-btn" onclick="dismissRecentSalesToast()" title="Dismiss">&times;</button>
+        <img id="recentSalesImg" src="images/laptop.jpg" alt="Product thumbnail">
+        <div class="recent-sales-info">
+            <div class="recent-buyer"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> <span id="recentSalesBuyer">Tanvir (Dhanmondi, Dhaka)</span> purchased:</div>
+            <div class="recent-product-name" id="recentSalesProduct">Asus ROG Strix G16</div>
+            <div class="recent-time" id="recentSalesTime">⚡ 2 mins ago • Verified Buyer</div>
+        </div>
+    </div>
+
+    <!-- 2. FLOATING COMPARE DOCK -->
+    <div id="compareDock" class="compare-dock" style="display:none;">
+        <div style="font-size:13px; font-weight:800; color:var(--text-color); display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-code-compare" style="color:var(--primary);"></i> Compare Products:
+        </div>
+        <div class="compare-dock-items" id="compareDockItems">
+            <!-- Thumbs injected by script.js -->
+        </div>
+        <button type="button" onclick="toggleCompareModal(true)" style="background:var(--primary); color:white; border:none; padding:7px 14px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; box-shadow:0 2px 8px rgba(37,99,235,0.3);">
+            View Comparison (<span id="compareDockCount">0</span>)
+        </button>
+        <button type="button" onclick="clearAllCompareItems()" style="background:none; border:none; color:var(--danger); font-size:11.5px; font-weight:700; cursor:pointer;">
+            Clear All
+        </button>
+    </div>
+
+    <!-- 3. FLOATING LIVE CHAT & WHATSAPP SUPPORT WIDGET -->
+    <div id="chatTriggerBtn" class="floating-chat-trigger" onclick="toggleChatWidget()" title="Chat with Tech Support">
+        <i class="fa-solid fa-headset"></i>
+        <span class="chat-online-dot"></span>
+    </div>
+
+    <div id="chatWidgetBox" class="chat-widget-box" style="display:none;">
+        <div class="chat-widget-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-size:16px;">
+                    🤖
+                </div>
+                <div>
+                    <h4 style="margin:0; font-size:14px; font-weight:800;">TechVerse Support Bot</h4>
+                    <span style="font-size:10.5px; opacity:0.9;">🟢 Online • Instant Response</span>
+                </div>
+            </div>
+            <button onclick="toggleChatWidget(false)" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+        </div>
+
+        <div class="chat-widget-messages" id="chatMessages">
+            <div class="chat-msg bot">
+                👋 Hello! Welcome to <b>TechVerse</b>. How can our tech specialist team help you today?
+            </div>
+            <div class="chat-quick-actions" id="chatQuickActions">
+                <button class="btn-chat-chip" onclick="handleChatPrompt('whatsapp')">💬 Connect with Human on WhatsApp</button>
+                <button class="btn-chat-chip" onclick="handleChatPrompt('track')">📦 How do I track my order?</button>
+                <button class="btn-chat-chip" onclick="handleChatPrompt('warranty')">🛡️ What is your Official Warranty policy?</button>
+                <button class="btn-chat-chip" onclick="handleChatPrompt('pc_builder')">🖥️ Can you help me build a custom PC?</button>
+                <button class="btn-chat-chip" onclick="handleChatPrompt('helpline')">📞 What is your phone helpline?</button>
+            </div>
+        </div>
+
+        <form class="chat-input-bar" onsubmit="handleChatSubmit(event)">
+            <input type="text" id="chatUserInput" placeholder="Type a message or question..." autocomplete="off">
+            <button type="submit" title="Send message"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <!-- 4. CUSTOM PC BUILDER STUDIO MODAL -->
+    <div id="pcBuilderModal" class="modal">
+        <div class="modal-content pc-builder-modal-content">
+            <span class="close-modal" onclick="togglePcBuilderModal(false)">&times;</span>
+            <div class="pc-builder-header">
+                <div>
+                    <h2 style="color:var(--primary); margin:0 0 4px 0; font-size:20px; display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> TechVerse Custom PC Builder Studio
+                    </h2>
+                    <span style="font-size:12.5px; color:var(--text-muted);">Configure your dream gaming rig or workstation with real-time component compatibility</span>
+                </div>
+                <div class="pc-builder-summary-bar">
+                    <div>
+                        <small style="display:block; font-size:11px; color:var(--text-muted); font-weight:700;">ESTIMATED POWER</small>
+                        <strong id="pcBuilderWattage" style="color:#0284c7; font-size:15px;">~ 65W</strong>
+                    </div>
+                    <div style="border-left:1px solid var(--border-color); padding-left:14px;">
+                        <small style="display:block; font-size:11px; color:var(--text-muted); font-weight:700;">TOTAL ESTIMATE</small>
+                        <strong id="pcBuilderTotal" style="color:var(--primary); font-size:18px;">৳ 0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pc-builder-grid" id="pcBuilderSlotsGrid">
+                <!-- 8 slots filled dynamically by script.js -->
+            </div>
+
+            <div class="pc-builder-footer">
+                <button type="button" onclick="resetPcBuilder()" style="background:var(--card-elevated); color:var(--text-color); border:1px solid var(--border-color); padding:10px 16px; border-radius:var(--radius-sm); font-weight:700; cursor:pointer; font-size:13px;">
+                    🔄 Reset Build
+                </button>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" onclick="printPcBuildQuotation()" style="background:#0284c7; color:white; border:none; padding:10px 18px; border-radius:var(--radius-sm); font-weight:700; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+                        🖨️ Print Quotation
+                    </button>
+                    <button type="button" onclick="addPcBuildToCart()" style="background:var(--primary); color:white; border:none; padding:10px 22px; border-radius:var(--radius-sm); font-weight:800; cursor:pointer; font-size:13.5px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 3px 12px rgba(37,99,235,0.35);">
+                        🛒 Add Entire Rig to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PC COMPONENT SELECTOR MODAL (SUB-MODAL) -->
+    <div id="pcComponentSelectorModal" class="modal">
+        <div class="modal-content" style="max-width:680px; max-height:85vh; padding:20px; display:flex; flex-direction:column;">
+            <span class="close-modal" onclick="togglePcComponentSelectorModal(false)">&times;</span>
+            <h3 id="pcSelectorTitle" style="color:var(--primary); margin-bottom:12px;">Choose Processor (CPU)</h3>
+            <div id="pcSelectorList" style="flex:1; overflow-y:auto; padding-right:4px;">
+                <!-- Catalog items injected by script.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. PRODUCT COMPARISON MODAL -->
+    <div id="compareModal" class="modal">
+        <div class="modal-content" style="max-width:960px; max-height:90vh; padding:24px; overflow-y:auto;">
+            <span class="close-modal" onclick="toggleCompareModal(false)">&times;</span>
+            <h2 style="color:var(--primary); margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-code-compare"></i> Side-by-Side Product Comparison
+            </h2>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+                Compare specifications, prices, official warranties, and real performance metrics to pick the perfect hardware.
+            </p>
+            <div id="compareTableContainer" style="overflow-x:auto;">
+                <!-- Rendered dynamically by script.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 0% EMI CALCULATOR MODAL -->
+    <div id="emiModal" class="modal">
+        <div class="modal-content" style="max-width:520px; padding:24px;">
+            <span class="close-modal" onclick="toggleEmiModal(false)">&times;</span>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                <div style="width:46px; height:46px; border-radius:50%; background:rgba(37,99,235,0.15); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--primary);">
+                    💳
+                </div>
+                <div>
+                    <h3 style="margin:0; font-size:18px; color:var(--text-color);">0% Interest EMI Calculator</h3>
+                    <small style="color:var(--text-muted);">Available for up to 24 months with 18+ Bangladeshi Banks</small>
+                </div>
+            </div>
+
+            <div style="background:var(--card-elevated); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-color); margin-bottom:14px;">
+                <div style="font-size:12.5px; color:var(--text-muted);">Selected Product:</div>
+                <strong id="emiProdName" style="font-size:14px; color:var(--text-color);">Asus ROG Gaming Laptop</strong>
+                <div style="font-size:16px; font-weight:800; color:var(--primary); margin-top:2px;">
+                    Price: <span id="emiProdPrice">৳ 120,000</span>
+                </div>
+            </div>
+
+            <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Select Installment Tenure:</label>
+            <div class="emi-tenure-grid">
+                <button type="button" class="emi-tenure-btn" onclick="selectEmiTenure(3, this)">3 Months</button>
+                <button type="button" class="emi-tenure-btn active" onclick="selectEmiTenure(6, this)">6 Months (0%)</button>
+                <button type="button" class="emi-tenure-btn" onclick="selectEmiTenure(9, this)">9 Months</button>
+                <button type="button" class="emi-tenure-btn" onclick="selectEmiTenure(12, this)">12 Months (0%)</button>
+                <button type="button" class="emi-tenure-btn" onclick="selectEmiTenure(18, this)">18 Months</button>
+                <button type="button" class="emi-tenure-btn" onclick="selectEmiTenure(24, this)">24 Months</button>
+            </div>
+
+            <div class="emi-highlight-box">
+                <span style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Monthly Installment:</span>
+                <div class="emi-amount-text" id="emiMonthlyAmount">৳ 20,000 / month</div>
+                <small style="color:#10b981; font-weight:700;">✓ 0% Interest with Partner Credit Cards</small>
+            </div>
+
+            <div style="margin-top:14px;">
+                <label style="font-size:12px; font-weight:700; color:var(--text-muted); display:block; text-align:center;">Accepted Partner Banks for 0% EMI:</label>
+                <div class="bank-logo-badges">
+                    <span class="bank-badge">SCB</span>
+                    <span class="bank-badge" style="color:#e2136e;">City Amex</span>
+                    <span class="bank-badge">BRAC Bank</span>
+                    <span class="bank-badge">EBL</span>
+                    <span class="bank-badge">MTB</span>
+                    <span class="bank-badge">DBBL</span>
+                    <span class="bank-badge">UCBL</span>
+                    <span class="bank-badge">Bank Asia</span>
+                </div>
+            </div>
+
+            <div style="margin-top:18px; display:flex; gap:10px;">
+                <button type="button" onclick="toggleEmiModal(false)" style="flex:1; background:var(--card-elevated); color:var(--text-color); border:1px solid var(--border-color); padding:10px; border-radius:var(--radius-sm); font-weight:700; cursor:pointer;">
+                    Close
+                </button>
+                <button type="button" onclick="applyEmiInCart()" style="flex:1; background:var(--primary); color:white; border:none; padding:10px; border-radius:var(--radius-sm); font-weight:800; cursor:pointer; box-shadow:var(--shadow-sm);">
+                    Add with EMI Option
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. WRITE CUSTOMER REVIEW MODAL -->
+    <div id="writeReviewModal" class="modal">
+        <div class="modal-content" style="max-width:500px; padding:24px;">
+            <span class="close-modal" onclick="toggleWriteReviewModal(false)">&times;</span>
+            <h3 style="color:var(--primary); margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                ✍️ Write a Verified Product Review
+            </h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">
+                Share your authentic experience with the TechVerse community
+            </p>
+
+            <form id="writeReviewForm" onsubmit="submitCustomerReview(event)">
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:6px;">Your Overall Rating *</label>
+                    <div class="star-picker" id="starPicker">
+                        <span class="star active" onclick="setStarRating(1)">★</span>
+                        <span class="star active" onclick="setStarRating(2)">★</span>
+                        <span class="star active" onclick="setStarRating(3)">★</span>
+                        <span class="star active" onclick="setStarRating(4)">★</span>
+                        <span class="star active" onclick="setStarRating(5)">★</span>
+                    </div>
+                </div>
+
+                <div class="form-row-2" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div>
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Your Full Name *</label>
+                        <input type="text" id="reviewAuthorName" required placeholder="e.g. Tanvir Ahmed" style="width:100%; padding:9px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                    </div>
+                    <div>
+                        <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Your City / District *</label>
+                        <input type="text" id="reviewAuthorCity" required placeholder="e.g. Dhaka, Cumilla" style="width:100%; padding:9px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                    </div>
+                </div>
+
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Purchased Item / Topic</label>
+                    <input type="text" id="reviewItemTopic" placeholder="e.g. Asus ROG Gaming Laptop" style="width:100%; padding:9px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);">
+                </div>
+
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:4px;">Attach Unboxing / Product Photo (Optional)</label>
+                    <input type="file" id="reviewPhotoInput" accept="image/*" onchange="handleReviewPhotoSelect(this)" style="font-size:12px; color:var(--text-muted); width:100%;">
+                    <div id="reviewPhotoPreview" style="display:none; margin-top:8px;">
+                        <img id="reviewPhotoImg" src="" alt="Photo preview" style="max-height:80px; border-radius:6px; border:1px solid var(--border-color);">
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" onclick="toggleWriteReviewModal(false)" style="padding:10px 18px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--card-elevated); color:var(--text-color); font-weight:700; cursor:pointer;">Cancel</button>
+                    <button type="submit" style="padding:10px 22px; border-radius:var(--radius-sm); border:none; background:var(--primary); color:white; font-weight:800; cursor:pointer; box-shadow:var(--shadow-sm);">⭐ Post Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. STORE LOCATOR & PHYSICAL OUTLETS MODAL -->
+    <div id="storeLocatorModal" class="modal">
+        <div class="modal-content" style="max-width:680px; padding:24px;">
+            <span class="close-modal" onclick="toggleStoreLocatorModal(false)">&times;</span>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                <div style="width:48px; height:48px; border-radius:50%; background:rgba(37,99,235,0.15); display:flex; align-items:center; justify-content:center; font-size:24px; color:var(--primary);">
+                    <i class="fa-solid fa-shop"></i>
+                </div>
+                <div>
+                    <h3 style="margin:0; font-size:18px; color:var(--text-color);">TechVerse Physical Outlets & Experience Hubs</h3>
+                    <small style="color:var(--text-muted);">Visit our authorized flagship showrooms for live hands-on testing</small>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px; max-height:65vh; overflow-y:auto; padding-right:4px;">
+                <!-- Outlet 1 -->
+                <div style="background:var(--card-elevated); border:1px solid var(--border-color); border-left:4px solid var(--primary); padding:14px 16px; border-radius:var(--radius-sm);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+                        <div>
+                            <strong style="font-size:15px; color:var(--text-color);">📍 Dhaka Flagship Experience Center</strong>
+                            <div style="font-size:12.5px; color:var(--text-muted); margin-top:3px;">
+                                Level 4, Shop #420-422, Multiplan Center, New Elephant Road, Dhaka-1205
+                            </div>
+                        </div>
+                        <span style="font-size:11px; background:rgba(16,185,129,0.15); color:#10b981; padding:3px 8px; border-radius:10px; font-weight:800;">OPEN NOW</span>
+                    </div>
+                    <div style="margin-top:10px; font-size:12.5px; display:flex; gap:14px; flex-wrap:wrap;">
+                        <span>📞 Phone: <b>+880 1820-727102</b></span>
+                        <span>🕒 Hours: <b>10:00 AM - 08:30 PM (Daily)</b></span>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <a href="https://maps.google.com/?q=Multiplan+Center+Dhaka" target="_blank" style="font-size:12px; color:var(--primary); font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fa-solid fa-diamond-turn-right"></i> Get Directions on Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Outlet 2 -->
+                <div style="background:var(--card-elevated); border:1px solid var(--border-color); border-left:4px solid #06b6d4; padding:14px 16px; border-radius:var(--radius-sm);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+                        <div>
+                            <strong style="font-size:15px; color:var(--text-color);">📍 Chattogram Gaming Zone</strong>
+                            <div style="font-size:12.5px; color:var(--text-muted); margin-top:3px;">
+                                Level 3, Central Shopping Complex, GEC Circle, Chittagong
+                            </div>
+                        </div>
+                        <span style="font-size:11px; background:rgba(16,185,129,0.15); color:#10b981; padding:3px 8px; border-radius:10px; font-weight:800;">OPEN NOW</span>
+                    </div>
+                    <div style="margin-top:10px; font-size:12.5px; display:flex; gap:14px; flex-wrap:wrap;">
+                        <span>📞 Phone: <b>+880 1820-727102</b></span>
+                        <span>🕒 Hours: <b>10:00 AM - 08:00 PM (Thu Closed)</b></span>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <a href="https://maps.google.com/?q=GEC+Circle+Chittagong" target="_blank" style="font-size:12px; color:var(--primary); font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fa-solid fa-diamond-turn-right"></i> Get Directions on Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Outlet 3 -->
+                <div style="background:var(--card-elevated); border:1px solid var(--border-color); border-left:4px solid #8b5cf6; padding:14px 16px; border-radius:var(--radius-sm);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+                        <div>
+                            <strong style="font-size:15px; color:var(--text-color);">📍 Official Warranty & RMA Service Hub</strong>
+                            <div style="font-size:12.5px; color:var(--text-muted); margin-top:3px;">
+                                Motijheel Commercial Area, Dhaka-1000
+                            </div>
+                        </div>
+                        <span style="font-size:11px; background:rgba(16,185,129,0.15); color:#10b981; padding:3px 8px; border-radius:10px; font-weight:800;">OFFICIAL RMA</span>
+                    </div>
+                    <div style="margin-top:10px; font-size:12.5px;">
+                        <span>✉️ Email: <b>warranty@techverse.com</b></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. LUCKY SPIN THE WHEEL DISCOUNT GAME MODAL -->
+    <div id="spinWheelModal" class="modal">
+        <div class="modal-content" style="max-width:440px; padding:24px; text-align:center;">
+            <span class="close-modal" onclick="toggleSpinWheelModal(false)">&times;</span>
+            <div style="font-size:32px; margin-bottom:6px;">🎡</div>
+            <h3 style="margin:0 0 4px 0; font-size:19px; color:var(--text-color);">TechVerse Lucky Spin & Win!</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">
+                Spin the wheel to unlock exclusive discount vouchers for your checkout!
+            </p>
+
+            <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheelCanvas" width="290" height="290" class="wheel-canvas"></canvas>
+            </div>
+
+            <button type="button" id="btnSpinNow" onclick="spinLuckyWheel()" class="btn-spin-now">
+                🎰 SPIN TO WIN NOW
+            </button>
+
+            <div id="spinWinResult" style="display:none; margin-top:16px; background:rgba(16,185,129,0.15); border:1px dashed #10b981; padding:12px; border-radius:8px;">
+                <div style="font-size:13px; font-weight:800; color:#10b981;">🎉 CONGRATULATIONS!</div>
+                <div id="spinWinPrize" style="font-size:16px; font-weight:900; color:var(--text-color); margin:4px 0;">৳500 OFF (WELCOME500)</div>
+                <button type="button" onclick="claimWheelPrize()" style="background:#10b981; color:white; border:none; padding:8px 18px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; margin-top:6px;">
+                    Claim & Apply to Cart 🛍️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. CUSTOMER AUTHENTICATION & USER PROFILE MODAL -->
+    <div id="authModal" class="modal" onclick="if(event.target === this) toggleAuthModal(false)">
+        <div class="modal-content auth-modal-content">
+            <span class="close-modal" onclick="toggleAuthModal(false)" title="Close Window">&times;</span>
+            
+            <div class="auth-header">
+                <div class="auth-header-icon" id="authHeaderIcon">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h3 id="authModalTitle">TechVerse Customer Portal</h3>
+                <span id="authModalSubtitle">Access your orders, reward points & speedy checkout</span>
+            </div>
+
+            <!-- TABS (Shown when logged out) -->
+            <div class="auth-tabs" id="authTabsBar">
+                <button type="button" class="auth-tab active" id="tabAuthLogin" onclick="switchAuthTab('login')">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+                </button>
+                <button type="button" class="auth-tab" id="tabAuthRegister" onclick="switchAuthTab('register')">
+                    <i class="fa-solid fa-user-plus"></i> Create Account
+                </button>
+            </div>
+
+            <div class="auth-body">
+                <!-- PANE 1: LOGIN -->
+                <div id="authPaneLogin">
+                    <form onsubmit="handleCustomerLogin(event)" class="auth-form">
+                        <div class="auth-field-group">
+                            <label class="auth-label">Mobile Number or Email *</label>
+                            <div class="auth-input-wrapper">
+                                <i class="fa-solid fa-user auth-field-icon"></i>
+                                <input type="text" id="loginIdentifier" class="auth-input" required placeholder="018XXXXXXXX or name@email.com" autocomplete="username">
+                            </div>
+                        </div>
+
+                        <div class="auth-field-group">
+                            <div class="auth-label-row">
+                                <label class="auth-label">Password *</label>
+                                <a href="javascript:void(0)" onclick="handleForgotPassword()" class="auth-forgot-link">Forgot password?</a>
+                            </div>
+                            <div class="auth-input-wrapper">
+                                <i class="fa-solid fa-lock auth-field-icon"></i>
+                                <input type="password" id="loginPassword" class="auth-input" required placeholder="Enter your password" autocomplete="current-password">
+                                <button type="button" class="auth-toggle-pass-btn" onclick="toggleAuthInputPass('loginPassword', this)" title="Show/Hide Password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="auth-options-row">
+                            <label class="auth-remember-label">
+                                <input type="checkbox" id="loginRememberMe" checked>
+                                <span>Remember my login session</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-auth-submit" id="btnCustomerLogin">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Account
+                        </button>
+
+                        <div class="auth-divider">
+                            <span>or continue with</span>
+                        </div>
+
+                        <button type="button" class="btn-social-login btn-google-login" onclick="handleSocialAuth('Google')">
+                            <svg class="google-svg" viewBox="0 0 24 24" width="18" height="18">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                            </svg>
+                            <span>Continue with Google</span>
+                        </button>
+
+                        <div class="auth-switch-footer">
+                            <span>Don't have an account?</span>
+                            <a href="javascript:void(0)" onclick="switchAuthTab('register')" class="auth-switch-link">Create Account</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- PANE 2: REGISTER -->
+                <div id="authPaneRegister" style="display:none;">
+                    <form onsubmit="handleCustomerRegister(event)" class="auth-form">
+                        <div class="auth-field-group">
+                            <label class="auth-label">Full Name *</label>
+                            <div class="auth-input-wrapper">
+                                <i class="fa-solid fa-user auth-field-icon"></i>
+                                <input type="text" id="regName" class="auth-input" required placeholder="e.g. Tanvir Ahmed" autocomplete="name">
+                            </div>
+                        </div>
+
+                        <div class="auth-field-group">
+                            <label class="auth-label">Mobile Number *</label>
+                            <div class="auth-input-wrapper">
+                                <i class="fa-solid fa-phone auth-field-icon"></i>
+                                <input type="tel" id="regPhone" class="auth-input" required placeholder="018XXXXXXXX" autocomplete="tel">
+                            </div>
+                        </div>
+
+                        <div class="auth-field-group">
+                            <label class="auth-label">Email Address (Optional)</label>
+                            <div class="auth-input-wrapper">
+                                <i class="fa-solid fa-envelope auth-field-icon"></i>
+                                <input type="email" id="regEmail" class="auth-input" placeholder="tanvir@example.com" autocomplete="email">
+                            </div>
+                        </div>
+
+                        <div class="auth-field-group">
+                            <label class="auth-label">Set Password *</label>
+                            <div class="auth-input-wrapper">
+                                <i class="fa-solid fa-lock auth-field-icon"></i>
+                                <input type="password" id="regPassword" class="auth-input" required placeholder="At least 6 characters" autocomplete="new-password">
+                                <button type="button" class="auth-toggle-pass-btn" onclick="toggleAuthInputPass('regPassword', this)" title="Show/Hide Password">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="auth-options-row">
+                            <label class="auth-remember-label">
+                                <input type="checkbox" id="regTermsCheckbox" checked required>
+                                <span>I agree to TechVerse <a href="#policy" style="color:var(--primary); text-decoration:underline;">Terms</a> & <a href="#policy" style="color:var(--primary); text-decoration:underline;">Privacy Policy</a></span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-auth-submit" id="btnCustomerRegister">
+                            <i class="fa-solid fa-gift"></i> Register & Claim 100 Bonus Points
+                        </button>
+
+                        <div class="auth-divider">
+                            <span>or continue with</span>
+                        </div>
+
+                        <button type="button" class="btn-social-login btn-google-login" onclick="handleSocialAuth('Google')">
+                            <svg class="google-svg" viewBox="0 0 24 24" width="18" height="18">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                            </svg>
+                            <span>Continue with Google</span>
+                        </button>
+
+                        <div class="auth-switch-footer">
+                            <span>Already registered?</span>
+                            <a href="javascript:void(0)" onclick="switchAuthTab('login')" class="auth-switch-link">Sign In to Account</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- PANE 3: PROFILE & ORDERS -->
+                <div id="authPaneProfile" style="display:none;">
+                    <div class="profile-card-modern">
+                        <div class="profile-avatar-circle" id="profileAvatarInitials">
+                            YB
+                        </div>
+                        <div class="profile-meta-info">
+                            <div class="profile-name-row">
+                                <h4 id="profileUserName">MD YEASIN BHUIYAN</h4>
+                                <span class="profile-verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                            </div>
+                            <div id="profileUserContact" class="profile-contact-text">01820727102</div>
+                        </div>
+                    </div>
+
+                    <!-- LOYALTY CARD -->
+                    <div class="loyalty-banner-card">
+                        <div class="loyalty-banner-left">
+                            <div class="loyalty-tier-tag">
+                                <i class="fa-solid fa-crown"></i> VIP Member
+                            </div>
+                            <div class="loyalty-title">TechVerse Reward Points</div>
+                            <div class="loyalty-subtitle">Redeemable on checkout (1 Point = ৳1)</div>
+                        </div>
+                        <div class="loyalty-points-counter">
+                            <span id="profileLoyaltyPoints">100</span>
+                            <small>PTS</small>
+                        </div>
+                    </div>
+
+                    <!-- ORDERS HEADING -->
+                    <div class="profile-section-header">
+                        <h4><i class="fa-solid fa-box-archive"></i> Recent Order History</h4>
+                        <span id="profileOrderCountBadge" class="profile-count-pill">0 Orders</span>
+                    </div>
+
+                    <div id="profileOrdersList" class="profile-orders-container">
+                        <!-- Injected by script.js -->
+                    </div>
+
+                    <!-- PROFILE ACTION FOOTER -->
+                    <div class="profile-action-footer">
+                        <button type="button" onclick="logoutCustomer()" class="btn-profile-logout">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                        </button>
+                        <button type="button" onclick="toggleAuthModal(false)" class="btn-profile-continue">
+                            <i class="fa-solid fa-bag-shopping"></i> Continue Shopping
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. INTERACTIVE BKASH PAYMENT GATEWAY OVERLAY -->
+    <div id="bkashCheckoutModal" class="modal">
+        <div class="modal-content bkash-modal-content">
+            <span class="close-modal" onclick="toggleBkashModal(false)" style="color:white; top:12px; right:14px;">&times;</span>
+            <div class="bkash-top-banner">
+                <div class="bkash-brand">
+                    <span>bKash</span>
+                </div>
+                <div style="text-align:right; font-size:11.5px; opacity:0.95;">
+                    <div>Merchant: <b>TechVerse BD</b></div>
+                    <div>Inv: <span id="bkashInvoiceNo">TV-889102</span></div>
+                </div>
+            </div>
+
+            <div class="bkash-body">
+                <div style="font-size:13px; color:#64748b; font-weight:600;">Amount to Pay</div>
+                <div class="bkash-amount-display" id="bkashPayAmount">৳ 0</div>
+
+                <!-- STEP 1: PHONE -->
+                <div id="bkashStepPhone">
+                    <p style="font-size:12.5px; color:#475569; margin:0 0 10px 0;">Enter your bKash mobile account number</p>
+                    <input type="tel" id="bkashPhoneInput" class="bkash-input-field" placeholder="01XXXXXXXXX" maxlength="11">
+                    <button type="button" class="bkash-btn-action" onclick="proceedBkashStep(2)">CONFIRM NUMBER</button>
+                </div>
+
+                <!-- STEP 2: OTP -->
+                <div id="bkashStepOtp" style="display:none;">
+                    <p style="font-size:12.5px; color:#475569; margin:0 0 4px 0;">Enter verification code sent to your mobile</p>
+                    <small style="color:#D12053; font-weight:700;">(Demo OTP: 123456)</small>
+                    <input type="text" id="bkashOtpInput" class="bkash-input-field" placeholder="123456" maxlength="6">
+                    <button type="button" class="bkash-btn-action" onclick="proceedBkashStep(3)">VERIFY OTP</button>
+                </div>
+
+                <!-- STEP 3: PIN -->
+                <div id="bkashStepPin" style="display:none;">
+                    <p style="font-size:12.5px; color:#475569; margin:0 0 4px 0;">Enter your 5-digit bKash PIN</p>
+                    <small style="color:#64748b;">(Demo PIN: Any 5 digits, e.g. 12345)</small>
+                    <input type="password" id="bkashPinInput" class="bkash-input-field" placeholder="•••••" maxlength="5">
+                    <button type="button" class="bkash-btn-action" onclick="submitBkashPaymentFinal()">CONFIRM & PAY</button>
+                </div>
+
+                <!-- STEP 4: PROCESSING ANIMATION -->
+                <div id="bkashStepProcessing" style="display:none; padding:25px 0;">
+                    <div style="font-size:36px; animation:gentlePulse 1s infinite;">⚡</div>
+                    <h4 style="color:#D12053; margin:8px 0 4px;">Processing bKash Payment...</h4>
+                    <small style="color:#64748b;">Verifying transaction with bKash Bangladesh</small>
+                </div>
+
+                <div style="margin-top:16px; font-size:11px; color:#94a3b8; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <i class="fa-solid fa-lock"></i> 128-bit Encrypted bKash Merchant API
                 </div>
             </div>
         </div>
